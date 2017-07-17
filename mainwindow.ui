@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>702</width>
+    <height>489</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Tahoma</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Miner's Lamp</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/eth_miner_lamp.ico</normaloff>:/icons/eth_miner_lamp.ico</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+
+color: white;
+  background-color:  black;
+
+ }
+
+QLabel
+{
+	background-color: black;
+	color: white;
+
+}
+
+QLineEdit {
+ padding: 1px;
+ border-style: solid;
+ border: 2px solid gray;
+ border-radius: 4px;
+ }
+
+QTextEdit {
+	border: 2px solid gray;
+	border-radius: 4px;
+}
+
+
+
+QLineEdit
+{
+color: white;
+}
+
+QLineEdit#lineEditDonate
+{
+border-style: no-border;
+color: yellow;
+}
+
+
+QDateTimeEdit {
+	padding: 1px;
+	border-style: solid;
+	border: 2px solid gray;
+	border-radius: 4px;
+}
+
+QTimeEdit {
+	padding: 1px;
+	border-style: solid;
+	border: 2px solid gray;
+	border-radius: 4px;
+}
+
+QComboBox {
+	border: 2px solid gray;
+	border-radius: 4px;
+}
+
+QTreeView {
+	border: 2px solid gray;
+	border-radius: 4px;
+}
+
+
+QListView {
+    alternate-background-color: gray;
+}
+
+QGroupBox {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #E0E0E0, stop: 1 #FFFFFF);
+    border: 2px solid gray;
+    border-radius: 4px;
+	margin-top: 3ex;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+	padding: 0 3px;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #E0E0E0, stop: 1 #FFFFFF);
+}
+
+
+QCheckBox {
+color: white;
+
+ }
+
+QSpinBox {
+color: white;
+ padding: 1px;
+ border-style: solid;
+ border: 2px solid gray;
+ border-radius: 2px;
+ }
+
+QPushButton {
+ color: white;
+ background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+ 										stop: 0 #808080, stop: 0.1 #909090,
+										stop: 0.49 #505050, stop: 0.5 #666666, stop: 1 #909090);
+ border-width: 1px;
+ border-color: black;
+ border-style: solid;
+ border-radius: 4;
+ padding: 3px;
+ font-size: 13px;
+ padding-left: 5px;
+ padding-right: 5px;
+ min-width: 50px;
+ max-width: 200px;
+ min-height: 13px;
+ max-height: 40px;
+ }
+
+QPushButton:pressed
+{
+ color: white;
+ background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #77e, stop: 0.49 #12c, stop: 0.5 #33b, stop: 1 #22c);
+ border-width: 1px;
+ border-color: black;
+ border-style: solid;
+ border-radius: 4;
+ padding: 3px;
+ font-size: 13px;
+ padding-left: 5px;
+ padding-right: 5px;
+ min-width: 50px;
+ max-width: 200px;
+ min-height: 13px;
+ max-height: 40px;
+}
+
+QPushButton:hover
+{
+ color: white;
+ background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #505050, stop: 0.1 #707070, stop: 0.49 #12c, stop: 0.5 #aaaaaa, stop: 1 #33c);
+ border-width: 1px;
+ border-color: black;
+ border-style: solid;
+ border-radius: 4;
+ padding: 3px;
+ font-size: 13px;
+ padding-left: 5px;
+ padding-right: 5px;
+ min-width: 50px;
+ max-width: 200px;
+ min-height: 13px;
+ max-height: 40px;
+}
+
+QPushButton:checked
+{
+ color: white;
+ background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #77e, stop: 0.49 #12c, stop: 0.5 #44b, stop: 1 #ddc);
+ border-width: 1px;
+ border-color: black;
+ border-style: solid;
+ border-radius: 4;
+ padding: 3px;
+ font-size: 13px;
+ padding-left: 5px;
+ padding-right: 5px;
+ min-width: 50px;
+ max-width: 200px;
+ min-height: 13px;
+ max-height: 40px;
+}
+
+QPushButton:disabled
+{
+ color: white;
+ background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+ 										stop: 0 #CCCCCC, stop: 0.1 #EEEEEE,
+										stop: 0.49 #AAAAAA, stop: 0.5 #BBBBBB, stop: 1 #CCCCCC);
+ border-width: 1px;
+ border-color: black;
+ border-style: solid;
+ border-radius: 4;
+ padding: 3px;
+ font-size: 13px;
+ padding-left: 5px;
+ padding-right: 5px;
+ min-width: 50px;
+ max-width: 200px;
+ min-height: 13px;
+ max-height: 40px;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Miner path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" colspan="5">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Command line:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2" colspan="5">
+     <widget class="QLineEdit" name="lineEditArgs"/>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QCheckBox" name="checkBoxRestart">
+      <property name="text">
+       <string>Restart miner on faillure (CUDA error mainly)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Max consecutive 0MH/s:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="checkBoxOnlyShare">
+      <property name="text">
+       <string>Only display share info</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="7">
+     <widget class="QTextEdit" name="textEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QSpinBox" name="spinBoxMax0MHs"/>
+    </item>
+    <item row="3" column="3">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Delay before restart:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4">
+     <widget class="QSpinBox" name="spinBoxDelay"/>
+    </item>
+    <item row="3" column="5" colspan="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Start mining</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="6">
+     <widget class="QPushButton" name="pushButtonHelp">
+      <property name="text">
+       <string>Help</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

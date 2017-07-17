@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>eth_miner_lamp.ico</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>logo.png</file>
+    </qresource>
+</RCC>
