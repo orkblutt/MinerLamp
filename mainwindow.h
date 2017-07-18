@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QThread>
 
 #include "minerprocess.h"
 #include "highlighter.h"
@@ -11,6 +12,19 @@
 namespace Ui {
 class MainWindow;
 }
+
+class autoStart : public QThread
+{
+    Q_OBJECT
+public:
+    autoStart(QObject* pParent = Q_NULLPTR);
+
+    void run();
+
+signals:
+
+    void readyToStartMiner();
+};
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +35,8 @@ public:
     ~MainWindow();
 
     void setVisible(bool visible) Q_DECL_OVERRIDE;
+
+    void startMiner();
 
 protected:
      void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
@@ -49,6 +65,10 @@ private slots:
 
     void on_pushButtonHelp_clicked();
 
+    void on_spinBoxDelay0MHs_valueChanged(int arg1);
+
+    void onReadyToStartMiner();
+
 private:
 
     void onMinerStarted();
@@ -75,6 +95,8 @@ private:
     QAction* _quitAction;
 
     Highlighter* _highlighter;
+
+    autoStart* _starter;
 };
 
 #endif // MAINWINDOW_H

@@ -225,18 +225,12 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="0" column="2" colspan="5">
-     <widget class="QLineEdit" name="lineEditMinerPath"/>
-    </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Command line:</string>
       </property>
      </widget>
-    </item>
-    <item row="1" column="2" colspan="5">
-     <widget class="QLineEdit" name="lineEditArgs"/>
     </item>
     <item row="2" column="0" colspan="3">
      <widget class="QCheckBox" name="checkBoxRestart">
@@ -245,24 +239,10 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="3" column="0" colspan="2">
+    <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Max consecutive 0MH/s:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="checkBoxOnlyShare">
-      <property name="text">
-       <string>Only display share info</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0" colspan="7">
-     <widget class="QTextEdit" name="textEdit">
-      <property name="readOnly">
-       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -279,17 +259,54 @@ QPushButton:disabled
     <item row="3" column="4">
      <widget class="QSpinBox" name="spinBoxDelay"/>
     </item>
-    <item row="3" column="5" colspan="2">
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Delay before monitoring for 0MH/s:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="spinBoxDelay0MHs"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="checkBoxOnlyShare">
+      <property name="text">
+       <string>Only display share info</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="6">
+     <widget class="QTextEdit" name="textEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="4">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
+    <item row="1" column="1" colspan="4">
+     <widget class="QLineEdit" name="lineEditArgs"/>
+    </item>
+    <item row="0" column="5" rowspan="2">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>Start mining</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="6">
+    <item row="2" column="3" colspan="2">
+     <widget class="QCheckBox" name="checkBoxAutoStart">
+      <property name="text">
+       <string>Start miner on startup</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5">
      <widget class="QPushButton" name="pushButtonHelp">
       <property name="text">
-       <string>Help</string>
+       <string>About</string>
       </property>
      </widget>
     </item>

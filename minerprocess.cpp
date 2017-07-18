@@ -4,12 +4,26 @@
 #include <QRegExp>
 #include <QThread>
 
+zeroMHsWaitter::zeroMHsWaitter(unsigned int delay, QObject* pParent /*= Q_NULLPTR*/) : QThread(pParent)
+  , _pParent((MinerProcess*)pParent)
+  , _delay(delay)
+{
+}
+
+
+void zeroMHsWaitter::run()
+{
+    QThread::sleep(_delay);
+}
+
 MinerProcess::MinerProcess():
     _isRunning(false),
-    _0mhs(0),
+    _0mhs(5),
     _restartDelay(2),
     _autoRestart(true),
-    _shareOnly(false)
+    _shareOnly(false),
+    _readyToMonitor(false),
+    _waitter(Q_NULLPTR)
 {
 
     connect(&_miner, &QProcess::readyReadStandardOutput,
@@ -25,7 +39,6 @@ MinerProcess::MinerProcess():
              this, &MinerProcess::onStarted);
 
     _miner.setReadChannel(QProcess::StandardOutput);
-
 }
 
 void MinerProcess::onReadyToReadStdout()
@@ -34,7 +47,6 @@ void MinerProcess::onReadyToReadStdout()
     while (!stream.atEnd())
     {
         QString line = stream.readLine();
-        //qDebug() << "stdout:" << line;
         if(line.length() > 1 && !_shareOnly)
             _log->append(line.trimmed());
     }
@@ -44,7 +56,6 @@ void MinerProcess::onReadyToReadStderr()
 {
     QString line(_miner.readAllStandardError());
 
-    //qDebug() << "stderr:" << line;
     if(line.length() > 1)
     {
         QStringList list = line.split(QRegExp("\r\n"), QString::SkipEmptyParts);
@@ -80,14 +91,17 @@ void MinerProcess::onReadyToReadStderr()
 
             emit emitHashRate(hasrate);
 
-            if(list.at(7) == "0.00MH/s")
-                _0mhs++;
-            else
-                _0mhs = 0;
-
-            if(_0mhs > _max0mhs)
+            if(_readyToMonitor)
             {
-                restart();
+                if(list.at(7) == "0.00MH/s")
+                    _0mhs++;
+                else
+                    _0mhs = 0;
+
+                if(_0mhs > _max0mhs)
+                {
+                    restart();
+                }
             }
         }
     }
@@ -98,6 +112,8 @@ void MinerProcess::onExit()
     _log->append("ethminer exit");
     _isRunning = false;
     _0mhs = 0;
+    if(_waitter && _waitter->isRunning()) _waitter->terminate();
+
     emit emitStoped();
 }
 
@@ -109,6 +125,12 @@ void MinerProcess::onStarted()
     emit emitStarted();
 }
 
+void MinerProcess::onReadyToMonitor()
+{
+    _readyToMonitor = true;
+    qDebug() << "onReadyToMonitor";
+}
+
 
 void MinerProcess::start(const QString &path, const QString& args)
 {
@@ -116,7 +138,18 @@ void MinerProcess::start(const QString &path, const QString& args)
     _minerArgs = args;
 
     QStringList arglist = args.split(" ");
+
+    if(_waitter && _waitter->isRunning()) _waitter->terminate();
+    if(_waitter) delete _waitter;
+
+    _waitter = new zeroMHsWaitter(_delayBefore0MHs, this);
+
+    connect(_waitter, SIGNAL(finished()), this, SLOT(onReadyToMonitor()), Qt::DirectConnection);
+
+    _waitter->start();
+
     _miner.start(path, arglist);
+
     _isRunning = true;
 }
 
@@ -126,6 +159,7 @@ void MinerProcess::stop()
     _miner.waitForFinished();
     _0mhs = 0;
     _isRunning = false;
+    if(_waitter && _waitter->isRunning()) _waitter->terminate();
     emit emitStoped();
 }
 

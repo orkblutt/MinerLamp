@@ -14,6 +14,8 @@
 #define AUTORESTART "autorestart"
 #define MAX0MHS "max0mhs"
 #define RESTARTDELAY "restartdelay"
+#define ZEROMHSDELAY "zeromhsdelay"
+#define AUTOSTART "autostart"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->checkBoxRestart->setChecked(_settings->value(AUTORESTART).toBool());
     ui->spinBoxMax0MHs->setValue(_settings->value(MAX0MHS).toInt());
     ui->spinBoxDelay->setValue(_settings->value(RESTARTDELAY).toInt());
+    ui->spinBoxDelay0MHs->setValue(_settings->value(ZEROMHSDELAY).toInt());
+    ui->checkBoxAutoStart->setChecked(_settings->value(AUTOSTART).toBool());
+
+
+    if(ui->spinBoxMax0MHs->value() == 0) ui->spinBoxMax0MHs->setValue(5);
 
     _process->setLogControl(ui->textEdit);
 
@@ -52,6 +59,14 @@ MainWindow::MainWindow(QWidget *parent) :
     _trayIcon->show();
 
     setupEditor();
+
+    if(ui->checkBoxAutoStart->isChecked())
+    {
+        _starter = new autoStart(this);
+        //QObject::connect(_starter, SIGNAL(finished()), this, SLOT(&QObject::deleteLater()), Qt::DirectConnection);
+        connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
+        _starter->start();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -61,6 +76,8 @@ MainWindow::~MainWindow()
     _settings->setValue(AUTORESTART, ui->checkBoxRestart->isChecked());
     _settings->setValue(MAX0MHS, ui->spinBoxMax0MHs->value());
     _settings->setValue(RESTARTDELAY, ui->spinBoxDelay->value());
+    _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
+    _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
 
     _process->stop();
 
@@ -74,6 +91,11 @@ void MainWindow::setVisible(bool visible)
     _maximizeAction->setEnabled(!isMaximized());
     _restoreAction->setEnabled(isMaximized() || !visible);
     QMainWindow::setVisible(visible);
+}
+
+void MainWindow::startMiner()
+{
+    on_pushButton_clicked();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -196,7 +218,8 @@ void MainWindow::onHashrate(QString &hashrate)
 void MainWindow::onError()
 {
     _errorCount++;
-    _trayIcon->showMessage("Miner's lamp report", "An error has been detected in ehtminer.\n" + ui->checkBoxRestart->isChecked() ? "Miner's lamp restarted it automaticaly" : "Check the autorestart checkbox if you want Miner's lamp to restart it on error");
+    _trayIcon->showMessage("Miner's lamp report"
+                           , "An error has been detected in ethminer.\n" + ui->checkBoxRestart->isChecked() ? "Miner's lamp restarted it automaticaly" : "Check the autorestart checkbox if you want Miner's lamp to restart it on error");
 }
 
 void MainWindow::on_checkBoxRestart_clicked(bool checked)
@@ -214,6 +237,16 @@ void MainWindow::on_spinBoxDelay_valueChanged(int arg1)
     _process->setRestartDelay(arg1);
 }
 
+void MainWindow::on_spinBoxDelay0MHs_valueChanged(int arg1)
+{
+    _process->setDelayBefore0MHs(arg1);
+}
+
+void MainWindow::onReadyToStartMiner()
+{
+    on_pushButton_clicked();
+}
+
 void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
@@ -224,4 +257,19 @@ void MainWindow::on_pushButtonHelp_clicked()
     helpDialog* helpdial = new helpDialog(this);
     helpdial->exec();
     delete helpdial;
+}
+
+
+
+
+autoStart::autoStart(QObject *pParent)
+{
+
+}
+
+void autoStart::run()
+{
+    QThread::sleep(2);
+    emit readyToStartMiner();
+
 }
