@@ -71,13 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    _settings->setValue(MINERPATH, ui->lineEditMinerPath->text());
-    _settings->setValue(MINERARGS, ui->lineEditArgs->text());
-    _settings->setValue(AUTORESTART, ui->checkBoxRestart->isChecked());
-    _settings->setValue(MAX0MHS, ui->spinBoxMax0MHs->value());
-    _settings->setValue(RESTARTDELAY, ui->spinBoxDelay->value());
-    _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
-    _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
+
+    saveParameters();
 
     _process->stop();
 
@@ -110,7 +105,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
         QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::MessageIcon(QSystemTrayIcon::Information);
         _trayIcon->showMessage("Miner's lamp still running", _isMinerRunning ? "Ethminer is running" : "Ethminer isn't running", icon, 2 * 1000);
-
     }
 }
 
@@ -150,6 +144,9 @@ void MainWindow::createActions()
     _quitAction = new QAction(tr("&Close"), this);
     connect(_quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
+    _helpAction = new QAction(tr("&Help"), this);
+    connect(_helpAction, &QAction::triggered, this, &MainWindow::onHelp);
+
 }
 
 void MainWindow::createTrayIcon()
@@ -158,6 +155,7 @@ void MainWindow::createTrayIcon()
     _trayIconMenu->addAction(_minimizeAction);
     _trayIconMenu->addAction(_maximizeAction);
     _trayIconMenu->addAction(_restoreAction);
+    _trayIconMenu->addAction(_helpAction);
     _trayIconMenu->addSeparator();
     _trayIconMenu->addAction(_quitAction);
 
@@ -175,6 +173,17 @@ void MainWindow::setupEditor()
     ui->textEdit->setFont(font);
 
     _highlighter = new Highlighter(ui->textEdit->document());
+}
+
+void MainWindow::saveParameters()
+{
+    _settings->setValue(MINERPATH, ui->lineEditMinerPath->text());
+    _settings->setValue(MINERARGS, ui->lineEditArgs->text());
+    _settings->setValue(AUTORESTART, ui->checkBoxRestart->isChecked());
+    _settings->setValue(MAX0MHS, ui->spinBoxMax0MHs->value());
+    _settings->setValue(RESTARTDELAY, ui->spinBoxDelay->value());
+    _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
+    _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -207,6 +216,7 @@ void MainWindow::onMinerStoped()
     ui->pushButton->setText("Start mining");
     _isMinerRunning = false;
     _isStartStoping = false;
+
     this->setWindowTitle(QString("Miner's Lamp"));
 }
 
@@ -225,21 +235,25 @@ void MainWindow::onError()
 void MainWindow::on_checkBoxRestart_clicked(bool checked)
 {
     _process->setRestartOption(checked);
+    saveParameters();
 }
 
 void MainWindow::on_spinBoxMax0MHs_valueChanged(int arg1)
 {
     _process->setMax0MHs(arg1);
+    saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay_valueChanged(int arg1)
 {
     _process->setRestartDelay(arg1);
+    saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay0MHs_valueChanged(int arg1)
 {
     _process->setDelayBefore0MHs(arg1);
+    saveParameters();
 }
 
 void MainWindow::onReadyToStartMiner()
@@ -247,9 +261,15 @@ void MainWindow::onReadyToStartMiner()
     on_pushButton_clicked();
 }
 
+void MainWindow::onHelp()
+{
+    on_pushButtonHelp_clicked();
+}
+
 void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
+    saveParameters();
 }
 
 void MainWindow::on_pushButtonHelp_clicked()
@@ -264,7 +284,6 @@ void MainWindow::on_pushButtonHelp_clicked()
 
 autoStart::autoStart(QObject *pParent)
 {
-
 }
 
 void autoStart::run()

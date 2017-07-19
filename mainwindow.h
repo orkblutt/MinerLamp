@@ -51,6 +51,8 @@ private:
 
      void setupEditor();
 
+     void saveParameters();
+
 private slots:
     void on_pushButton_clicked();
 
@@ -68,6 +70,8 @@ private slots:
     void on_spinBoxDelay0MHs_valueChanged(int arg1);
 
     void onReadyToStartMiner();
+
+    void onHelp();
 
 private:
 
@@ -93,6 +97,7 @@ private:
     QAction* _maximizeAction;
     QAction* _restoreAction;
     QAction* _quitAction;
+    QAction* _helpAction;
 
     Highlighter* _highlighter;
 

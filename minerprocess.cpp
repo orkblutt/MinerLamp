@@ -128,7 +128,6 @@ void MinerProcess::onStarted()
 void MinerProcess::onReadyToMonitor()
 {
     _readyToMonitor = true;
-    qDebug() << "onReadyToMonitor";
 }
 
 
@@ -138,6 +137,8 @@ void MinerProcess::start(const QString &path, const QString& args)
     _minerArgs = args;
 
     QStringList arglist = args.split(" ");
+
+    _readyToMonitor = false;
 
     if(_waitter && _waitter->isRunning()) _waitter->terminate();
     if(_waitter) delete _waitter;
