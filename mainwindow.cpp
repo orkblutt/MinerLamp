@@ -62,8 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(ui->checkBoxAutoStart->isChecked())
     {
+        qDebug() << "start t";
         _starter = new autoStart(this);
-        //QObject::connect(_starter, SIGNAL(finished()), this, SLOT(&QObject::deleteLater()), Qt::DirectConnection);
         connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
         _starter->start();
     }
@@ -188,6 +188,7 @@ void MainWindow::saveParameters()
 
 void MainWindow::on_pushButton_clicked()
 {
+    saveParameters();
     if(!_isStartStoping) // avoid to start/stop more than once on dbl clic
     {
         _isStartStoping = true;
@@ -235,25 +236,25 @@ void MainWindow::onError()
 void MainWindow::on_checkBoxRestart_clicked(bool checked)
 {
     _process->setRestartOption(checked);
-    saveParameters();
+    //saveParameters();
 }
 
 void MainWindow::on_spinBoxMax0MHs_valueChanged(int arg1)
 {
     _process->setMax0MHs(arg1);
-    saveParameters();
+    //saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay_valueChanged(int arg1)
 {
     _process->setRestartDelay(arg1);
-    saveParameters();
+    //saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay0MHs_valueChanged(int arg1)
 {
     _process->setDelayBefore0MHs(arg1);
-    saveParameters();
+    //saveParameters();
 }
 
 void MainWindow::onReadyToStartMiner()
@@ -269,7 +270,7 @@ void MainWindow::onHelp()
 void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
-    saveParameters();
+    //saveParameters();
 }
 
 void MainWindow::on_pushButtonHelp_clicked()

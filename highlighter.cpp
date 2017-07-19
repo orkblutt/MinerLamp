@@ -12,12 +12,22 @@ Highlighter::Highlighter(QTextDocument *parent)
     _highlightingRules.append(rule);
 
     _shareFormat.setFontWeight(QFont::Bold);
-    _shareFormat.setForeground(Qt::green);
+    _shareFormat.setForeground(Qt::blue);
     rule.pattern = QRegularExpression("Solution[^\n]*");
     rule.format = _shareFormat;
     _highlightingRules.append(rule);
 
+    _submitAdmitted.setFontWeight(QFont::Bold);
+    _submitAdmitted.setForeground(Qt::green);
+    rule.pattern = QRegularExpression("B-)[^\n]*");
+    rule.format = _shareFormat;
+    _highlightingRules.append(rule);
 
+    _submitRefused.setFontWeight(QFont::Bold);
+    _submitRefused.setForeground(Qt::red);
+    rule.pattern = QRegularExpression(":-([^\n]*");
+    rule.format = _submitRefused;
+    _highlightingRules.append(rule);
 }
 
 void Highlighter::highlightBlock(const QString &text)
