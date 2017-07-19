@@ -5,6 +5,8 @@ Highlighter::Highlighter(QTextDocument *parent)
 {
     HighlightingRule rule;
 
+    QString escaped;
+
     _0mhsFormat.setFontWeight(QFont::Bold);
     _0mhsFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression("\\b0.00MH/s\\b");
@@ -17,10 +19,11 @@ Highlighter::Highlighter(QTextDocument *parent)
     rule.format = _shareFormat;
     _highlightingRules.append(rule);
 
+    escaped = QRegularExpression::escape("B-) Submitted and accepted.");
     _submitAdmitted.setFontWeight(QFont::Bold);
     _submitAdmitted.setForeground(Qt::green);
-    rule.pattern = QRegularExpression("B-)[^\n]*");
-    rule.format = _shareFormat;
+    rule.pattern = QRegularExpression(escaped);
+    rule.format = _submitAdmitted;
     _highlightingRules.append(rule);
 
     _submitRefused.setFontWeight(QFont::Bold);
