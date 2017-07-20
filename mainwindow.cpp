@@ -9,13 +9,15 @@
 #include <QMenuBar>
 #include <QCloseEvent>
 
-#define MINERPATH "minerpath"
-#define MINERARGS "minerargs"
-#define AUTORESTART "autorestart"
-#define MAX0MHS "max0mhs"
-#define RESTARTDELAY "restartdelay"
-#define ZEROMHSDELAY "zeromhsdelay"
-#define AUTOSTART "autostart"
+#define MINERPATH           "minerpath"
+#define MINERARGS           "minerargs"
+#define AUTORESTART         "autorestart"
+#define MAX0MHS             "max0mhs"
+#define RESTARTDELAY        "restartdelay"
+#define ZEROMHSDELAY        "zeromhsdelay"
+#define AUTOSTART           "autostart"
+#define DISPLAYSHAREONLY    "shareonly"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,16 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    ui->lineEditMinerPath->setText(_settings->value(MINERPATH).toString());
-    ui->lineEditArgs->setText(_settings->value(MINERARGS).toString());
-    ui->checkBoxRestart->setChecked(_settings->value(AUTORESTART).toBool());
-    ui->spinBoxMax0MHs->setValue(_settings->value(MAX0MHS).toInt());
-    ui->spinBoxDelay->setValue(_settings->value(RESTARTDELAY).toInt());
-    ui->spinBoxDelay0MHs->setValue(_settings->value(ZEROMHSDELAY).toInt());
-    ui->checkBoxAutoStart->setChecked(_settings->value(AUTOSTART).toBool());
-
-
-    if(ui->spinBoxMax0MHs->value() == 0) ui->spinBoxMax0MHs->setValue(5);
 
     _process->setLogControl(ui->textEdit);
 
@@ -47,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_process, &MinerProcess::emitStoped, this, &MainWindow::onMinerStoped);
     connect(_process, &MinerProcess::emitHashRate, this, &MainWindow::onHashrate);
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
+
+    loadParameters();
+
 
     createActions();
 
@@ -81,6 +76,34 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::loadParameters()
+{
+    ui->lineEditMinerPath->setText(_settings->value(MINERPATH).toString());
+    ui->lineEditArgs->setText(_settings->value(MINERARGS).toString());
+    ui->groupBoxWatchdog->setChecked(_settings->value(AUTORESTART).toBool());
+    ui->spinBoxMax0MHs->setValue(_settings->value(MAX0MHS).toInt());
+    ui->spinBoxDelay->setValue(_settings->value(RESTARTDELAY).toInt());
+    ui->spinBoxDelay0MHs->setValue(_settings->value(ZEROMHSDELAY).toInt());
+    ui->checkBoxAutoStart->setChecked(_settings->value(AUTOSTART).toBool());
+    ui->checkBoxOnlyShare->setChecked(_settings->value(DISPLAYSHAREONLY).toBool());
+
+    _process->setShareOnly(_settings->value(DISPLAYSHAREONLY).toBool());
+    _process->setRestartOption(_settings->value(AUTORESTART).toBool());
+
+}
+
+void MainWindow::saveParameters()
+{
+    _settings->setValue(MINERPATH, ui->lineEditMinerPath->text());
+    _settings->setValue(MINERARGS, ui->lineEditArgs->text());
+    _settings->setValue(AUTORESTART, ui->groupBoxWatchdog->isChecked());
+    _settings->setValue(MAX0MHS, ui->spinBoxMax0MHs->value());
+    _settings->setValue(RESTARTDELAY, ui->spinBoxDelay->value());
+    _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
+    _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
+    _settings->setValue(DISPLAYSHAREONLY, ui->checkBoxOnlyShare->isChecked());
+}
+
 void MainWindow::setVisible(bool visible)
 {
     _maximizeAction->setEnabled(!isMaximized());
@@ -110,7 +133,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::setIcon()
 {
-    QIcon icon(":/icons/eth_miner_lamp.ico");
+    QIcon icon(":/images/logo.png");
     _trayIcon->setIcon(icon);
     _trayIcon->setToolTip("Miner's lamp");
 
@@ -144,7 +167,7 @@ void MainWindow::createActions()
     _quitAction = new QAction(tr("&Close"), this);
     connect(_quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
-    _helpAction = new QAction(tr("&Help"), this);
+    _helpAction = new QAction(tr("&About"), this);
     connect(_helpAction, &QAction::triggered, this, &MainWindow::onHelp);
 
 }
@@ -175,16 +198,6 @@ void MainWindow::setupEditor()
     _highlighter = new Highlighter(ui->textEdit->document());
 }
 
-void MainWindow::saveParameters()
-{
-    _settings->setValue(MINERPATH, ui->lineEditMinerPath->text());
-    _settings->setValue(MINERARGS, ui->lineEditArgs->text());
-    _settings->setValue(AUTORESTART, ui->checkBoxRestart->isChecked());
-    _settings->setValue(MAX0MHS, ui->spinBoxMax0MHs->value());
-    _settings->setValue(RESTARTDELAY, ui->spinBoxDelay->value());
-    _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
-    _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
-}
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -197,7 +210,7 @@ void MainWindow::on_pushButton_clicked()
         {
             _process->setMax0MHs(ui->spinBoxMax0MHs->value());
             _process->setRestartDelay(ui->spinBoxDelay->value());
-            _process->setRestartOption(ui->checkBoxRestart->isChecked());
+            _process->setRestartOption(ui->groupBoxWatchdog->isChecked());
             _process->start(ui->lineEditMinerPath->text(), ui->lineEditArgs->text());
         }
         else
@@ -230,31 +243,28 @@ void MainWindow::onError()
 {
     _errorCount++;
     _trayIcon->showMessage("Miner's lamp report"
-                           , "An error has been detected in ethminer.\n" + ui->checkBoxRestart->isChecked() ? "Miner's lamp restarted it automaticaly" : "Check the autorestart checkbox if you want Miner's lamp to restart it on error");
+                           , "An error has been detected in ethminer.\n" + ui->groupBoxWatchdog->isChecked() ? "Miner's lamp restarted it automaticaly" : "Check the watchdog option checkbox if you want Miner's lamp to restart it on error");
 }
 
-void MainWindow::on_checkBoxRestart_clicked(bool checked)
+void MainWindow::on_groupBoxWatchdog_clicked(bool checked)
 {
     _process->setRestartOption(checked);
-    //saveParameters();
+
 }
 
 void MainWindow::on_spinBoxMax0MHs_valueChanged(int arg1)
 {
     _process->setMax0MHs(arg1);
-    //saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay_valueChanged(int arg1)
 {
     _process->setRestartDelay(arg1);
-    //saveParameters();
 }
 
 void MainWindow::on_spinBoxDelay0MHs_valueChanged(int arg1)
 {
     _process->setDelayBefore0MHs(arg1);
-    //saveParameters();
 }
 
 void MainWindow::onReadyToStartMiner()
@@ -270,8 +280,9 @@ void MainWindow::onHelp()
 void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
-    //saveParameters();
 }
+
+
 
 void MainWindow::on_pushButtonHelp_clicked()
 {
@@ -291,5 +302,6 @@ void autoStart::run()
 {
     QThread::sleep(2);
     emit readyToStartMiner();
-
 }
+
+

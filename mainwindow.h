@@ -51,13 +51,11 @@ private:
 
      void setupEditor();
 
+     void loadParameters();
      void saveParameters();
 
 private slots:
     void on_pushButton_clicked();
-
-
-    void on_checkBoxRestart_clicked(bool checked);
 
     void on_spinBoxMax0MHs_valueChanged(int arg1);
 
@@ -72,6 +70,8 @@ private slots:
     void onReadyToStartMiner();
 
     void onHelp();
+
+    void on_groupBoxWatchdog_clicked(bool checked);
 
 private:
 

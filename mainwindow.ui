@@ -38,6 +38,21 @@ QLabel
 
 }
 
+QGroupBox {
+    background-color: black;
+    border: 2px solid gray;
+    border-radius: 5px;
+    margin-top: 1ex; /* leave space at the top for the title */
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center; /* position at the top center */
+    padding: 0 3px;
+    background-color: black;
+}
+
+
 QLineEdit {
  padding: 1px;
  border-style: solid;
@@ -93,21 +108,6 @@ QListView {
     alternate-background-color: gray;
 }
 
-QGroupBox {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #E0E0E0, stop: 1 #FFFFFF);
-    border: 2px solid gray;
-    border-radius: 4px;
-	margin-top: 3ex;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-	padding: 0 3px;
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #E0E0E0, stop: 1 #FFFFFF);
-}
 
 
 QCheckBox {
@@ -217,11 +217,21 @@ QPushButton:disabled
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
        <string>Miner path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Start mining</string>
       </property>
      </widget>
     </item>
@@ -232,81 +242,94 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="3">
-     <widget class="QCheckBox" name="checkBoxRestart">
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="lineEditArgs"/>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButtonHelp">
       <property name="text">
-       <string>Restart miner on faillure (CUDA error mainly)</string>
+       <string>About</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Max consecutive 0MH/s:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QSpinBox" name="spinBoxMax0MHs"/>
-    </item>
-    <item row="3" column="3">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>Delay before restart:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="4">
-     <widget class="QSpinBox" name="spinBoxDelay"/>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Delay before monitoring for 0MH/s:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QSpinBox" name="spinBoxDelay0MHs"/>
-    </item>
-    <item row="5" column="0">
      <widget class="QCheckBox" name="checkBoxOnlyShare">
       <property name="text">
        <string>Only display share info</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="0" colspan="6">
+    <item row="3" column="1">
+     <widget class="QCheckBox" name="checkBoxAutoStart">
+      <property name="text">
+       <string>Auto start miner on MinerLamp startup</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QGroupBox" name="groupBoxWatchdog">
+      <property name="title">
+       <string>Watchdog options (restart miner in case of error)</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Max consecutive 0MH/s:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="spinBoxMax0MHs">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Delay before restart:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QSpinBox" name="spinBoxDelay">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Delay before monitoring for 0MH/s:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="spinBoxDelay0MHs">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="3">
      <widget class="QTextEdit" name="textEdit">
       <property name="readOnly">
        <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditMinerPath"/>
-    </item>
-    <item row="1" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditArgs"/>
-    </item>
-    <item row="0" column="5" rowspan="2">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Start mining</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="3" colspan="2">
-     <widget class="QCheckBox" name="checkBoxAutoStart">
-      <property name="text">
-       <string>Start miner on startup</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="5">
-     <widget class="QPushButton" name="pushButtonHelp">
-      <property name="text">
-       <string>About</string>
       </property>
      </widget>
     </item>
