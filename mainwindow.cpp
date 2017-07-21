@@ -55,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setupEditor();
 
+    ui->lcdNumber->display("0.00");
+
     if(ui->checkBoxAutoStart->isChecked())
     {
         qDebug() << "start t";
@@ -232,11 +234,25 @@ void MainWindow::onMinerStoped()
     _isStartStoping = false;
 
     this->setWindowTitle(QString("Miner's Lamp"));
+    ui->lcdNumber->setPalette(Qt::gray);
+    ui->lcdNumber->display("0.00");
+
+    _trayIcon->setToolTip(QString("Miner's lamp"));
 }
 
 void MainWindow::onHashrate(QString &hashrate)
 {
+    QString hrValue = hashrate.mid(0, hashrate.indexOf("MH/s"));
+
     this->setWindowTitle(QString("Miner's Lamp - " + hashrate + " - Restart count: " + QString::number(_errorCount)));
+    if(hrValue.toDouble() == 0)
+        ui->lcdNumber->setPalette(Qt::red);
+    else
+        ui->lcdNumber->setPalette(Qt::green);
+
+    ui->lcdNumber->display(hrValue);
+
+    _trayIcon->setToolTip(QString("Miner's lamp - " + hashrate));
 }
 
 void MainWindow::onError()
@@ -281,7 +297,6 @@ void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
 }
-
 
 
 void MainWindow::on_pushButtonHelp_clicked()

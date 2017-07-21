@@ -26,9 +26,10 @@ Highlighter::Highlighter(QTextDocument *parent)
     rule.format = _submitAdmitted;
     _highlightingRules.append(rule);
 
+    escaped = QRegularExpression::escape(":-( Not accepted.");
     _submitRefused.setFontWeight(QFont::Bold);
     _submitRefused.setForeground(Qt::red);
-    rule.pattern = QRegularExpression(":-([^\n]*");
+    rule.pattern = QRegularExpression(escaped);
     rule.format = _submitRefused;
     _highlightingRules.append(rule);
 }

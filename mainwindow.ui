@@ -333,6 +333,13 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
+    <item row="3" column="2">
+     <widget class="QLCDNumber" name="lcdNumber">
+      <property name="digitCount">
+       <number>7</number>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
  </widget>

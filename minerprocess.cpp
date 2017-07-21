@@ -87,9 +87,10 @@ void MinerProcess::onReadyToReadStderr()
         {
             QRegExp regex("[, ]");
             QStringList list = line.split(regex, QString::SkipEmptyParts);
-            QString hasrate(list.at(7) + " " + list.at(8));
+            QString hasrate(list.at(6) + " " + list.at(7));
 
             emit emitHashRate(hasrate);
+            qDebug() << list;
 
             if(_readyToMonitor)
             {
