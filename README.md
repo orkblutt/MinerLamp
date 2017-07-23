@@ -23,8 +23,8 @@ MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under cont
 
 ## Install
 
-MinerLamp uses Qt as main developpement framework. The binary (MinerLamp.exe) depends on several Qt libraries. You can find them in the archive availabe on the release page [Releases].
-nVidia option need the nvml.dll (or .so). On Windows you can copy it and paste it in your MinerLamp directory or add path in the PATH environement variable. Traditionaly this path is: "C:\Program Files\NVIDIA Corporation\NVSMI"
+MinerLamp uses Qt as main developpement framework. The binary (MinerLamp.exe) depends on several Qt libraries. You can find them in the archive availabe on the release page [https://github.com/orkblutt/MinerLamp/releases].
+nVidia option need the nvml.dll (or .so). On Windows you can copy and paste it in your MinerLamp directory or add path in the PATH environement variable. Traditionaly this path is: "C:\Program Files\NVIDIA Corporation\NVSMI"
 
 
 ## Usage
@@ -50,6 +50,7 @@ Feel free to make pull request.
 - correct versioning
 - CMake
 - Support for AMD
+- build Linux and Mac releases
 
 
 
