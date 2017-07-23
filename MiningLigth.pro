@@ -18,24 +18,26 @@ VERSION = 0.1.0.243
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     minerprocess.cpp \
     highlighter.cpp \
-    helpdialog.cpp
+    helpdialog.cpp \
+    nvidianvml.cpp
 
 HEADERS += \
         mainwindow.h \
     minerprocess.h \
     highlighter.h \
-    helpdialog.h
+    helpdialog.h \
+    nvidianvml.h
 
 FORMS += \
         mainwindow.ui \
@@ -47,3 +49,8 @@ RC_ICONS += \
 RESOURCES += \
     resources.qrc
 
+
+win32: LIBS += -L'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x64/' -lnvml
+
+INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
+DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'

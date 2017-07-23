@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "minerprocess.h"
 #include "helpdialog.h"
+#include "nvidianvml.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -40,6 +41,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_process, &MinerProcess::emitHashRate, this, &MainWindow::onHashrate);
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
 
+    _maxGPUTemp = new maxGPUThread(this);
+
+    connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
+
+    _maxGPUTemp->start();
+
+
     loadParameters();
 
 
@@ -64,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
         _starter->start();
     }
+
 }
 
 MainWindow::~MainWindow()
@@ -262,6 +271,18 @@ void MainWindow::onError()
                            , "An error has been detected in ethminer.\n" + ui->groupBoxWatchdog->isChecked() ? "Miner's lamp restarted it automaticaly" : "Check the watchdog option checkbox if you want Miner's lamp to restart it on error");
 }
 
+const QColor MainWindow::getTempColor(unsigned int temp)
+{
+    if(temp < 50)
+        return Qt::green;
+    else if(temp < 65)
+        return Qt::yellow;
+    else if(temp < 72)
+        return QColor("orange");
+
+    return Qt::red;
+}
+
 void MainWindow::on_groupBoxWatchdog_clicked(bool checked)
 {
     _process->setRestartOption(checked);
@@ -286,6 +307,31 @@ void MainWindow::on_spinBoxDelay0MHs_valueChanged(int arg1)
 void MainWindow::onReadyToStartMiner()
 {
     on_pushButton_clicked();
+}
+
+void MainWindow::onGPUInfo(unsigned int gpucount
+                           , unsigned int maxgputemp
+                           , unsigned int mingputemp
+                           , unsigned int maxfanspeed
+                           , unsigned int minfanspeed
+                           , unsigned int maxmemclock
+                           , unsigned int minmemclock)
+{
+
+    ui->lcdNumberMaxGPUTemp->setPalette(getTempColor(maxgputemp));
+    ui->lcdNumberMinGPUTemp->setPalette(getTempColor(mingputemp));
+
+    ui->lcdNumberGPUCount->display((int)gpucount);
+
+    ui->lcdNumberMaxGPUTemp->display((int)maxgputemp);
+    ui->lcdNumberMinGPUTemp->display((int)mingputemp);
+
+    ui->lcdNumberMaxFanSpeed->display((int)maxfanspeed);
+    ui->lcdNumberMinFanSpeed->display((int)minfanspeed);
+
+    ui->lcdNumberMaxMemClock->display((int)maxmemclock);
+    ui->lcdNumberMinMemClock->display((int)minmemclock);
+
 }
 
 void MainWindow::onHelp()
@@ -320,3 +366,28 @@ void autoStart::run()
 }
 
 
+
+maxGPUThread::maxGPUThread(QObject *pParent)
+{
+
+}
+
+void maxGPUThread::run()
+{
+    nvidiaNVML nvml;
+    if(!nvml.initNVML()) return;
+
+    while(1)
+    {
+        unsigned int gpucount = nvml.getGPUCount();
+
+        unsigned int maxTemp = nvml.getHigherTemp();
+        unsigned int minTemp = nvml.getLowerTemp();
+        unsigned int maxfanspeed = nvml.getHigherFanSpeed();
+        unsigned int minfanspeed = nvml.getLowerFanSpeed();
+        unsigned int maxmemclock = nvml.getMaxClock();
+        unsigned int minmemclock = nvml.getLowerClock();
+        emit gpuInfoSignal(gpucount, maxTemp, minTemp, maxfanspeed, minfanspeed, maxmemclock, minmemclock);
+        QThread::sleep(5);
+    }
+}

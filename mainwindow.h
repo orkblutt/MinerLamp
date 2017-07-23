@@ -26,6 +26,25 @@ signals:
     void readyToStartMiner();
 };
 
+class maxGPUThread : public QThread
+{
+    Q_OBJECT
+public:
+    maxGPUThread(QObject* pParent = Q_NULLPTR);
+
+    void run();
+
+signals:
+
+    void gpuInfoSignal(unsigned int gpucount
+                       , unsigned int maxgputemp
+                       , unsigned int mingputemp
+                       , unsigned int maxfanspeed
+                       , unsigned int minfanspeed
+                       , unsigned int maxmemclock
+                       , unsigned int minmemclock);
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -69,6 +88,14 @@ private slots:
 
     void onReadyToStartMiner();
 
+    void onGPUInfo(unsigned int gpucount
+                   , unsigned int maxgputemp
+                   , unsigned int mingputemp
+                   , unsigned int maxfanspeed
+                   , unsigned int minfanspeed
+                   , unsigned int maxmemclock
+                   , unsigned int minmemclock);
+
     void onHelp();
 
     void on_groupBoxWatchdog_clicked(bool checked);
@@ -79,6 +106,8 @@ private:
     void onMinerStoped();
     void onHashrate(QString& hashrate);
     void onError();
+
+    const QColor getTempColor(unsigned int temp);
 
     Ui::MainWindow *ui;
     MinerProcess* _process;
@@ -101,7 +130,9 @@ private:
 
     Highlighter* _highlighter;
 
+    //QThreads
     autoStart* _starter;
+    maxGPUThread* _maxGPUTemp;
 };
 
 #endif // MAINWINDOW_H

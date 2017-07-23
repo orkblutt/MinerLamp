@@ -90,7 +90,6 @@ void MinerProcess::onReadyToReadStderr()
             QString hasrate(list.at(6) + " " + list.at(7));
 
             emit emitHashRate(hasrate);
-            qDebug() << list;
 
             if(_readyToMonitor)
             {
