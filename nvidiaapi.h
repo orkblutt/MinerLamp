@@ -1,7 +1,14 @@
 #ifndef NVIDIAAPI_H
 #define NVIDIAAPI_H
 
+#include <QMutex>
+#include <QLibrary>
+#include <QByteArray>
+
 typedef unsigned long NvU32;
+
+#define NV_MAX_GPU 64
+
 
 typedef struct {
     NvU32   version;
@@ -72,8 +79,10 @@ class nvidiaAPI
 {
 public:
     nvidiaAPI();
+    ~nvidiaAPI();
 
-    void initAPI();
+    void overClock(unsigned int gpu, unsigned int mem);
+
 
 private:
     typedef void *(*NvAPI_QueryInterface_t)(unsigned int offset);
@@ -102,6 +111,8 @@ private:
     NvAPI_GPU_GetPstates20_t NvGetPstates;
     NvAPI_GPU_SetPstates20_t NvSetPstates;
 
+
+    int* _gpuHandles[NV_MAX_GPU];
 
 
 };

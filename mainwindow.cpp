@@ -5,6 +5,7 @@
 #include "nvidianvml.h"
 #include "nvocdialog.h"
 
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QMenu>

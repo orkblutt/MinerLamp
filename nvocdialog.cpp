@@ -8,10 +8,18 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _nvml = new nvidiaNVML();
+    //_nvml = new nvidiaNVML();
 
     //_nvml->initNVML();
-    _nvml->setClock(0);
+    //_nvml->setClock(0);
+
+    _nvapi = new nvidiaAPI();
+
+
+
+    _nvapi->overClock(100,100);
+
+
 
 }
 
@@ -19,5 +27,7 @@ nvOCDialog::~nvOCDialog()
 {
     delete ui;
     //_nvml->shutDownNVML();
-    delete _nvml;
+    //delete _nvml;
+
+    delete _nvapi;
 }

@@ -129,8 +129,6 @@ int nvidiaNVML::getMaxSupportedMemClock(unsigned int index)
         return -1;
     }
 
-
-
     unsigned int count = 0;
     result = nvmlDeviceGetSupportedMemoryClocks(device, &count, clock);
     if(result == NVML_ERROR_INSUFFICIENT_SIZE)

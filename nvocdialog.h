@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "nvidianvml.h"
+#include "nvidiaapi.h"
 
 namespace Ui {
 class nvOCDialog;
@@ -21,6 +22,8 @@ private:
     Ui::nvOCDialog *ui;
 
     nvidiaNVML* _nvml;
+
+    nvidiaAPI* _nvapi;
 };
 
 #endif // NVOCDIALOG_H
