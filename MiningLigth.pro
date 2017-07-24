@@ -31,7 +31,8 @@ SOURCES += \
     highlighter.cpp \
     helpdialog.cpp \
     nvidianvml.cpp \
-    nvocdialog.cpp
+    nvocdialog.cpp \
+    nvidiaapi.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
     highlighter.h \
     helpdialog.h \
     nvidianvml.h \
-    nvocdialog.h
+    nvocdialog.h \
+    nvidiaapi.h
 
 FORMS += \
         mainwindow.ui \
@@ -57,3 +59,5 @@ win32: LIBS += -L'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x6
 
 INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
+
+INCLUDEPATH += nvapi
