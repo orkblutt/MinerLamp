@@ -42,7 +42,7 @@ nvidiaAPI::~nvidiaAPI()
 
 void nvidiaAPI::overClock(unsigned int gpu, unsigned int mem)
 {
-    int nGPU=0, userfreq = 0, systype=0, memsize=0, memtype=0;
+    int nGPU=0, userfreq = 100000, systype=0, memsize=0, memtype=0;
     int *hdlGPU[64]={0}, *buf=0;
     char sysname[64]={0}, biosname[64]={0};
     NV_GPU_PERF_PSTATES20_INFO_V1 pstates_info;
@@ -57,19 +57,20 @@ void nvidiaAPI::overClock(unsigned int gpu, unsigned int mem)
     NvGetBiosName(hdlGPU[0], biosname);
     NvGetPstates(hdlGPU[0], &pstates_info);
 
-    qDebug("Name: %s\n", sysname);
-        qDebug("VRAM: %dMB GDDR%d\n", memsize/1024, memtype<=7?3:5);
-        qDebug("BIOS: %s\n", biosname);
-        qDebug("\nGPU: %dMHz\n", (int)((pstates_info.pstates[0].clocks[0]).data.range.maxFreq_kHz)/1000);
-        qDebug("RAM: %dMHz\n", (int)((pstates_info.pstates[0].clocks[1]).data.single.freq_kHz)/1000);
-        qDebug("\nCurrent GPU OC: %dMHz\n", (int)((pstates_info.pstates[0].clocks[0]).freqDelta_kHz.value)/1000);
-        qDebug("Current RAM OC: %dMHz\n", (int)((pstates_info.pstates[0].clocks[1]).freqDelta_kHz.value)/1000);
+    qDebug("Name: %s", sysname);
+    qDebug("VRAM: %dMB GDDR%d", memsize/1024, memtype<=7?3:5);
+    qDebug("BIOS: %s", biosname);
+    qDebug("GPU: %dMHz", (int)((pstates_info.pstates[0].clocks[0]).data.range.maxFreq_kHz)/1000);
+    qDebug("RAM: %dMHz", (int)((pstates_info.pstates[0].clocks[1]).data.single.freq_kHz)/1000);
+    qDebug("Current GPU OC: %dMHz", (int)((pstates_info.pstates[0].clocks[0]).freqDelta_kHz.value)/1000);
+    qDebug("Current RAM OC: %dMHz", (int)((pstates_info.pstates[0].clocks[1]).freqDelta_kHz.value)/1000);
 
     buf = (int*)malloc(0x1c94);
     memset(buf, 0, 0x1c94);
     buf[0] = 0x11c94; buf[2] = 1; buf[3] = 1;
-    buf[10] = 100;
-    NvSetPstates(hdlGPU[0], buf);
+    buf[7] = 4; buf[10] = memtype<=7?userfreq:userfreq*2;
+    qDebug() << buf[10];
+    NvSetPstates(hdlGPU[0], buf)? qDebug("VRAM OC failed!\n") : qDebug("RAM OC OK: %d MHz\n", userfreq/1000);
     free(buf);
 }
 
