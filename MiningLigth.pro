@@ -30,18 +30,21 @@ SOURCES += \
     minerprocess.cpp \
     highlighter.cpp \
     helpdialog.cpp \
-    nvidianvml.cpp
+    nvidianvml.cpp \
+    nvocdialog.cpp
 
 HEADERS += \
         mainwindow.h \
     minerprocess.h \
     highlighter.h \
     helpdialog.h \
-    nvidianvml.h
+    nvidianvml.h \
+    nvocdialog.h
 
 FORMS += \
         mainwindow.ui \
-    helpdialog.ui
+    helpdialog.ui \
+    nvocdialog.ui
 
 RC_ICONS += \
         eth_miner_lamp.ico

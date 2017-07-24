@@ -20,6 +20,8 @@ public:
     int getFanSpeed(unsigned int index);
     int getMemClock(unsigned int index);
 
+    int getMaxSupportedMemClock(unsigned int index);
+
     int getHigherTemp();
     int getLowerTemp();
     int getHigherFanSpeed();

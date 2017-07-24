@@ -3,6 +3,7 @@
 #include "minerprocess.h"
 #include "helpdialog.h"
 #include "nvidianvml.h"
+#include "nvocdialog.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -387,7 +388,16 @@ void maxGPUThread::run()
         unsigned int minfanspeed = nvml.getLowerFanSpeed();
         unsigned int maxmemclock = nvml.getMaxClock();
         unsigned int minmemclock = nvml.getLowerClock();
+
         emit gpuInfoSignal(gpucount, maxTemp, minTemp, maxfanspeed, minfanspeed, maxmemclock, minmemclock);
+
         QThread::sleep(5);
     }
+}
+
+void MainWindow::on_pushButtonOC_clicked()
+{
+    nvOCDialog dlg;
+    dlg.exec();
+
 }

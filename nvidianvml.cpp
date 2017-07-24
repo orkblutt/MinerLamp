@@ -95,6 +95,44 @@ int nvidiaNVML::getMemClock(unsigned int index)
 
 }
 
+int nvidiaNVML::getMaxSupportedMemClock(unsigned int index)
+{
+    nvmlReturn_t result;
+
+    nvmlDevice_t device;
+    unsigned int* clock = 0;
+    unsigned int max = 0;
+
+    result = nvmlDeviceGetHandleByIndex(index, &device);
+    if(result != NVML_SUCCESS )
+    {
+        qDebug() << nvmlErrorString(result);
+        return -1;
+    }
+
+    unsigned int power = 0;
+    nvmlDeviceGetPowerUsage(device, &power);
+    qDebug() << power;
+
+    unsigned int count = 0;
+    result = nvmlDeviceGetSupportedMemoryClocks(device, &count, clock);
+    if(result == NVML_ERROR_INSUFFICIENT_SIZE)
+    {
+        qDebug() << "NVML_ERROR_INSUFFICIENT_SIZE";
+        qDebug() << count;
+        clock = new unsigned int[count];
+        result = nvmlDeviceGetSupportedMemoryClocks(device, &count, clock);
+        if(result == NVML_SUCCESS)
+        {
+            for(unsigned int i = 0; i < count; i++)
+            {
+                if(max < clock[i]) max = clock[i];
+            }
+        }
+    }
+    return max;
+}
+
 int nvidiaNVML::getHigherTemp()
 {
     unsigned int maxTemp = 0;

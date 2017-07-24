@@ -9,6 +9,7 @@
 #include "minerprocess.h"
 #include "highlighter.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -100,6 +101,8 @@ private slots:
 
     void on_groupBoxWatchdog_clicked(bool checked);
 
+    void on_pushButtonOC_clicked();
+
 private:
 
     void onMinerStarted();
@@ -129,6 +132,7 @@ private:
     QAction* _helpAction;
 
     Highlighter* _highlighter;
+
 
     //QThreads
     autoStart* _starter;
