@@ -43,7 +43,9 @@ signals:
                        , unsigned int maxfanspeed
                        , unsigned int minfanspeed
                        , unsigned int maxmemclock
-                       , unsigned int minmemclock);
+                       , unsigned int minmemclock
+                       , unsigned int maxpowerdraw
+                       , unsigned int minpowerdraw);
 };
 
 class MainWindow : public QMainWindow
@@ -71,6 +73,8 @@ private:
 
      void setupEditor();
 
+     void setupToolTips();
+
      void loadParameters();
      void saveParameters();
 
@@ -95,7 +99,9 @@ private slots:
                    , unsigned int maxfanspeed
                    , unsigned int minfanspeed
                    , unsigned int maxmemclock
-                   , unsigned int minmemclock);
+                   , unsigned int minmemclock
+                   , unsigned int maxpowerdraw
+                   , unsigned int minpowerdraw);
 
     void onHelp();
 

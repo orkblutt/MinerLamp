@@ -10,12 +10,14 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
     _nvml = new nvidiaNVML();
 
-    _nvml->getMaxSupportedMemClock(0);
+    //_nvml->initNVML();
+    _nvml->setClock(0);
 
 }
 
 nvOCDialog::~nvOCDialog()
 {
     delete ui;
+    //_nvml->shutDownNVML();
     delete _nvml;
 }

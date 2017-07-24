@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QCloseEvent>
+#include <QLibrary>
 
 #define MINERPATH           "minerpath"
 #define MINERARGS           "minerargs"
@@ -37,10 +38,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _process->setLogControl(ui->textEdit);
 
+
     connect(_process, &MinerProcess::emitStarted, this, &MainWindow::onMinerStarted);
     connect(_process, &MinerProcess::emitStoped, this, &MainWindow::onMinerStoped);
     connect(_process, &MinerProcess::emitHashRate, this, &MainWindow::onHashrate);
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
+
+
+
+   QLibrary lib("nvml.dll");
+   if (!lib.load())
+   {
+        qDebug() << lib.errorString();
+   }
+   else
+       lib.unload();
 
     _maxGPUTemp = new maxGPUThread(this);
 
@@ -50,6 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     loadParameters();
+
+    setupToolTips();
 
 
     createActions();
@@ -210,6 +224,26 @@ void MainWindow::setupEditor()
     _highlighter = new Highlighter(ui->textEdit->document());
 }
 
+void MainWindow::setupToolTips()
+{
+
+    ui->lcdNumberGPUCount->setToolTip("Number of nVidia GPU(s)");
+
+    ui->lcdNumberMaxGPUTemp->setToolTip("Display the current higher temperature");
+    ui->lcdNumberMinGPUTemp->setToolTip("Display the current lower temperature");
+
+    ui->lcdNumberMaxFanSpeed->setToolTip("Display the current higher fan speed in percent of the max speed");
+    ui->lcdNumberMinFanSpeed->setToolTip("Display the current lower fan speed in percent of the max speed");
+
+    ui->lcdNumberMaxMemClock->setToolTip("Display the current higher memory clock");
+    ui->lcdNumberMinMemClock->setToolTip("Display the current lower memory clock");
+
+
+    ui->lcdNumberMaxWatt->setToolTip("Display the current higher power draw in Watt");
+    ui->lcdNumberMinWatt->setToolTip("Display the current lower power draw in Watt");
+
+}
+
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -316,7 +350,9 @@ void MainWindow::onGPUInfo(unsigned int gpucount
                            , unsigned int maxfanspeed
                            , unsigned int minfanspeed
                            , unsigned int maxmemclock
-                           , unsigned int minmemclock)
+                           , unsigned int minmemclock
+                           , unsigned int maxpowerdraw
+                           , unsigned int minpowerdraw)
 {
 
     ui->lcdNumberMaxGPUTemp->setPalette(getTempColor(maxgputemp));
@@ -332,6 +368,10 @@ void MainWindow::onGPUInfo(unsigned int gpucount
 
     ui->lcdNumberMaxMemClock->display((int)maxmemclock);
     ui->lcdNumberMinMemClock->display((int)minmemclock);
+
+
+    ui->lcdNumberMaxWatt->display((double)maxpowerdraw / 1000);
+    ui->lcdNumberMinWatt->display((double)minpowerdraw / 1000);
 
 }
 
@@ -388,8 +428,10 @@ void maxGPUThread::run()
         unsigned int minfanspeed = nvml.getLowerFanSpeed();
         unsigned int maxmemclock = nvml.getMaxClock();
         unsigned int minmemclock = nvml.getLowerClock();
+        unsigned int maxpowerdraw = nvml.getMaxPowerDraw();
+        unsigned int minpowerdraw = nvml.getMinPowerDraw();
 
-        emit gpuInfoSignal(gpucount, maxTemp, minTemp, maxfanspeed, minfanspeed, maxmemclock, minmemclock);
+        emit gpuInfoSignal(gpucount, maxTemp, minTemp, maxfanspeed, minfanspeed, maxmemclock, minmemclock, maxpowerdraw, minpowerdraw);
 
         QThread::sleep(5);
     }
@@ -397,7 +439,8 @@ void maxGPUThread::run()
 
 void MainWindow::on_pushButtonOC_clicked()
 {
-    nvOCDialog dlg;
-    dlg.exec();
+    nvOCDialog* dlg = new nvOCDialog(this);
+    dlg->exec();
+    delete dlg;
 
 }
