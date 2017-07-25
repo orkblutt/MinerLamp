@@ -17,7 +17,7 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
 
 
-    _nvapi->overClock(100,100);
+   _nvapi->setMemClock(4000);
 
 
 

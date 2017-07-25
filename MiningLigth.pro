@@ -60,4 +60,9 @@ win32: LIBS += -L'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x6
 INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 
-INCLUDEPATH += nvapi
+INCLUDEPATH += $$PWD/nvapi
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/nvapi/amd64/ -lnvapi64
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/nvapi/amd64/ -lnvapi64
+
+DEPENDPATH += $$PWD/nvapi/amd64

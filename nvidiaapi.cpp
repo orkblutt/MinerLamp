@@ -1,77 +1,127 @@
 #include "nvidiaapi.h"
 #include <QDebug>
-nvidiaAPI::nvidiaAPI()
+
+
+nvidiaAPI::nvidiaAPI():
+    QLibrary("nvapi64"),
+    _gpuHandles{0},
+    _gpuCount(0),
+    _libLoaded(false),
+    NvAPI_DLL_SetPstates20(NULL)
 {
 
-    for(int i = 0; i < NV_MAX_GPU; i++) _gpuHandles[i] = 0;
+        nvapi_QueryInterface = (NVAPI_QUERYINTERFACE)resolve("nvapi_QueryInterface");
+        if(nvapi_QueryInterface != Q_NULLPTR)
+            _libLoaded = true;
 
-    QLibrary nvapilib("nvapi64");
-    nvapilib.load();
+        NvAPI_DLL_SetPstates20 = (NvAPI_DLL_SetPstates20_t)nvapi_QueryInterface(0x0F4DAE6B);
 
-    NvQueryInterface = (NvAPI_QueryInterface_t)nvapilib.resolve("nvapi_QueryInterface");
+        qDebug() << NvAPI_DLL_SetPstates20;
 
-    qDebug() << NvQueryInterface;
 
-    if(NvQueryInterface != Q_NULLPTR)
+    NvAPI_Status ret = NvAPI_Initialize();
+    if (!ret == NVAPI_OK)
     {
-        NvInit          = (NvAPI_Initialize_t)NvQueryInterface(0x0150E828);
-        NvUnload        = (NvAPI_Unload_t)NvQueryInterface(0xD22BDD7E);
-        NvEnumGPUs      = (NvAPI_EnumPhysicalGPUs_t)NvQueryInterface(0xE5AC921F);
-        NvGetSysType    = (NvAPI_GPU_GetSystemType_t)NvQueryInterface(0xBAAABFCC);
-        NvGetName       = (NvAPI_GPU_GetFullName_t)NvQueryInterface(0xCEEE8E9F);
-        NvGetMemSize    = (NvAPI_GPU_GetPhysicalFrameBufferSize_t)NvQueryInterface(0x46FBEB03);
-        NvGetMemType    = (NvAPI_GPU_GetRamType_t)NvQueryInterface(0x57F7CAAC);
-        NvGetBiosName   = (NvAPI_GPU_GetVbiosVersionString_t)NvQueryInterface(0xA561FD7D);
-        NvGetFreq       = (NvAPI_GPU_GetAllClockFrequencies_t)NvQueryInterface(0xDCB616C3);
-        NvGetPstates    = (NvAPI_GPU_GetPstates20_t)NvQueryInterface(0x6FF81213);
-        NvSetPstates    = (NvAPI_GPU_SetPstates20_t)NvQueryInterface(0x0F4DAE6B);
+        NvAPI_ShortString string;
+        NvAPI_GetErrorMessage(ret, string);
+        qDebug("NVAPI NvAPI_Initialize: %s", string);
+        return;
     }
 
-    NvInit();
+    qDebug() << "NVAPI success";
 
+    ret = NvAPI_EnumPhysicalGPUs(_gpuHandles, &_gpuCount);
+    if (ret != NVAPI_OK)
+    {
+        NvAPI_ShortString string;
+        NvAPI_GetErrorMessage(ret, string);
+        qDebug("NVAPI NvAPI_EnumPhysicalGPUs: %s", string);
+
+    }
+
+    qDebug() << _gpuCount;
+
+    for(NvU32 i = 0; i < _gpuCount; i++)
+    {
+        NvAPI_ShortString name;
+                ret = NvAPI_GPU_GetFullName(_gpuHandles[i], name);
+
+               qDebug() << name;
+
+    }
 
 
 }
 
 nvidiaAPI::~nvidiaAPI()
 {
-    NvUnload();
+    unload();
+
+    NvAPI_Unload();
 }
 
 
 
 void nvidiaAPI::overClock(unsigned int gpu, unsigned int mem)
 {
-    int nGPU=0, userfreq = 100000, systype=0, memsize=0, memtype=0;
-    int *hdlGPU[64]={0}, *buf=0;
-    char sysname[64]={0}, biosname[64]={0};
-    NV_GPU_PERF_PSTATES20_INFO_V1 pstates_info;
-    pstates_info.version = 0x11c94;
 
-
-    NvEnumGPUs(hdlGPU, &nGPU);
-    NvGetSysType(hdlGPU[0], &systype);
-    NvGetName(hdlGPU[0], sysname);
-    NvGetMemSize(hdlGPU[0], &memsize);
-    NvGetMemType(hdlGPU[0], &memtype);
-    NvGetBiosName(hdlGPU[0], biosname);
-    NvGetPstates(hdlGPU[0], &pstates_info);
-
-    qDebug("Name: %s", sysname);
-    qDebug("VRAM: %dMB GDDR%d", memsize/1024, memtype<=7?3:5);
-    qDebug("BIOS: %s", biosname);
-    qDebug("GPU: %dMHz", (int)((pstates_info.pstates[0].clocks[0]).data.range.maxFreq_kHz)/1000);
-    qDebug("RAM: %dMHz", (int)((pstates_info.pstates[0].clocks[1]).data.single.freq_kHz)/1000);
-    qDebug("Current GPU OC: %dMHz", (int)((pstates_info.pstates[0].clocks[0]).freqDelta_kHz.value)/1000);
-    qDebug("Current RAM OC: %dMHz", (int)((pstates_info.pstates[0].clocks[1]).freqDelta_kHz.value)/1000);
-
-    buf = (int*)malloc(0x1c94);
-    memset(buf, 0, 0x1c94);
-    buf[0] = 0x11c94; buf[2] = 1; buf[3] = 1;
-    buf[7] = 4; buf[10] = memtype<=7?userfreq:userfreq*2;
-    qDebug() << buf[10];
-    NvSetPstates(hdlGPU[0], buf)? qDebug("VRAM OC failed!\n") : qDebug("RAM OC OK: %d MHz\n", userfreq/1000);
-    free(buf);
 }
+
+int nvidiaAPI::setMemClock(unsigned int clock)
+{
+    NvAPI_Status ret;
+    NvS32 delta = 0;
+
+    // wrong to get default base clock (when modified) on maxwell (same as cuda props one)
+    NV_GPU_CLOCK_FREQUENCIES freqs = { 0 };
+    freqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
+    freqs.ClockType = NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK;
+
+    typedef NvAPI_Status (__cdecl * QNVAPI_GPU_GETALLCLOCKFREQUENCIES)       (NvPhysicalGpuHandle, NV_GPU_CLOCK_FREQUENCIES*);
+    QNVAPI_GPU_GETALLCLOCKFREQUENCIES       nvapi_GPU_GetAllClockFrequencies = NULL;
+
+    nvapi_GPU_GetAllClockFrequencies = (QNVAPI_GPU_GETALLCLOCKFREQUENCIES)nvapi_QueryInterface(0x1BD69F49);
+    qDebug() << nvapi_GPU_GetAllClockFrequencies;
+
+    //ret = NvAPI_GPU_GetAllClockFrequencies(_gpuHandles[0], &freqs); // wrong base clocks, useless
+    ret =  nvapi_GPU_GetAllClockFrequencies(_gpuHandles[0], &freqs);
+    if (ret == NVAPI_OK)  {
+        delta = (clock * 1000) - freqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
+
+        qDebug() << delta;
+    }
+
+    // seems ok on maxwell and pascal for the mem clocks
+    NV_GPU_PERF_PSTATES_INFO deffreqs = { 0 };
+    deffreqs.version = NV_GPU_PERF_PSTATES_INFO_VER;
+    ret = NvAPI_GPU_GetPstatesInfoEx(_gpuHandles[0], &deffreqs, 0x1); // deprecated but req for def clocks
+    if (ret == NVAPI_OK) {
+        if (deffreqs.pstates[0].clocks[0].domainId == NVAPI_GPU_PUBLIC_CLOCK_MEMORY)
+            delta = (clock * 1000) - deffreqs.pstates[0].clocks[0].freq;
+    }
+
+    if (delta == (clock * 1000))
+        return ret;
+
+    // todo: bounds check with GetPstates20
+
+    NV_GPU_PERF_PSTATES20_INFO_V1 pset1 = { 0 };
+    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
+    pset1.numPstates = 1;
+    pset1.numClocks = 1;
+    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
+    pset1.pstates[0].clocks[0].freqDelta_kHz.value = delta;
+
+
+
+    ret = NvAPI_DLL_SetPstates20(_gpuHandles[0], &pset1);
+    if (ret == NVAPI_OK) {
+        qDebug("GPU #%u: Boost mem clock set to %u (delta %d)", _gpuCount, clock, delta/1000);
+    }
+    return ret;
+
+}
+
+
 
 
