@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
+    <width>854</width>
     <height>489</height>
    </rect>
   </property>
@@ -33,8 +33,8 @@ color: white;
 
 QLabel
 {
-	background-color: black;
-	color: white;
+  background-color: black;
+  color: white;
 
 }
 
@@ -61,8 +61,8 @@ QLineEdit {
  }
 
 QTextEdit {
-	border: 2px solid gray;
-	border-radius: 4px;
+  border: 2px solid gray;
+  border-radius: 4px;
 }
 
 
@@ -80,27 +80,27 @@ color: yellow;
 
 
 QDateTimeEdit {
-	padding: 1px;
-	border-style: solid;
-	border: 2px solid gray;
-	border-radius: 4px;
+  padding: 1px;
+  border-style: solid;
+  border: 2px solid gray;
+  border-radius: 4px;
 }
 
 QTimeEdit {
-	padding: 1px;
-	border-style: solid;
-	border: 2px solid gray;
-	border-radius: 4px;
+  padding: 1px;
+  border-style: solid;
+  border: 2px solid gray;
+  border-radius: 4px;
 }
 
 QComboBox {
-	border: 2px solid gray;
-	border-radius: 4px;
+  border: 2px solid gray;
+  border-radius: 4px;
 }
 
 QTreeView {
-	border: 2px solid gray;
-	border-radius: 4px;
+  border: 2px solid gray;
+  border-radius: 4px;
 }
 
 
@@ -126,8 +126,8 @@ color: white;
 QPushButton {
  color: white;
  background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
- 										stop: 0 #808080, stop: 0.1 #909090,
-										stop: 0.49 #505050, stop: 0.5 #666666, stop: 1 #909090);
+                    stop: 0 #808080, stop: 0.1 #909090,
+                    stop: 0.49 #505050, stop: 0.5 #666666, stop: 1 #909090);
  border-width: 1px;
  border-color: black;
  border-style: solid;
@@ -200,8 +200,8 @@ QPushButton:disabled
 {
  color: white;
  background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
- 										stop: 0 #CCCCCC, stop: 0.1 #EEEEEE,
-										stop: 0.49 #AAAAAA, stop: 0.5 #BBBBBB, stop: 1 #CCCCCC);
+                    stop: 0 #CCCCCC, stop: 0.1 #EEEEEE,
+                    stop: 0.49 #AAAAAA, stop: 0.5 #BBBBBB, stop: 1 #CCCCCC);
  border-width: 1px;
  border-color: black;
  border-style: solid;
@@ -218,8 +218,126 @@ QPushButton:disabled
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="1" colspan="3">
-     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    <item row="3" column="0" colspan="6">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>nVidia</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="4">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Min fan speed:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Max mem clock:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Devices number:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLCDNumber" name="lcdNumberGPUCount">
+         <property name="digitCount">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLCDNumber" name="lcdNumberMaxFanSpeed"/>
+       </item>
+       <item row="0" column="7">
+        <widget class="QLCDNumber" name="lcdNumberMaxMemClock"/>
+       </item>
+       <item row="0" column="9">
+        <widget class="QLCDNumber" name="lcdNumberMaxWatt"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Min GPU temp:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLCDNumber" name="lcdNumberMaxGPUTemp">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Max GPU temp:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Max Speed fan:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Max power draw:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLCDNumber" name="lcdNumberMinGPUTemp">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="7">
+        <widget class="QLCDNumber" name="lcdNumberMinMemClock"/>
+       </item>
+       <item row="1" column="6">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Min mem clock:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="9">
+        <widget class="QLCDNumber" name="lcdNumberMinWatt"/>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLCDNumber" name="lcdNumberMinFanSpeed"/>
+       </item>
+       <item row="1" column="8">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Min power draw:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" rowspan="2">
+        <widget class="QPushButton" name="pushButtonOC">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>OverClocking</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
     <item row="2" column="0" colspan="5">
      <widget class="QGroupBox" name="groupBoxWatchdog">
@@ -281,13 +399,20 @@ QPushButton:disabled
       </layout>
      </widget>
     </item>
-    <item row="1" column="1" colspan="3">
-     <widget class="QLineEdit" name="lineEditArgs"/>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Miner path:</string>
+      </property>
+     </widget>
     </item>
-    <item row="4" column="5">
-     <widget class="QLCDNumber" name="lcdNumber">
-      <property name="digitCount">
-       <number>7</number>
+    <item row="0" column="1" colspan="3">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Command line:</string>
       </property>
      </widget>
     </item>
@@ -298,19 +423,8 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Command line:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Miner path:</string>
-      </property>
-     </widget>
+    <item row="1" column="1" colspan="3">
+     <widget class="QLineEdit" name="lineEditArgs"/>
     </item>
     <item row="4" column="0">
      <widget class="QCheckBox" name="checkBoxOnlyShare">
@@ -333,6 +447,13 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
+    <item row="4" column="4">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Hasrate:</string>
+      </property>
+     </widget>
+    </item>
     <item row="5" column="0" colspan="6">
      <widget class="QTextEdit" name="textEdit">
       <property name="readOnly">
@@ -340,101 +461,10 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="3" column="0" colspan="6">
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>nVidia</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Devices number:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLCDNumber" name="lcdNumberGPUCount">
-         <property name="digitCount">
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="4">
-        <widget class="QLCDNumber" name="lcdNumberMinGPUTemp">
-         <property name="digitCount">
-          <number>3</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Min GPU temp:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Max GPU temp:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QLCDNumber" name="lcdNumberMaxGPUTemp">
-         <property name="digitCount">
-          <number>3</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="6">
-        <widget class="QLCDNumber" name="lcdNumberMaxFanSpeed"/>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Max Speed fan:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="7">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Max mem clock:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Min fan speed:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="8">
-        <widget class="QLCDNumber" name="lcdNumberMaxMemClock"/>
-       </item>
-       <item row="2" column="6">
-        <widget class="QLCDNumber" name="lcdNumberMinFanSpeed"/>
-       </item>
-       <item row="2" column="7">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Min mem clock:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="8">
-        <widget class="QLCDNumber" name="lcdNumberMinMemClock"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="4" column="4">
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Hashrate:</string>
+    <item row="4" column="5">
+     <widget class="QLCDNumber" name="lcdNumber">
+      <property name="digitCount">
+       <number>7</number>
       </property>
      </widget>
     </item>

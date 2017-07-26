@@ -95,6 +95,60 @@ int nvidiaNVML::getMemClock(unsigned int index)
 
 }
 
+int nvidiaNVML::getPowerDraw(unsigned int index)
+{
+    nvmlReturn_t result;
+
+    nvmlDevice_t device;
+    unsigned int power = 0;
+
+    result = nvmlDeviceGetHandleByIndex(index, &device);
+    if(result != NVML_SUCCESS )
+    {
+        qDebug() << nvmlErrorString(result);
+        return -1;
+    }
+
+    result = nvmlDeviceGetPowerUsage(device, &power);
+
+    return power;
+}
+
+int nvidiaNVML::getMaxSupportedMemClock(unsigned int index)
+{
+    nvmlReturn_t result;
+
+    nvmlDevice_t device;
+    unsigned int* clock = 0;
+    unsigned int max = 0;
+
+    result = nvmlDeviceGetHandleByIndex(index, &device);
+    if(result != NVML_SUCCESS )
+    {
+        qDebug() << nvmlErrorString(result);
+        return -1;
+    }
+
+    unsigned int count = 0;
+    result = nvmlDeviceGetSupportedMemoryClocks(device, &count, clock);
+    if(result == NVML_ERROR_INSUFFICIENT_SIZE)
+    {
+        qDebug() << "NVML_ERROR_INSUFFICIENT_SIZE";
+        qDebug() << count;
+        clock = new unsigned int[count];
+        result = nvmlDeviceGetSupportedMemoryClocks(device, &count, clock);
+        if(result == NVML_SUCCESS)
+        {
+            for(unsigned int i = 0; i < count; i++)
+            {
+                if(max < clock[i]) max = clock[i];
+                qDebug() << clock[i];
+            }
+        }
+    }
+    return max;
+}
+
 int nvidiaNVML::getHigherTemp()
 {
     unsigned int maxTemp = 0;
@@ -173,5 +227,64 @@ int nvidiaNVML::getLowerClock()
             minClock = speed;
     }
     return minClock;
+
+}
+
+int nvidiaNVML::getMaxPowerDraw()
+{
+    unsigned int maxWatt = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int watt = getPowerDraw(i);
+        if(watt > maxWatt)
+            maxWatt = watt;
+    }
+    return maxWatt;
+}
+
+int nvidiaNVML::getMinPowerDraw()
+{
+    unsigned int minWatt = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int watt = getPowerDraw(i);
+        if(watt < minWatt)
+            minWatt = watt;
+    }
+    return minWatt;
+
+}
+
+void nvidiaNVML::setClock(unsigned int index)
+{
+
+    nvmlReturn_t result;
+
+    nvmlDevice_t device;
+
+
+    result = nvmlDeviceGetHandleByIndex(index, &device);
+    if(result != NVML_SUCCESS )
+    {
+        qDebug() << nvmlErrorString(result);
+        return;
+    }
+
+    nvmlEnableState_t enablestate;
+
+    nvmlDeviceGetAPIRestriction(device, NVML_RESTRICTED_API_SET_APPLICATION_CLOCKS, &enablestate);
+    if(enablestate == NVML_FEATURE_ENABLED)
+    {
+        result = nvmlDeviceSetAPIRestriction(device, NVML_RESTRICTED_API_SET_APPLICATION_CLOCKS, NVML_FEATURE_DISABLED);
+    }
+
+
+
+    result = nvmlDeviceSetApplicationsClocks(device, 4700, 1750);
+    if(result != NVML_SUCCESS)
+        qDebug() << nvmlErrorString(result);
+
 
 }

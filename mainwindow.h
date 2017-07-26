@@ -9,6 +9,7 @@
 #include "minerprocess.h"
 #include "highlighter.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -42,7 +43,9 @@ signals:
                        , unsigned int maxfanspeed
                        , unsigned int minfanspeed
                        , unsigned int maxmemclock
-                       , unsigned int minmemclock);
+                       , unsigned int minmemclock
+                       , unsigned int maxpowerdraw
+                       , unsigned int minpowerdraw);
 };
 
 class MainWindow : public QMainWindow
@@ -70,6 +73,8 @@ private:
 
      void setupEditor();
 
+     void setupToolTips();
+
      void loadParameters();
      void saveParameters();
 
@@ -94,11 +99,15 @@ private slots:
                    , unsigned int maxfanspeed
                    , unsigned int minfanspeed
                    , unsigned int maxmemclock
-                   , unsigned int minmemclock);
+                   , unsigned int minmemclock
+                   , unsigned int maxpowerdraw
+                   , unsigned int minpowerdraw);
 
     void onHelp();
 
     void on_groupBoxWatchdog_clicked(bool checked);
+
+    void on_pushButtonOC_clicked();
 
 private:
 
@@ -129,6 +138,7 @@ private:
     QAction* _helpAction;
 
     Highlighter* _highlighter;
+
 
     //QThreads
     autoStart* _starter;
