@@ -241,7 +241,7 @@ QPushButton:disabled
        <item row="0" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Devices number:</string>
+          <string># of GPUs:</string>
          </property>
         </widget>
        </item>
@@ -285,7 +285,7 @@ QPushButton:disabled
        <item row="0" column="4">
         <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>Max Speed fan:</string>
+          <string>Max fan speed:</string>
          </property>
         </widget>
        </item>
@@ -429,7 +429,7 @@ QPushButton:disabled
     <item row="4" column="0">
      <widget class="QCheckBox" name="checkBoxOnlyShare">
       <property name="text">
-       <string>Only display share info</string>
+       <string>Display share info only</string>
       </property>
      </widget>
     </item>
@@ -443,14 +443,14 @@ QPushButton:disabled
     <item row="4" column="1">
      <widget class="QCheckBox" name="checkBoxAutoStart">
       <property name="text">
-       <string>Auto start miner</string>
+       <string>Auto start mining</string>
       </property>
      </widget>
     </item>
     <item row="4" column="4">
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>Hasrate:</string>
+       <string>Hashrate:</string>
       </property>
      </widget>
     </item>

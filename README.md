@@ -1,16 +1,17 @@
 "# MinerLamp" 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 
-> MinerLamp is a graphical interface to use with etherminer with advanced watchdog options
+> MinerLamp is a graphical interface to use with ethminer with advanced watchdog options
 
 MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under control. It can be built on Linux, Mac and Windows.
 
 ### Features
 - simple GUI that can run on Windows, Linux and Mac (Qt)
-- automated etherminer parameters
-- watchdog for restarting etherminer in case of errors
+- automated ethminer parameters
+- watchdog for restarting ethminer in case of errors
 - enhanced displaying of ethminer output - highlighted successful solutions, shares & zero hashrate
-- display useful information for nVidia cards
+- display useful information for nVidia cards - core temperatures, fan speed, memory clock - a minimum and a maximum from all cards - easy for spotting OC issues
+- integrated overclocking of nVidia cards - available soon!
 
 ## Table of Contents
 
@@ -24,16 +25,16 @@ MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under cont
 ## Install
 
 MinerLamp uses Qt as main developpement framework. The binary (MinerLamp.exe) depends on several Qt libraries. You can find them in the archive availabe on the release page [https://github.com/orkblutt/MinerLamp/releases].
-nVidia option needs the nvml.dll (or .so). On Windows you can copy and paste it in your MinerLamp directory or add path in the PATH environement variable. Traditionaly, the path is: "C:\Program Files\NVIDIA Corporation\NVSMI"
+nVidia option needs the nvml.dll (or .so). On Windows you can copy and paste it in your MinerLamp directory or add path in the PATH environment variable. Traditionaly, the path is: "C:\Program Files\NVIDIA Corporation\NVSMI"
 
 
 ## Usage
 1 - Start MinerLamp.
 
-2 - Fill the etherminer binary path in the first edit box, e.g.:
+2 - Fill the ethminer binary path in the first edit box, e.g.:
 > C:\Users\USERNAME\Desktop\ethminer\ethminer.exe
 
-3 - Fill the etherminer's startup parameters, as you would normally use on your ethminer startup script, but excluding "ethminer.exe" before, e.g:
+3 - Fill the ethminer's startup parameters, as you would normally use on your ethminer startup script, but excluding "ethminer.exe" before, e.g.:
 > --farm-recheck 2000 -U -S POOL_ADDRESS:PORT -O WALLET_ID.MINER_NAME/E-MAIL_FOR_MONITORING
 
 4 - Check the options you want to activate.
