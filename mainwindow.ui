@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
+    <width>854</width>
     <height>489</height>
    </rect>
   </property>
@@ -328,6 +328,9 @@ QPushButton:disabled
        </item>
        <item row="1" column="0" rowspan="2">
         <widget class="QPushButton" name="pushButtonOC">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>OverClocking</string>
          </property>

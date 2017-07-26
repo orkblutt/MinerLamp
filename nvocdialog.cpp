@@ -17,7 +17,9 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
 
 
-   _nvapi->setMemClock(4000);
+   qDebug() <<_nvapi->getGpuClock(0);
+
+   _nvapi->setLED(0, 100);
 
 
 

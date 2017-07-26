@@ -50,16 +50,16 @@ MainWindow::MainWindow(QWidget *parent) :
    QLibrary lib("nvml.dll");
    if (!lib.load())
    {
-        qDebug() << lib.errorString();
+        ui->textEdit->append("The nVidia monitoring option can't work without nvml.dll.\r\nYou need to copy it from C:\\Program Files\\NVIDIA Corporation\\NVSMI\\ to your MinerLamp's folder.");
    }
    else
-       lib.unload();
+   {
 
-    _maxGPUTemp = new maxGPUThread(this);
+        _maxGPUTemp = new maxGPUThread(this);
+        connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
 
-    connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
-
-    _maxGPUTemp->start();
+        _maxGPUTemp->start();
+   }
 
 
     loadParameters();
@@ -436,6 +436,8 @@ void maxGPUThread::run()
 
         QThread::sleep(5);
     }
+
+    nvml.shutDownNVML();
 }
 
 void MainWindow::on_pushButtonOC_clicked()

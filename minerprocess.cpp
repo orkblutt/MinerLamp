@@ -59,6 +59,7 @@ void MinerProcess::onReadyToReadStderr()
     if(line.length() > 1)
     {
         QStringList list = line.split(QRegExp("\r\n"), QString::SkipEmptyParts);
+        qDebug() << list;
         for(int i = 0; i < list.size(); i++)
         {
             if(_shareOnly)
