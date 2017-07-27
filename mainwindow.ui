@@ -329,7 +329,7 @@ QPushButton:disabled
        <item row="1" column="0" rowspan="2">
         <widget class="QPushButton" name="pushButtonOC">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string>OverClocking</string>
@@ -450,7 +450,7 @@ QPushButton:disabled
     <item row="4" column="4">
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>Hasrate:</string>
+       <string>Hashrate:</string>
       </property>
      </widget>
     </item>

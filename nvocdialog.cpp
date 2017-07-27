@@ -19,7 +19,7 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
    qDebug() <<_nvapi->getGpuClock(0);
 
-   _nvapi->setLED(0, 100);
+   _nvapi->setLED(0, 0xFF00FF);
 
 
 

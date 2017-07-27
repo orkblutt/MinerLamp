@@ -40,6 +40,17 @@ nvidiaAPI::nvidiaAPI():
         NvGetPstates = (NvAPI_GPU_GetPstates20_t)NvQueryInterface(0x6FF81213);
         NvSetPstates = (NvAPI_GPU_SetPstates20_t)NvQueryInterface(0x0F4DAE6B);
         NvGetPStatesInfoEx  = (NvAPI_GPU_GetPstatesInfoEx_t)NvQueryInterface(0x843C0256);
+      /*  NvAPI_DLL_PerfPoliciesGetInfo  = (NvAPI_DLL_PerfPoliciesGetInfo_t)NvQueryInterface(0x409D9841);
+        NvAPI_DLL_PerfPoliciesGetStatus  = (NvAPI_DLL_PerfPoliciesGetStatus_t)NvQueryInterface(0x3D358A0C);
+        NvAPI_DLL_ClientPowerPoliciesGetInfo  = (NvAPI_DLL_ClientPowerPoliciesGetInfo_t)NvQueryInterface(0x34206D86);
+        NvAPI_DLL_ClientPowerPoliciesGetStatus  = (NvAPI_DLL_ClientPowerPoliciesGetStatus_t)NvQueryInterface(0x70916171);
+        NvAPI_DLL_ClientPowerPoliciesSetStatus  = (NvAPI_DLL_ClientPowerPoliciesSetStatus_t)NvQueryInterface(0xAD95F5ED);
+        NvAPI_DLL_ClientPowerTopologyGetStatus = (NvAPI_DLL_ClientPowerTopologyGetStatus_t)NvQueryInterface(0xEDCF624E);
+        NvAPI_DLL_ClientThermalPoliciesGetInfo = (NvAPI_DLL_ClientThermalPoliciesGetInfo_t)NvQueryInterface(0x0D258BB5);
+        NvAPI_DLL_ClientThermalPoliciesGetLimit = (NvAPI_DLL_ClientThermalPoliciesGetLimit_t)NvQueryInterface(0xE9C425A1);
+        NvAPI_DLL_ClientThermalPoliciesSetLimit = (NvAPI_DLL_ClientThermalPoliciesSetLimit_t)NvQueryInterface(0x34C0B13D);
+        */
+
         //let's have some fun
         NvQueryIlluminationSupport = (NvAPI_GPU_QueryIlluminationSupport_t)NvQueryInterface(0xA629DA31);
 
@@ -160,20 +171,9 @@ int nvidiaAPI::setMemClock(unsigned int clock)
 /*
  *
 
-unsigned int nvapi_get_gpu_clock(unsigned int devNum)
-{
-    NvAPI_Status ret = NVAPI_OK;
-    unsigned int freq = 0;
-    NV_GPU_CLOCK_FREQUENCIES *freqs;
-    NV_INIT_STRUCT_ALLOC(NV_GPU_CLOCK_FREQUENCIES, freqs);
-    freqs->ClockType = NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ;
-    ret = NvAPI_GPU_GetAllClockFrequencies(phys[devNum], freqs);
-    if (ret == NVAPI_OK) {
-        freq = freqs->domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency / 1000;
-    }
-    free(freqs);
-    return freq; // in MHz
-}
+
+
+
 
 uint8_t nvapi_get_plimit(unsigned int devNum)
 {

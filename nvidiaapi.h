@@ -47,9 +47,16 @@ private:
     typedef NvAPI_Status (*NvAPI_GPU_GetIllumination_t)(NV_GPU_GET_ILLUMINATION_PARM *pIlluminationInfo);
     typedef NvAPI_Status (*NvAPI_GPU_SetIllumination_t)(NV_GPU_SET_ILLUMINATION_PARM *pIlluminationInfo);
     typedef NvAPI_Status (*NvAPI_GPU_QueryIlluminationSupport_t)(NV_GPU_QUERY_ILLUMINATION_SUPPORT_PARM *pIlluminationSupportInfo);
-
-
-
+  /*  typedef NvAPI_Status (*NvAPI_DLL_PerfPoliciesGetInfo_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_PERF_INFO* pInfo);
+    typedef NvAPI_Status (*NvAPI_DLL_PerfPoliciesGetStatus_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_PERF_STATUS* pStatus);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesGetInfo_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_INFO* pInfo);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesGetStatus_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_STATUS* pPolicies);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesSetStatus_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_STATUS* pPolicies);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientPowerTopologyGetStatus_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_TOPO* topo);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientThermalPoliciesGetInfo_t)(NvPhysicalGpuHandle hPhysicalGpu, NV_GPU_THERMAL_SETTINGS* pInfo);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientThermalPoliciesGetLimit_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_THERMAL_LIMIT* pLimit);
+    typedef NvAPI_Status (*NvAPI_DLL_ClientThermalPoliciesSetLimit_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_THERMAL_LIMIT* pLimit);
+  */
 
     NvAPI_QueryInterface_t NvQueryInterface;
     NvAPI_Initialize_t NvInit;
@@ -67,6 +74,24 @@ private:
     NvAPI_GPU_GetIllumination_t NvGetIllumination;
     NvAPI_GPU_SetIllumination_t NvSetIllumination;
     NvAPI_GPU_QueryIlluminationSupport_t NvQueryIlluminationSupport;
+   /* NvAPI_DLL_PerfPoliciesGetInfo_t NvAPI_DLL_PerfPoliciesGetInfo;
+    NvAPI_DLL_PerfPoliciesGetStatus_t NvAPI_DLL_PerfPoliciesGetStatus;
+    NvAPI_DLL_ClientPowerPoliciesGetInfo_t NvAPI_DLL_ClientPowerPoliciesGetInfo;
+    NvAPI_DLL_ClientPowerPoliciesGetStatus_t NvAPI_DLL_ClientPowerPoliciesGetStatus;
+    NvAPI_DLL_ClientPowerPoliciesSetStatus_t NvAPI_DLL_ClientPowerPoliciesSetStatus;
+    NvAPI_DLL_ClientPowerTopologyGetStatus_t NvAPI_DLL_ClientPowerTopologyGetStatus;
+    NvAPI_DLL_ClientThermalPoliciesGetInfo_t NvAPI_DLL_ClientThermalPoliciesGetInfo;
+    NvAPI_DLL_ClientThermalPoliciesGetLimit_t NvAPI_DLL_ClientThermalPoliciesGetLimit;
+    NvAPI_DLL_ClientThermalPoliciesSetLimit_t NvAPI_DLL_ClientThermalPoliciesSetLimit;
+    */
+
+
+
+
+
+
+
+
 
 
     NvU32 _gpuCount;
