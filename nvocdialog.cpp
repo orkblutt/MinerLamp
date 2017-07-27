@@ -11,27 +11,10 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
     _nvapi = new nvidiaAPI();
 
-
     ui->horizontalSliderPowerPercent->setValue(_nvapi->getPowerLimit(0));
 
     unsigned int gpuclock = _nvapi->getGpuClock(0);
     qDebug() << gpuclock;
-
-
-/*
-   qDebug() <<
-
-   _nvapi->setPowerLimitPercent(0, 80);
-   qDebug() << _nvapi->getPowerLimit(0);
-
-   _nvapi->setPowerLimitPercent(0, 100);
-   qDebug() << _nvapi->getPowerLimit(0);
-   */
-
-
-   //_nvapi->setLED(0, 100);
-  // _nvapi->setMemClock(0, 500);
-
 
 
 }
