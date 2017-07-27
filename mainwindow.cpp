@@ -12,6 +12,7 @@
 #include <QMenuBar>
 #include <QCloseEvent>
 #include <QLibrary>
+#include <QDir>
 
 #define MINERPATH           "minerpath"
 #define MINERARGS           "minerargs"
@@ -32,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     _process = new MinerProcess();
-    _settings = new QSettings("Orkblutt binaries factory", "Miner's Lamp");
+    _settings = new QSettings(QString(QDir::currentPath() + QDir::separator() + "minerlamp.ini"), QSettings::IniFormat);
 
     ui->setupUi(this);
 
