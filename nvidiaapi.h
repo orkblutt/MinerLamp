@@ -274,13 +274,16 @@ public:
     nvidiaAPI();
     ~nvidiaAPI();
 
+    unsigned int getGPUCount();
+
     void overClock(unsigned int gpu, unsigned int mem);
 
     void setLED(unsigned int gpu, int color);
 
+    int getGPUOffset(unsigned int gpu);
+
     unsigned int getGpuClock(unsigned int gpu);
     unsigned int getPowerLimit(unsigned int gpu);
-
 
     int setMemClockOffset(unsigned int gpu, unsigned int clock);
     int setGPUOffset(unsigned int gpu, unsigned int offset);
@@ -330,6 +333,7 @@ private:
     NvAPI_DLL_ClientPowerPoliciesGetInfo_t NvClientPowerPoliciesGetInfo;
     NvAPI_DLL_ClientPowerPoliciesSetStatus_t NvClientPowerPoliciesSetStatus;
 
+private:
 
     NvU32 _gpuCount;
 

@@ -244,6 +244,9 @@ void MainWindow::setupToolTips()
     ui->lcdNumberMaxWatt->setToolTip("Display the current higher power draw in Watt");
     ui->lcdNumberMinWatt->setToolTip("Display the current lower power draw in Watt");
 
+    ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
+    ui->checkBoxBlinkLED->setToolTip("Not yet implemented...");
+
 }
 
 

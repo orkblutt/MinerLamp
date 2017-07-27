@@ -16,6 +16,7 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
     unsigned int gpuclock = _nvapi->getGpuClock(0);
     qDebug() << gpuclock;
 
+_nvapi->getGPUOffset(0);
 
 }
 
