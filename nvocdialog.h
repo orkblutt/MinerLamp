@@ -18,6 +18,13 @@ public:
     explicit nvOCDialog(QWidget *parent = 0);
     ~nvOCDialog();
 
+private slots:
+    void on_horizontalSliderPowerPercent_valueChanged(int value);
+
+    void on_horizontalSliderGpuOffset_valueChanged(int value);
+
+    void on_horizontalSliderMemOffset_valueChanged(int value);
+
 private:
     Ui::nvOCDialog *ui;
 

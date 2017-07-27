@@ -40,9 +40,13 @@ nvidiaAPI::nvidiaAPI():
         NvGetPstates = (NvAPI_GPU_GetPstates20_t)NvQueryInterface(0x6FF81213);
         NvSetPstates = (NvAPI_GPU_SetPstates20_t)NvQueryInterface(0x0F4DAE6B);
         NvGetPStatesInfoEx  = (NvAPI_GPU_GetPstatesInfoEx_t)NvQueryInterface(0x843C0256);
-        //let's have some fun
-        NvQueryIlluminationSupport = (NvAPI_GPU_QueryIlluminationSupport_t)NvQueryInterface(0xA629DA31);
 
+        NvClientPowerPoliciesGetStatus = (NvAPI_DLL_ClientPowerPoliciesGetStatus_t)NvQueryInterface(0x70916171);
+        NvClientPowerPoliciesGetInfo = (NvAPI_DLL_ClientPowerPoliciesGetInfo_t)NvQueryInterface(0x34206D86);
+        NvClientPowerPoliciesSetStatus = (NvAPI_DLL_ClientPowerPoliciesSetStatus_t)NvQueryInterface(0xAD95F5ED);
+
+        //let's have some fun with LED
+        NvQueryIlluminationSupport = (NvAPI_GPU_QueryIlluminationSupport_t)NvQueryInterface(0xA629DA31);
         NvGetIllumination = (NvAPI_GPU_GetIllumination_t)NvQueryInterface(0x9A1B9365);
         NvSetIllumination = (NvAPI_GPU_SetIllumination_t)NvQueryInterface(0x254A187);
 
@@ -60,7 +64,6 @@ nvidiaAPI::~nvidiaAPI()
 {
 
 
-
 }
 
 
@@ -73,13 +76,18 @@ void nvidiaAPI::overClock(unsigned int gpu, unsigned int mem)
 void nvidiaAPI::setLED(unsigned int gpu, int color)
 {
     NvAPI_Status ret = NVAPI_OK;
+
+
     NV_GPU_QUERY_ILLUMINATION_SUPPORT_PARM illu;
+    illu.bSupported = false;
+    illu.version = NV_GPU_QUERY_ILLUMINATION_SUPPORT_PARM_VER;
     illu.hPhysicalGpu = _gpuHandles[gpu];
     illu.Attribute = NV_GPU_IA_LOGO_BRIGHTNESS;
     ret = NvQueryIlluminationSupport(&illu);
     if (!ret && illu.bSupported)
     {
         NV_GPU_GET_ILLUMINATION_PARM led;
+        led.version = NV_GPU_GET_ILLUMINATION_PARM_VER;
         led.hPhysicalGpu = _gpuHandles[gpu];
         led.Attribute = NV_GPU_IA_LOGO_BRIGHTNESS;
         NvGetIllumination(&led);
@@ -110,8 +118,100 @@ unsigned int nvidiaAPI::getGpuClock(unsigned int gpu)
     return freq; // in MHz
 }
 
-int nvidiaAPI::setMemClock(unsigned int clock)
+unsigned int nvidiaAPI::getPowerLimit(unsigned int gpu)
 {
+    NvAPI_Status ret = NVAPI_OK;
+    NVAPI_GPU_POWER_STATUS pol = { 0 };
+    pol.version = NVAPI_GPU_POWER_STATUS_VER;
+    if ((ret = NvClientPowerPoliciesGetStatus(_gpuHandles[gpu], &pol)) != NVAPI_OK)
+       return 0;
+
+    return (uint8_t) (pol.entries[0].power / 1000); // in percent
+
+}
+
+int nvidiaAPI::setPowerLimitPercent(unsigned int gpu, unsigned int percent)
+{
+    NvAPI_Status ret = NVAPI_OK;
+
+    uint32_t val = percent * 1000;
+
+    NVAPI_GPU_POWER_INFO nfo = { 0 };
+    nfo.version = NVAPI_GPU_POWER_INFO_VER;
+    ret = NvClientPowerPoliciesGetInfo(_gpuHandles[gpu], &nfo);
+    if (ret == NVAPI_OK) {
+        if (val == 0)
+            val = nfo.entries[0].def_power;
+        else if (val < nfo.entries[0].min_power)
+            val = nfo.entries[0].min_power;
+        else if (val > nfo.entries[0].max_power)
+            val = nfo.entries[0].max_power;
+    }
+
+    NVAPI_GPU_POWER_STATUS pol = { 0 };
+    pol.version = NVAPI_GPU_POWER_STATUS_VER;
+    pol.flags = 1;
+    pol.entries[0].power = val;
+    if ((ret = NvClientPowerPoliciesSetStatus(_gpuHandles[gpu], &pol)) != NVAPI_OK)
+    {
+
+
+        return -1;
+    }
+    return ret;
+
+}
+
+int nvidiaAPI::setMemClockOffset(unsigned int gpu, unsigned int clock)
+{
+    NvAPI_Status ret;
+    NvS32 deltaKHz = clock * 1000;
+    // todo: bounds check with GetPstates20
+
+    NV_GPU_PERF_PSTATES20_INFO_V1 pset1 = { 0 };
+    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
+    pset1.numPstates = 1;
+    pset1.numClocks = 1;
+    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
+    pset1.pstates[0].clocks[0].freqDelta_kHz.value = deltaKHz;
+    ret = NvSetPstates(_gpuHandles[gpu], &pset1);
+    if (ret == NVAPI_OK)
+        qDebug("GPU #%u: Memory clock offset set to %+d MHz", gpu, deltaKHz / 1000);
+
+    return ret;
+}
+
+int nvidiaAPI::setGPUOffset(unsigned int gpu, unsigned int offset)
+{
+    NvAPI_Status ret;
+    NvS32 deltaKHz = offset * 1000;
+
+    NV_GPU_PERF_PSTATES20_INFO_V1 pset1 = { 0 };
+    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
+    pset1.numPstates = 1;
+    pset1.numClocks = 1;
+    // Ok on both 1080 and 970
+    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS;
+    pset1.pstates[0].clocks[0].freqDelta_kHz.value = deltaKHz;
+    ret = NvSetPstates(_gpuHandles[gpu], &pset1);
+    if (ret == NVAPI_OK) {
+        qDebug("GPU #%u: pu clock offset set to %d MHz", gpu, deltaKHz/1000);
+    }
+    return ret;
+
+}
+
+
+
+int nvidiaAPI::setTempLimitOffset(unsigned int gpu, unsigned int offset)
+{
+    return 0;
+}
+/*
+int nvidiaAPI::setMemClock(unsigned int gpu, unsigned int clock)
+{
+
+
 
     NvAPI_Status ret;
     NvS32 delta = 0;
@@ -121,8 +221,7 @@ int nvidiaAPI::setMemClock(unsigned int clock)
     freqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
     freqs.ClockType = NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK;
 
-
-    ret =  NvGetFreq(_gpuHandles[0], &freqs);
+    ret =  NvGetFreq(_gpuHandles[gpu], &freqs);
     if (ret == NVAPI_OK)  {
         delta = (clock * 1000) - freqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
 
@@ -132,7 +231,7 @@ int nvidiaAPI::setMemClock(unsigned int clock)
     // seems ok on maxwell and pascal for the mem clocks
     NV_GPU_PERF_PSTATES_INFO deffreqs = { 0 };
     deffreqs.version = NV_GPU_PERF_PSTATES_INFO_VER;
-    ret = NvGetPStatesInfoEx(_gpuHandles[0], &deffreqs, 0x1); // deprecated but req for def clocks
+    ret = NvGetPStatesInfoEx(_gpuHandles[gpu], &deffreqs, 0x1); // deprecated but req for def clocks
     if (ret == NVAPI_OK) {
         if (deffreqs.pstates[0].clocks[0].domainId == NVAPI_GPU_PUBLIC_CLOCK_MEMORY)
             delta = (clock * 1000) - deffreqs.pstates[0].clocks[0].freq;
@@ -148,14 +247,15 @@ int nvidiaAPI::setMemClock(unsigned int clock)
     pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
     pset1.pstates[0].clocks[0].freqDelta_kHz.value = delta;
 
-    ret = NvSetPstates(_gpuHandles[0], &pset1);
+    ret = NvSetPstates(_gpuHandles[gpu], &pset1);
     if (ret == NVAPI_OK)
     {
         qDebug("GPU #%u: Boost mem clock set to %u (delta %d)", _gpuCount, clock, delta/1000);
     }
     return ret;
-}
 
+}
+*/
 
 /*
  *
@@ -310,87 +410,8 @@ int nvapi_set_gpuclock(unsigned int devNum, uint32_t clock)
     return ret;
 }
 
-int nvapi_set_memclock(unsigned int devNum, uint32_t clock)
-{
-    NvAPI_Status ret;
-    NvS32 delta = 0;
 
-    if (devNum >= nvapi_dev_cnt)
-        return -ENODEV;
 
-    // wrong to get default base clock (when modified) on maxwell (same as cuda props one)
-    NV_GPU_CLOCK_FREQUENCIES freqs = { 0 };
-    freqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
-    freqs.ClockType = NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK;
-    ret = NvAPI_GPU_GetAllClockFrequencies(phys[devNum], &freqs); // wrong base clocks, useless
-    if (ret == NVAPI_OK)  {
-        delta = (clock * 1000) - freqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
-    }
-
-    // seems ok on maxwell and pascal for the mem clocks
-    NV_GPU_PERF_PSTATES_INFO deffreqs = { 0 };
-    deffreqs.version = NV_GPU_PERF_PSTATES_INFO_VER;
-    ret = NvAPI_GPU_GetPstatesInfoEx(phys[devNum], &deffreqs, 0x1); // deprecated but req for def clocks
-    if (ret == NVAPI_OK) {
-        if (deffreqs.pstates[0].clocks[0].domainId == NVAPI_GPU_PUBLIC_CLOCK_MEMORY)
-            delta = (clock * 1000) - deffreqs.pstates[0].clocks[0].freq;
-    }
-
-    if (delta == (clock * 1000))
-        return ret;
-
-    // todo: bounds check with GetPstates20
-
-    NV_GPU_PERF_PSTATES20_INFO_V1 pset1 = { 0 };
-    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
-    pset1.numPstates = 1;
-    pset1.numClocks = 1;
-    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
-    pset1.pstates[0].clocks[0].freqDelta_kHz.value = delta;
-    ret = NvAPI_DLL_SetPstates20v1(phys[devNum], &pset1);
-    if (ret == NVAPI_OK) {
-        applog(LOG_INFO, "GPU #%u: Boost mem clock set to %u (delta %d)", devNum, clock, delta/1000);
-    }
-    return ret;
-}
-
-static int nvapi_set_memoffset(unsigned int devNum, int32_t delta, bool log=true)
-{
-    NvAPI_Status ret;
-    NvS32 deltaKHz = delta * 1000;
-
-    if (devNum >= nvapi_dev_cnt)
-        return -ENODEV;
-
-    // todo: bounds check with GetPstates20
-
-    NV_GPU_PERF_PSTATES20_INFO_V1 pset1 = { 0 };
-    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
-    pset1.numPstates = 1;
-    pset1.numClocks = 1;
-    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
-    pset1.pstates[0].clocks[0].freqDelta_kHz.value = deltaKHz;
-    ret = NvAPI_DLL_SetPstates20v1(phys[devNum], &pset1);
-    if (ret == NVAPI_OK) {
-        if (log) applog(LOG_INFO, "GPU #%u: Memory clock offset set to %+d MHz", devNum, deltaKHz / 1000);
-        need_memclockrst = true;
-    }
-    return ret;
-}
-
-// Replacement for WIN32 CUDA 6.5 on pascal
-int nvapiMemGetInfo(int dev_id, uint64_t *free, uint64_t *total)
-{
-    NvAPI_Status ret = NVAPI_OK;
-    NV_DISPLAY_DRIVER_MEMORY_INFO mem = { 0 };
-    mem.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
-    unsigned int devNum = nvapi_dev_map[dev_id % MAX_GPUS];
-    if ((ret = NvAPI_GPU_GetMemoryInfo(phys[devNum], &mem)) == NVAPI_OK) {
-        *total = (uint64_t) mem.dedicatedVideoMemory;// mem.availableDedicatedVideoMemory;
-        *free  = (uint64_t) mem.curAvailableDedicatedVideoMemory;
-    }
-    return (int) ret;
-}
  */
 
 
