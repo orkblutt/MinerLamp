@@ -8,11 +8,29 @@
 
 class MinerProcess;
 
+// waitter before to monitor for O.OOMH/s
 class zeroMHsWaitter : public QThread
 {
     Q_OBJECT
 public:
     zeroMHsWaitter(unsigned int delay, QObject* pParent = Q_NULLPTR);
+
+    void run();
+
+private:
+    unsigned int _delay;
+    MinerProcess* _pParent;
+
+};
+
+// Timer for any MH/s
+// If no hasrate reported after a given delay
+// this worker will signal for issue
+class anyMHsWaitter : public QThread
+{
+    Q_OBJECT
+public:
+    anyMHsWaitter(unsigned int delay, QObject* pParent = Q_NULLPTR);
 
     void run();
 
@@ -44,6 +62,7 @@ public:
 private:
     QProcess    _miner;
     zeroMHsWaitter* _waitter;
+    anyMHsWaitter*  _anyHR;
 
     QTextEdit*  _log;
     QString     _minerPath;

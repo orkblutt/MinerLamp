@@ -1,8 +1,22 @@
 #include "minerprocess.h"
-#include <QTextStream>
+#include <QTextStream>q
 #include <QDebug>
 #include <QRegExp>
 #include <QThread>
+
+anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
+  , _pParent((MinerProcess*)pParent)
+  , _delay(delay)
+{
+}
+
+
+void anyMHsWaitter::run()
+{
+    QThread::sleep(_delay);
+}
+
+
 
 zeroMHsWaitter::zeroMHsWaitter(unsigned int delay, QObject* pParent /*= Q_NULLPTR*/) : QThread(pParent)
   , _pParent((MinerProcess*)pParent)
@@ -139,16 +153,20 @@ void MinerProcess::start(const QString &path, const QString& args)
 
     QStringList arglist = args.split(" ");
 
-    _readyToMonitor = false;
+    if(_delayBefore0MHs > 0)
+    {
+        _readyToMonitor = false;
+        if(_waitter && _waitter->isRunning()) _waitter->terminate();
+        if(_waitter) delete _waitter;
 
-    if(_waitter && _waitter->isRunning()) _waitter->terminate();
-    if(_waitter) delete _waitter;
+        _waitter = new zeroMHsWaitter(_delayBefore0MHs, this);
 
-    _waitter = new zeroMHsWaitter(_delayBefore0MHs, this);
+        connect(_waitter, SIGNAL(finished()), this, SLOT(onReadyToMonitor()), Qt::DirectConnection);
 
-    connect(_waitter, SIGNAL(finished()), this, SLOT(onReadyToMonitor()), Qt::DirectConnection);
-
-    _waitter->start();
+        _waitter->start();
+    }
+    else
+        _readyToMonitor = true;
 
     _miner.start(path, arglist);
 

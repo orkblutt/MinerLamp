@@ -244,6 +244,8 @@ void MainWindow::setupToolTips()
     ui->lcdNumberMaxWatt->setToolTip("Display the current higher power draw in Watt");
     ui->lcdNumberMinWatt->setToolTip("Display the current lower power draw in Watt");
 
+    ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
+
     ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
     ui->checkBoxBlinkLED->setToolTip("Not yet implemented...");
 
@@ -326,6 +328,10 @@ const QColor MainWindow::getTempColor(unsigned int temp)
 void MainWindow::on_groupBoxWatchdog_clicked(bool checked)
 {
     _process->setRestartOption(checked);
+    if(checked)
+        ui->groupBoxWatchdog->setToolTip("");
+    else
+        ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
 
 }
 
