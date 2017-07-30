@@ -22,6 +22,7 @@
 #define ZEROMHSDELAY        "zeromhsdelay"
 #define AUTOSTART           "autostart"
 #define DISPLAYSHAREONLY    "shareonly"
+#define DELAYNOHASH         "delaynohash"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -80,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setupEditor();
 
-    ui->lcdNumber->display("0.00");
+    ui->lcdNumberHashRate->display("0.00");
 
     if(ui->checkBoxAutoStart->isChecked())
     {
@@ -114,6 +115,7 @@ void MainWindow::loadParameters()
     ui->spinBoxDelay0MHs->setValue(_settings->value(ZEROMHSDELAY).toInt());
     ui->checkBoxAutoStart->setChecked(_settings->value(AUTOSTART).toBool());
     ui->checkBoxOnlyShare->setChecked(_settings->value(DISPLAYSHAREONLY).toBool());
+    ui->spinBoxDelayNoHash->setValue(_settings->value(DELAYNOHASH).toInt());
 
     _process->setShareOnly(_settings->value(DISPLAYSHAREONLY).toBool());
     _process->setRestartOption(_settings->value(AUTORESTART).toBool());
@@ -130,6 +132,7 @@ void MainWindow::saveParameters()
     _settings->setValue(ZEROMHSDELAY, ui->spinBoxDelay0MHs->value());
     _settings->setValue(AUTOSTART, ui->checkBoxAutoStart->isChecked());
     _settings->setValue(DISPLAYSHAREONLY, ui->checkBoxOnlyShare->isChecked());
+    _settings->setValue(DELAYNOHASH, ui->spinBoxDelayNoHash->value());
 }
 
 void MainWindow::setVisible(bool visible)
@@ -229,22 +232,26 @@ void MainWindow::setupEditor()
 void MainWindow::setupToolTips()
 {
 
+    ui->lcdNumberHashRate->setToolTip("Displaing the current hashrate");
     ui->lcdNumberGPUCount->setToolTip("Number of nVidia GPU(s)");
 
-    ui->lcdNumberMaxGPUTemp->setToolTip("Display the current higher temperature");
-    ui->lcdNumberMinGPUTemp->setToolTip("Display the current lower temperature");
+    ui->lcdNumberMaxGPUTemp->setToolTip("Displaing the current higher temperature");
+    ui->lcdNumberMinGPUTemp->setToolTip("Displaing the current lower temperature");
 
-    ui->lcdNumberMaxFanSpeed->setToolTip("Display the current higher fan speed in percent of the max speed");
-    ui->lcdNumberMinFanSpeed->setToolTip("Display the current lower fan speed in percent of the max speed");
+    ui->lcdNumberMaxFanSpeed->setToolTip("Displaing the current higher fan speed in percent of the max speed");
+    ui->lcdNumberMinFanSpeed->setToolTip("Displaing the current lower fan speed in percent of the max speed");
 
-    ui->lcdNumberMaxMemClock->setToolTip("Display the current higher memory clock");
-    ui->lcdNumberMinMemClock->setToolTip("Display the current lower memory clock");
+    ui->lcdNumberMaxMemClock->setToolTip("Displaing the current higher memory clock");
+    ui->lcdNumberMinMemClock->setToolTip("Displaing the current lower memory clock");
 
 
-    ui->lcdNumberMaxWatt->setToolTip("Display the current higher power draw in Watt");
-    ui->lcdNumberMinWatt->setToolTip("Display the current lower power draw in Watt");
+    ui->lcdNumberMaxWatt->setToolTip("Displaing the current higher power draw in Watt");
+    ui->lcdNumberMinWatt->setToolTip("Displaing the current lower power draw in Watt");
 
-    ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
+    if(!ui->groupBoxWatchdog->isChecked())
+        ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
+    else
+        ui->groupBoxWatchdog->setToolTip("");
 
     ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
     ui->checkBoxBlinkLED->setToolTip("Not yet implemented...");
@@ -285,8 +292,8 @@ void MainWindow::onMinerStoped()
     _isStartStoping = false;
 
     this->setWindowTitle(QString("Miner's Lamp"));
-    ui->lcdNumber->setPalette(Qt::gray);
-    ui->lcdNumber->display("0.00");
+    ui->lcdNumberHashRate->setPalette(Qt::gray);
+    ui->lcdNumberHashRate->display("0.00");
 
     _trayIcon->setToolTip(QString("Miner's lamp"));
 }
@@ -297,11 +304,11 @@ void MainWindow::onHashrate(QString &hashrate)
 
     this->setWindowTitle(QString("Miner's Lamp - " + hashrate + " - Restart count: " + QString::number(_errorCount)));
     if(hrValue.toDouble() == 0)
-        ui->lcdNumber->setPalette(Qt::red);
+        ui->lcdNumberHashRate->setPalette(Qt::red);
     else
-        ui->lcdNumber->setPalette(Qt::green);
+        ui->lcdNumberHashRate->setPalette(Qt::green);
 
-    ui->lcdNumber->display(hrValue);
+    ui->lcdNumberHashRate->display(hrValue);
 
     _trayIcon->setToolTip(QString("Miner's lamp - " + hashrate));
 }

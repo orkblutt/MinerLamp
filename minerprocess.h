@@ -21,6 +21,7 @@ private:
     unsigned int _delay;
     MinerProcess* _pParent;
 
+
 };
 
 // Timer for any MH/s
@@ -37,6 +38,12 @@ public:
 private:
     unsigned int _delay;
     MinerProcess* _pParent;
+
+    unsigned int _hashrateCount;
+
+signals:
+    void notHashing();
+
 
 };
 
@@ -56,6 +63,9 @@ public:
     void setMax0MHs(unsigned int max0mhs){_max0mhs = max0mhs;}
     void setShareOnly(bool shareOnly){_shareOnly = shareOnly;}
     void setDelayBefore0MHs(unsigned int delay){_delayBefore0MHs = delay;}
+    void setDelayBeforeNoHash(unsigned int delay){_delayBeforeNoHash = delay;}
+
+    unsigned int getCurrentHRCount(){return _hashrateCount;}
 
     void restart();
 
@@ -78,6 +88,9 @@ private:
     unsigned int _0mhs;
     unsigned int _restartDelay;
     unsigned int _delayBefore0MHs;
+    unsigned int _delayBeforeNoHash;
+
+    unsigned int _hashrateCount;
 
 
     void onReadyToReadStdout();
@@ -88,6 +101,7 @@ private:
 
 public slots:
     void onReadyToMonitor();
+    void onNoHashing();
 
 signals:
 

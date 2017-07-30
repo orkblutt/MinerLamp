@@ -7,13 +7,27 @@
 anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
   , _pParent((MinerProcess*)pParent)
   , _delay(delay)
+  , _hashrateCount(0)
 {
+
 }
 
 
 void anyMHsWaitter::run()
 {
-    QThread::sleep(_delay);
+    while(true)
+    {
+        qDebug() << "anyMHsWaitter ";
+        QThread::sleep(_delay);
+
+        qDebug() << _hashrateCount << _pParent->getCurrentHRCount();
+        if(_hashrateCount == _pParent->getCurrentHRCount())
+        {
+            emit notHashing();
+            break;
+        }
+        _hashrateCount = _pParent->getCurrentHRCount();
+    }
 }
 
 
@@ -34,10 +48,12 @@ MinerProcess::MinerProcess():
     _isRunning(false),
     _0mhs(5),
     _restartDelay(2),
+    _delayBeforeNoHash(30),
     _autoRestart(true),
     _shareOnly(false),
     _readyToMonitor(false),
-    _waitter(Q_NULLPTR)
+    _waitter(Q_NULLPTR),
+    _anyHR(Q_NULLPTR)
 {
 
     connect(&_miner, &QProcess::readyReadStandardOutput,
@@ -118,6 +134,8 @@ void MinerProcess::onReadyToReadStderr()
                     restart();
                 }
             }
+
+            _hashrateCount++;
         }
     }
 }
@@ -128,6 +146,7 @@ void MinerProcess::onExit()
     _isRunning = false;
     _0mhs = 0;
     if(_waitter && _waitter->isRunning()) _waitter->terminate();
+    if(_anyHR && _anyHR->isRunning()) _anyHR->terminate();
 
     emit emitStoped();
 }
@@ -143,6 +162,13 @@ void MinerProcess::onStarted()
 void MinerProcess::onReadyToMonitor()
 {
     _readyToMonitor = true;
+
+}
+
+void MinerProcess::onNoHashing()
+{
+    emit emitError();
+    restart();
 }
 
 
@@ -168,6 +194,19 @@ void MinerProcess::start(const QString &path, const QString& args)
     else
         _readyToMonitor = true;
 
+    _hashrateCount = 0;
+
+    if(_anyHR && _anyHR->isRunning())
+    {
+        _anyHR->terminate();
+        delete _anyHR;
+
+    }
+
+    _anyHR = new anyMHsWaitter(_delayBeforeNoHash, this);
+    connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()), Qt::DirectConnection);
+    _anyHR->start();
+
     _miner.start(path, arglist);
 
     _isRunning = true;
@@ -180,6 +219,8 @@ void MinerProcess::stop()
     _0mhs = 0;
     _isRunning = false;
     if(_waitter && _waitter->isRunning()) _waitter->terminate();
+    if(_anyHR && _anyHR->isRunning()) _anyHR->terminate();
+
     emit emitStoped();
 }
 
