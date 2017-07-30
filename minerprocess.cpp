@@ -17,10 +17,7 @@ void anyMHsWaitter::run()
 {
     while(true)
     {
-        qDebug() << "anyMHsWaitter ";
         QThread::sleep(_delay);
-
-        qDebug() << _hashrateCount << _pParent->getCurrentHRCount();
         if(_hashrateCount == _pParent->getCurrentHRCount())
         {
             emit notHashing();
@@ -134,7 +131,6 @@ void MinerProcess::onReadyToReadStderr()
                     restart();
                 }
             }
-
             _hashrateCount++;
         }
     }
@@ -162,7 +158,6 @@ void MinerProcess::onStarted()
 void MinerProcess::onReadyToMonitor()
 {
     _readyToMonitor = true;
-
 }
 
 void MinerProcess::onNoHashing()
