@@ -271,6 +271,7 @@ void MainWindow::on_pushButton_clicked()
             _process->setMax0MHs(ui->spinBoxMax0MHs->value());
             _process->setRestartDelay(ui->spinBoxDelay->value());
             _process->setRestartOption(ui->groupBoxWatchdog->isChecked());
+            _process->setDelayBeforeNoHash(ui->spinBoxDelayNoHash->value());
             _process->start(ui->lineEditMinerPath->text(), ui->lineEditArgs->text());
         }
         else
@@ -463,4 +464,9 @@ void MainWindow::on_pushButtonOC_clicked()
     dlg->exec();
     delete dlg;
 
+}
+
+void MainWindow::on_spinBoxDelayNoHash_valueChanged(int arg1)
+{
+    _process->setDelayBeforeNoHash(arg1);
 }

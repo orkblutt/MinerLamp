@@ -109,6 +109,8 @@ private slots:
 
     void on_pushButtonOC_clicked();
 
+    void on_spinBoxDelayNoHash_valueChanged(int arg1);
+
 private:
 
     void onMinerStarted();
