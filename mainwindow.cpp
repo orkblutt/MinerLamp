@@ -28,6 +28,7 @@
 #define NVIDIAOPTION        "nvidia_options"
 #define NVLEDHASHINTENSITY  "nv_led_hash_intensity"
 #define NVLEDSHAREINTENSITY "nv_led_share_intensity"
+#define NVLEDBLINKON        "nv_led_blink_on"
 #endif
 
 
@@ -481,22 +482,19 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 {
     unsigned short hash , share;
 
+    _settings->beginGroup(NVIDIAOPTION);
+
     if(checked)
     {
-        LEDDialog* led = new LEDDialog(50, 100, this);
+        hash = _settings->value(NVLEDHASHINTENSITY, hash).toInt();
+        share = _settings->value(NVLEDSHAREINTENSITY, share).toInt();
+        LEDDialog* led = new LEDDialog(hash, share, this);
         if(led)
         {
             if(led->exec())
             {
                 led->getValues(hash, share);
                 _process->setLEDOptions(hash, share, true);
-                qDebug() << "ok";
-
-                nvidiaAPI* nvapi = new nvidiaAPI();
-                nvapi->setAllLED(share);
-                QThread::msleep(500);
-                nvapi->setAllLED(hash);
-                delete nvapi;
             }
             else
                 ui->checkBoxBlinkLED->setChecked(false);
@@ -505,6 +503,15 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
     }
     else
         _process->setLEDOptions(hash, share, true);
+
+    _settings->setValue(NVLEDBLINKON, checked);
+
+    if(checked)
+    {
+        _settings->setValue(NVLEDHASHINTENSITY, hash);
+        _settings->setValue(NVLEDSHAREINTENSITY, share);
+    }
+    _settings->endGroup();
 }
 
 #endif
