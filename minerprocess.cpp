@@ -51,6 +51,14 @@ MinerProcess::MinerProcess():
     _readyToMonitor(false),
     _waitter(Q_NULLPTR),
     _anyHR(Q_NULLPTR)
+#ifdef NVIDIA
+  , _nvapi(Q_NULLPTR)
+#endif
+  , _blinker(Q_NULLPTR)
+  , _ledActivated(false)
+  , _ledHash(50)
+  , _ledShare(100)
+
 {
 
     connect(&_miner, &QProcess::readyReadStandardOutput,
@@ -66,6 +74,11 @@ MinerProcess::MinerProcess():
              this, &MinerProcess::onStarted);
 
     _miner.setReadChannel(QProcess::StandardOutput);
+
+#ifdef NVIDIA
+    _nvapi = new nvidiaAPI();
+#endif
+
 }
 
 void MinerProcess::onReadyToReadStdout()
@@ -96,6 +109,7 @@ void MinerProcess::onReadyToReadStderr()
                         || list.at(i).indexOf("Submitted") != -1)
                 {
                     _log->append(list.at(i).simplified());
+
                 }
             }
             else
@@ -132,6 +146,21 @@ void MinerProcess::onReadyToReadStderr()
                 }
             }
             _hashrateCount++;
+        }
+
+        if(_ledActivated)
+        {
+            if(line.indexOf("B-) Submitted and accepted.") != -1)
+            {
+                if(_blinker)
+                {
+                    if(_blinker->isRunning()) _blinker->terminate();
+                    delete _blinker;
+                }
+
+                _blinker = new blinkerLED(_ledHash, _ledShare, this);
+                _blinker->start();
+            }
         }
     }
 }
@@ -219,6 +248,13 @@ void MinerProcess::stop()
     emit emitStoped();
 }
 
+void MinerProcess::setLEDOptions(unsigned short hash, unsigned short share, bool activated)
+{
+    _ledHash = hash;
+    _ledShare = share;
+    _ledActivated = activated;
+}
+
 void MinerProcess::restart()
 {
     if(_autoRestart)
@@ -227,4 +263,22 @@ void MinerProcess::restart()
         QThread::sleep(_restartDelay);
         start(_minerPath, _minerArgs);
     }
+}
+
+blinkerLED::blinkerLED(unsigned short hash, unsigned short share, QObject* pParent) :
+_hash(hash),
+_share(share),
+_pParent((MinerProcess*)pParent)
+{
+
+}
+
+void blinkerLED::run()
+{
+#ifdef NVIDIA
+    nvidiaAPI* nvapi = _pParent->getNVAPI();
+    nvapi->setAllLED(_share);
+    QThread::sleep(1);
+    nvapi->setAllLED(_hash);
+#endif
 }

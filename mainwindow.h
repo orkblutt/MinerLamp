@@ -36,7 +36,7 @@ public:
     void run();
 
 signals:
-
+#ifdef NVIDIA
     void gpuInfoSignal(unsigned int gpucount
                        , unsigned int maxgputemp
                        , unsigned int mingputemp
@@ -46,6 +46,7 @@ signals:
                        , unsigned int minmemclock
                        , unsigned int maxpowerdraw
                        , unsigned int minpowerdraw);
+#endif
 };
 
 class MainWindow : public QMainWindow
@@ -57,7 +58,6 @@ public:
     ~MainWindow();
 
     void setVisible(bool visible) Q_DECL_OVERRIDE;
-
     void startMiner();
 
 protected:
@@ -70,29 +70,21 @@ private slots:
 private:
      void createActions();
      void createTrayIcon();
-
      void setupEditor();
-
      void setupToolTips();
-
      void loadParameters();
      void saveParameters();
 
 private slots:
+
     void on_pushButton_clicked();
-
     void on_spinBoxMax0MHs_valueChanged(int arg1);
-
     void on_spinBoxDelay_valueChanged(int arg1);
-
     void on_checkBoxOnlyShare_clicked(bool checked);
-
     void on_pushButtonHelp_clicked();
-
     void on_spinBoxDelay0MHs_valueChanged(int arg1);
-
     void onReadyToStartMiner();
-
+ #ifdef NVIDIA
     void onGPUInfo(unsigned int gpucount
                    , unsigned int maxgputemp
                    , unsigned int mingputemp
@@ -102,14 +94,15 @@ private slots:
                    , unsigned int minmemclock
                    , unsigned int maxpowerdraw
                    , unsigned int minpowerdraw);
+     void on_pushButtonOC_clicked();
+     void on_checkBoxBlinkLED_clicked(bool checked);
+#endif
 
-    void onHelp();
-
+     void onHelp();
     void on_groupBoxWatchdog_clicked(bool checked);
 
-    void on_pushButtonOC_clicked();
-
     void on_spinBoxDelayNoHash_valueChanged(int arg1);
+
 
 private:
 
@@ -144,7 +137,9 @@ private:
 
     //QThreads
     autoStart* _starter;
+#ifdef NVIDIA
     maxGPUThread* _maxGPUTemp;
+#endif
 };
 
 #endif // MAINWINDOW_H

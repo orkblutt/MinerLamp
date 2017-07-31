@@ -16,7 +16,7 @@ VERSION = 0.1.0.243
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS NVIDIA
 
 
 # You can also make your code fail to compile if you use deprecated APIs.
@@ -32,7 +32,8 @@ SOURCES += \
     helpdialog.cpp \
     nvidianvml.cpp \
     nvocdialog.cpp \
-    nvidiaapi.cpp
+    nvidiaapi.cpp \
+    leddialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,12 +42,14 @@ HEADERS += \
     helpdialog.h \
     nvidianvml.h \
     nvocdialog.h \
-    nvidiaapi.h
+    nvidiaapi.h \
+    leddialog.h
 
 FORMS += \
         mainwindow.ui \
     helpdialog.ui \
-    nvocdialog.ui
+    nvocdialog.ui \
+    leddialog.ui
 
 RC_ICONS += \
         eth_miner_lamp.ico

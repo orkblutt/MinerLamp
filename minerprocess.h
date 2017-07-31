@@ -6,7 +6,22 @@
 #include <QTextEdit>
 #include <QThread>
 
+#include "nvidiaapi.h"
+
 class MinerProcess;
+
+class blinkerLED : public QThread
+{
+    Q_OBJECT
+public:
+    blinkerLED(unsigned short hash, unsigned short share, QObject* pParent = Q_NULLPTR);
+
+    void run();
+private:
+    unsigned short _hash;
+    unsigned short _share;
+    MinerProcess* _pParent;
+};
 
 // waitter before to monitor for O.OOMH/s
 class zeroMHsWaitter : public QThread
@@ -20,7 +35,6 @@ public:
 private:
     unsigned int _delay;
     MinerProcess* _pParent;
-
 
 };
 
@@ -67,12 +81,23 @@ public:
 
     unsigned int getCurrentHRCount(){return _hashrateCount;}
 
+    void setLEDOptions(unsigned short hash, unsigned short share, bool activated);
+
     void restart();
+
+#ifdef NVIDIA
+    nvidiaAPI* getNVAPI(){return _nvapi;}
+#endif
 
 private:
     QProcess    _miner;
     zeroMHsWaitter* _waitter;
     anyMHsWaitter*  _anyHR;
+    blinkerLED* _blinker;
+
+#ifdef NVIDIA
+    nvidiaAPI*  _nvapi;
+#endif
 
     QTextEdit*  _log;
     QString     _minerPath;
@@ -91,6 +116,11 @@ private:
     unsigned int _delayBeforeNoHash;
 
     unsigned int _hashrateCount;
+
+    unsigned short _ledHash;
+    unsigned short _ledShare;
+
+    bool _ledActivated;
 
 
     void onReadyToReadStdout();

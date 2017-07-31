@@ -229,6 +229,14 @@ int nvidiaAPI::setTempLimitOffset(unsigned int gpu, unsigned int offset)
 {
     return 0;
 }
+
+void nvidiaAPI::setAllLED(int color)
+{
+    for(unsigned int i = 0; i < _gpuCount; i++)
+        setLED(i, color);
+}
+
+
 /*
 int nvidiaAPI::setMemClock(unsigned int gpu, unsigned int clock)
 {

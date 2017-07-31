@@ -4,7 +4,7 @@
 #include "helpdialog.h"
 #include "nvidianvml.h"
 #include "nvocdialog.h"
-
+#include "leddialog.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -24,6 +24,12 @@
 #define DISPLAYSHAREONLY    "shareonly"
 #define DELAYNOHASH         "delaynohash"
 
+#ifdef NVIDIA
+#define NVIDIAOPTION        "nvidia_options"
+#define NVLEDHASHINTENSITY  "nv_led_hash_intensity"
+#define NVLEDSHAREINTENSITY "nv_led_share_intensity"
+#endif
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,31 +44,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-
     _process->setLogControl(ui->textEdit);
-
 
     connect(_process, &MinerProcess::emitStarted, this, &MainWindow::onMinerStarted);
     connect(_process, &MinerProcess::emitStoped, this, &MainWindow::onMinerStoped);
     connect(_process, &MinerProcess::emitHashRate, this, &MainWindow::onHashrate);
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
 
-
-
-   QLibrary lib("nvml.dll");
-   if (!lib.load())
-   {
+#ifdef NVIDIA
+    QLibrary lib("nvml.dll");
+    if (!lib.load())
+    {
         ui->textEdit->append("The nVidia monitoring option can't work without nvml.dll.\r\nYou need to copy it from C:\\Program Files\\NVIDIA Corporation\\NVSMI\\ to your MinerLamp's folder.");
-   }
-   else
-   {
+    }
+    else
+    {
 
         _maxGPUTemp = new maxGPUThread(this);
         connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
 
         _maxGPUTemp->start();
-   }
-
+    }
+#endif
 
     loadParameters();
 
@@ -82,20 +85,20 @@ MainWindow::MainWindow(QWidget *parent) :
     setupEditor();
 
     ui->lcdNumberHashRate->display("0.00");
+#ifndef NVIDIA
+    ui->groupBoxNvidia->hide();
+#endif
 
     if(ui->checkBoxAutoStart->isChecked())
     {
-        qDebug() << "start t";
         _starter = new autoStart(this);
         connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
         _starter->start();
     }
-
 }
 
 MainWindow::~MainWindow()
 {
-
     saveParameters();
 
     _process->stop();
@@ -233,6 +236,7 @@ void MainWindow::setupToolTips()
 {
 
     ui->lcdNumberHashRate->setToolTip("Displaing the current hashrate");
+#ifdef NVIDIA
     ui->lcdNumberGPUCount->setToolTip("Number of nVidia GPU(s)");
 
     ui->lcdNumberMaxGPUTemp->setToolTip("Displaing the current higher temperature");
@@ -247,7 +251,7 @@ void MainWindow::setupToolTips()
 
     ui->lcdNumberMaxWatt->setToolTip("Displaing the current higher power draw in Watt");
     ui->lcdNumberMinWatt->setToolTip("Displaing the current lower power draw in Watt");
-
+#endif
     if(!ui->groupBoxWatchdog->isChecked())
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
     else
@@ -363,6 +367,45 @@ void MainWindow::onReadyToStartMiner()
     on_pushButton_clicked();
 }
 
+
+void MainWindow::onHelp()
+{
+    on_pushButtonHelp_clicked();
+}
+
+void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
+{
+    _process->setShareOnly(checked);
+}
+
+
+void MainWindow::on_pushButtonHelp_clicked()
+{
+    helpDialog* helpdial = new helpDialog(this);
+    helpdial->exec();
+    delete helpdial;
+}
+
+void MainWindow::on_spinBoxDelayNoHash_valueChanged(int arg1)
+{
+    _process->setDelayBeforeNoHash(arg1);
+}
+
+
+
+
+autoStart::autoStart(QObject *pParent)
+{
+}
+
+void autoStart::run()
+{
+    QThread::sleep(2);
+    emit readyToStartMiner();
+}
+
+#ifdef NVIDIA
+
 void MainWindow::onGPUInfo(unsigned int gpucount
                            , unsigned int maxgputemp
                            , unsigned int mingputemp
@@ -393,38 +436,6 @@ void MainWindow::onGPUInfo(unsigned int gpucount
     ui->lcdNumberMinWatt->display((double)minpowerdraw / 1000);
 
 }
-
-void MainWindow::onHelp()
-{
-    on_pushButtonHelp_clicked();
-}
-
-void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
-{
-    _process->setShareOnly(checked);
-}
-
-
-void MainWindow::on_pushButtonHelp_clicked()
-{
-    helpDialog* helpdial = new helpDialog(this);
-    helpdial->exec();
-    delete helpdial;
-}
-
-
-
-
-autoStart::autoStart(QObject *pParent)
-{
-}
-
-void autoStart::run()
-{
-    QThread::sleep(2);
-    emit readyToStartMiner();
-}
-
 
 
 maxGPUThread::maxGPUThread(QObject *pParent)
@@ -466,7 +477,36 @@ void MainWindow::on_pushButtonOC_clicked()
 
 }
 
-void MainWindow::on_spinBoxDelayNoHash_valueChanged(int arg1)
+void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 {
-    _process->setDelayBeforeNoHash(arg1);
+    unsigned short hash , share;
+
+    if(checked)
+    {
+        LEDDialog* led = new LEDDialog(50, 100, this);
+        if(led)
+        {
+            if(led->exec())
+            {
+                led->getValues(hash, share);
+                _process->setLEDOptions(hash, share, true);
+                qDebug() << "ok";
+
+                nvidiaAPI* nvapi = new nvidiaAPI();
+                nvapi->setAllLED(share);
+                QThread::msleep(500);
+                nvapi->setAllLED(hash);
+                delete nvapi;
+            }
+            else
+                ui->checkBoxBlinkLED->setChecked(false);
+            delete led;
+        }
+    }
+    else
+        _process->setLEDOptions(hash, share, true);
 }
+
+#endif
+
+

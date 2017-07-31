@@ -290,6 +290,8 @@ public:
     int setPowerLimitPercent(unsigned int gpu, unsigned int percent);
     int setTempLimitOffset(unsigned int gpu, unsigned int offset);
 
+    void setAllLED(int color);
+
 
 private:
 
