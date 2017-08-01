@@ -272,6 +272,13 @@ QPushButton:disabled
        <string>nVidia</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="10">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Max mem clock:</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
@@ -279,25 +286,12 @@ QPushButton:disabled
          </property>
         </widget>
        </item>
-       <item row="1" column="4">
+       <item row="1" column="5">
         <widget class="QLabel" name="label_11">
          <property name="text">
           <string>Min fan speed:</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Max mem clock:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLCDNumber" name="lcdNumberMaxFanSpeed"/>
-       </item>
-       <item row="0" column="9">
-        <widget class="QLCDNumber" name="lcdNumberMaxWatt"/>
        </item>
        <item row="0" column="1">
         <widget class="QLCDNumber" name="lcdNumberGPUCount">
@@ -306,8 +300,21 @@ QPushButton:disabled
          </property>
         </widget>
        </item>
-       <item row="0" column="7">
+       <item row="0" column="11">
         <widget class="QLCDNumber" name="lcdNumberMaxMemClock"/>
+       </item>
+       <item row="0" column="7">
+        <widget class="QLCDNumber" name="lcdNumberMaxFanSpeed"/>
+       </item>
+       <item row="0" column="13">
+        <widget class="QLCDNumber" name="lcdNumberMaxWatt"/>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Max Speed fan:</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="2">
         <widget class="QLabel" name="label_6">
@@ -323,10 +330,20 @@ QPushButton:disabled
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
-        <widget class="QLabel" name="label_9">
+       <item row="1" column="3">
+        <widget class="QLCDNumber" name="lcdNumberMinGPUTemp">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="11">
+        <widget class="QLCDNumber" name="lcdNumberMinMemClock"/>
+       </item>
+       <item row="0" column="12">
+        <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>Max Speed fan:</string>
+          <string>Max power draw:</string>
          </property>
         </widget>
        </item>
@@ -337,42 +354,25 @@ QPushButton:disabled
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
-        <widget class="QLCDNumber" name="lcdNumberMinGPUTemp">
-         <property name="digitCount">
-          <number>3</number>
+       <item row="1" column="10">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Min mem clock:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="7">
-        <widget class="QLCDNumber" name="lcdNumberMinMemClock"/>
-       </item>
-       <item row="0" column="8">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>Max power draw:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="9">
-        <widget class="QLCDNumber" name="lcdNumberMinWatt"/>
-       </item>
-       <item row="1" column="5">
         <widget class="QLCDNumber" name="lcdNumberMinFanSpeed"/>
        </item>
-       <item row="1" column="8">
+       <item row="1" column="12">
         <widget class="QLabel" name="label_15">
          <property name="text">
           <string>Min power draw:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="6">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Min mem clock:</string>
-         </property>
-        </widget>
+       <item row="1" column="13">
+        <widget class="QLCDNumber" name="lcdNumberMinWatt"/>
        </item>
        <item row="1" column="0" rowspan="3">
         <widget class="QPushButton" name="pushButtonOC">
@@ -391,6 +391,40 @@ QPushButton:disabled
          </property>
          <property name="text">
           <string>Blink LED on shares</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="8">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>Min GPU clock:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Max GPU clock:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="QLCDNumber" name="lcdNumberMaxGPUClock"/>
+       </item>
+       <item row="1" column="9">
+        <widget class="QLCDNumber" name="lcdNumberMinGPUClock"/>
+       </item>
+       <item row="2" column="12">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Total power draw:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="13">
+        <widget class="QLCDNumber" name="lcdNumberTotalPowerDraw">
+         <property name="digitCount">
+          <number>5</number>
          </property>
         </widget>
        </item>

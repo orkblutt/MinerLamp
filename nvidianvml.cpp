@@ -95,6 +95,26 @@ int nvidiaNVML::getMemClock(unsigned int index)
 
 }
 
+int nvidiaNVML::getGPUClock(unsigned int index)
+{
+    nvmlReturn_t result;
+
+    nvmlDevice_t device;
+    unsigned int clock = 0;
+
+    result = nvmlDeviceGetHandleByIndex(index, &device);
+    if(result != NVML_SUCCESS )
+    {
+        qDebug() << nvmlErrorString(result);
+        return -1;
+    }
+
+    result = nvmlDeviceGetClockInfo(device, NVML_CLOCK_GRAPHICS, &clock);
+
+    return clock;
+
+}
+
 int nvidiaNVML::getPowerDraw(unsigned int index)
 {
     nvmlReturn_t result;
@@ -202,7 +222,7 @@ int nvidiaNVML::getLowerFanSpeed()
 
 }
 
-int nvidiaNVML::getMaxClock()
+int nvidiaNVML::getMemMaxClock()
 {
     unsigned int maxClock = 0;
     unsigned int gpuCount = getGPUCount();
@@ -216,7 +236,7 @@ int nvidiaNVML::getMaxClock()
 
 }
 
-int nvidiaNVML::getLowerClock()
+int nvidiaNVML::getMemLowerClock()
 {
     unsigned int minClock = 1000000;
     unsigned int gpuCount = getGPUCount();
@@ -228,6 +248,32 @@ int nvidiaNVML::getLowerClock()
     }
     return minClock;
 
+}
+
+int nvidiaNVML::getGPUMaxClock()
+{
+    unsigned int maxClock = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int clock = getGPUClock(i);
+        if(clock > maxClock)
+            maxClock = clock;
+    }
+    return maxClock;
+}
+
+int nvidiaNVML::getGPUMinClock()
+{
+    unsigned int minClock = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int speed = getGPUClock(i);
+        if(speed < minClock)
+            minClock = speed;
+    }
+    return minClock;
 }
 
 int nvidiaNVML::getMaxPowerDraw()
@@ -255,6 +301,15 @@ int nvidiaNVML::getMinPowerDraw()
     }
     return minWatt;
 
+}
+
+int nvidiaNVML::getPowerDrawSum()
+{
+    unsigned int totalWatt = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+        totalWatt += getPowerDraw(i);
+    return totalWatt;
 }
 
 void nvidiaNVML::setClock(unsigned int index)

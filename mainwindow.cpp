@@ -249,9 +249,14 @@ void MainWindow::setupToolTips()
     ui->lcdNumberMaxMemClock->setToolTip("Displaing the current higher memory clock");
     ui->lcdNumberMinMemClock->setToolTip("Displaing the current lower memory clock");
 
+    ui->lcdNumberMaxGPUClock->setToolTip("The GPU in your rig with the higher clock");
+    ui->lcdNumberMinGPUClock->setToolTip("The GPU in your rig with the lower clock");
 
     ui->lcdNumberMaxWatt->setToolTip("Displaing the current higher power draw in Watt");
     ui->lcdNumberMinWatt->setToolTip("Displaing the current lower power draw in Watt");
+
+    ui->lcdNumberTotalPowerDraw->setToolTip("The total power used by the GPUs");
+
 #endif
     if(!ui->groupBoxWatchdog->isChecked())
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
@@ -259,7 +264,7 @@ void MainWindow::setupToolTips()
         ui->groupBoxWatchdog->setToolTip("");
 
     ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
-    ui->checkBoxBlinkLED->setToolTip("Not yet implemented...");
+    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
 
 }
 
@@ -414,8 +419,11 @@ void MainWindow::onGPUInfo(unsigned int gpucount
                            , unsigned int minfanspeed
                            , unsigned int maxmemclock
                            , unsigned int minmemclock
+                           , unsigned int maxgpuclock
+                           , unsigned int mingpuclock
                            , unsigned int maxpowerdraw
-                           , unsigned int minpowerdraw)
+                           , unsigned int minpowerdraw
+                           , unsigned int totalpowerdraw)
 {
 
     ui->lcdNumberMaxGPUTemp->setPalette(getTempColor(maxgputemp));
@@ -432,9 +440,13 @@ void MainWindow::onGPUInfo(unsigned int gpucount
     ui->lcdNumberMaxMemClock->display((int)maxmemclock);
     ui->lcdNumberMinMemClock->display((int)minmemclock);
 
+    ui->lcdNumberMaxGPUClock->display((int)maxgpuclock);
+    ui->lcdNumberMinGPUClock->display((int)mingpuclock);
 
     ui->lcdNumberMaxWatt->display((double)maxpowerdraw / 1000);
     ui->lcdNumberMinWatt->display((double)minpowerdraw / 1000);
+
+    ui->lcdNumberTotalPowerDraw->display((double)totalpowerdraw / 1000);
 
 }
 
@@ -457,12 +469,26 @@ void maxGPUThread::run()
         unsigned int minTemp = nvml.getLowerTemp();
         unsigned int maxfanspeed = nvml.getHigherFanSpeed();
         unsigned int minfanspeed = nvml.getLowerFanSpeed();
-        unsigned int maxmemclock = nvml.getMaxClock();
-        unsigned int minmemclock = nvml.getLowerClock();
+        unsigned int maxmemclock = nvml.getMemMaxClock();
+        unsigned int minmemclock = nvml.getMemLowerClock();
+        unsigned int maxgpuclock = nvml.getGPUMaxClock();
+        unsigned int mingpuclock = nvml.getGPUMinClock();
         unsigned int maxpowerdraw = nvml.getMaxPowerDraw();
         unsigned int minpowerdraw = nvml.getMinPowerDraw();
+        unsigned int totalpowerdraw = nvml.getPowerDrawSum();
 
-        emit gpuInfoSignal(gpucount, maxTemp, minTemp, maxfanspeed, minfanspeed, maxmemclock, minmemclock, maxpowerdraw, minpowerdraw);
+        emit gpuInfoSignal(gpucount
+                           , maxTemp
+                           , minTemp
+                           , maxfanspeed
+                           , minfanspeed
+                           , maxmemclock
+                           , minmemclock
+                           , maxgpuclock
+                           , mingpuclock
+                           , maxpowerdraw
+                           , minpowerdraw
+                           , totalpowerdraw);
 
         QThread::sleep(5);
     }

@@ -44,8 +44,11 @@ signals:
                        , unsigned int minfanspeed
                        , unsigned int maxmemclock
                        , unsigned int minmemclock
+                       , unsigned int maxgpuclock
+                       , unsigned int mingpuclock
                        , unsigned int maxpowerdraw
-                       , unsigned int minpowerdraw);
+                       , unsigned int minpowerdraw
+                       , unsigned int totalpowerdraw);
 #endif
 };
 
@@ -92,8 +95,12 @@ private slots:
                    , unsigned int minfanspeed
                    , unsigned int maxmemclock
                    , unsigned int minmemclock
+                   , unsigned int maxgpuclock
+                   , unsigned int mingpuclock
                    , unsigned int maxpowerdraw
-                   , unsigned int minpowerdraw);
+                   , unsigned int minpowerdraw
+                   , unsigned int totalpowerdraw
+                   );
      void on_pushButtonOC_clicked();
      void on_checkBoxBlinkLED_clicked(bool checked);
 #endif

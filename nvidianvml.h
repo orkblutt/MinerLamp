@@ -19,7 +19,7 @@ public:
     int getGPUTemp(unsigned int index);
     int getFanSpeed(unsigned int index);
     int getMemClock(unsigned int index);
-
+    int getGPUClock(unsigned int index);
     int getPowerDraw(unsigned int index);
 
     int getMaxSupportedMemClock(unsigned int index);
@@ -30,11 +30,17 @@ public:
     int getHigherFanSpeed();
     int getLowerFanSpeed();
 
-    int getMaxClock();
-    int getLowerClock();
+    int getMemMaxClock();
+    int getMemLowerClock();
+
+    int getGPUMaxClock();
+    int getGPUMinClock();
 
     int getMaxPowerDraw();
     int getMinPowerDraw();
+
+    int getPowerDrawSum();
+
 
     void setClock(unsigned int index);
 
