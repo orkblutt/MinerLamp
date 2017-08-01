@@ -5,6 +5,7 @@
 #include "nvidianvml.h"
 #include "nvocdialog.h"
 #include "leddialog.h"
+#include "nanopoolapi.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -506,7 +507,7 @@ void MainWindow::on_pushButtonOC_clicked()
 
 void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 {
-    unsigned short hash , share;
+    unsigned short hash = 0 , share = 0;
 
     _settings->beginGroup(NVIDIAOPTION);
 
@@ -541,5 +542,4 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 }
 
 #endif
-
 

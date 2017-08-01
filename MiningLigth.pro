@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,7 +33,8 @@ SOURCES += \
     nvidianvml.cpp \
     nvocdialog.cpp \
     nvidiaapi.cpp \
-    leddialog.cpp
+    leddialog.cpp \
+    nanopoolapi.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     nvidianvml.h \
     nvocdialog.h \
     nvidiaapi.h \
-    leddialog.h
+    leddialog.h \
+    nanopoolapi.h
 
 FORMS += \
         mainwindow.ui \
@@ -64,3 +66,5 @@ INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 
 win32: INCLUDEPATH += $$PWD/nvapi
+
+CONFIG  += openssl-linked

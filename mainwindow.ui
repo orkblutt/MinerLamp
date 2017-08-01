@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>916</width>
+    <width>1075</width>
     <height>539</height>
    </rect>
   </property>
@@ -218,13 +218,10 @@ QPushButton:disabled
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditMinerPath"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
+    <item row="0" column="5">
+     <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>Command line:</string>
+       <string>Start mining</string>
       </property>
      </widget>
     </item>
@@ -241,30 +238,6 @@ QPushButton:disabled
        <string>Only display share info</string>
       </property>
      </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Start mining</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="5">
-     <widget class="QPushButton" name="pushButtonHelp">
-      <property name="text">
-       <string>About</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0" colspan="6">
-     <widget class="QTextEdit" name="textEdit">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditArgs"/>
     </item>
     <item row="8" column="0" colspan="6">
      <widget class="QGroupBox" name="groupBoxNvidia">
@@ -431,6 +404,16 @@ QPushButton:disabled
       </layout>
      </widget>
     </item>
+    <item row="1" column="1" colspan="4">
+     <widget class="QLineEdit" name="lineEditArgs"/>
+    </item>
+    <item row="10" column="0" colspan="6">
+     <widget class="QTextEdit" name="textEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
     <item row="4" column="0" colspan="5">
      <widget class="QGroupBox" name="groupBoxWatchdog">
       <property name="title">
@@ -511,6 +494,16 @@ QPushButton:disabled
       </layout>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Command line:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="4">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
     <item row="2" column="0">
      <widget class="QCheckBox" name="checkBoxAutoStart">
       <property name="text">
@@ -522,6 +515,13 @@ QPushButton:disabled
      <widget class="QLCDNumber" name="lcdNumberHashRate">
       <property name="digitCount">
        <number>7</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QPushButton" name="pushButtonHelp">
+      <property name="text">
+       <string>About</string>
       </property>
      </widget>
     </item>

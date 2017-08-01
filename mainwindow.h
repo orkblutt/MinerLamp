@@ -110,7 +110,6 @@ private slots:
 
     void on_spinBoxDelayNoHash_valueChanged(int arg1);
 
-
 private:
 
     void onMinerStarted();
