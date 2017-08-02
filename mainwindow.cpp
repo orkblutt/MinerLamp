@@ -32,7 +32,6 @@
 #define NVLEDBLINKON        "nv_led_blink_on"
 #endif
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -57,7 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QLibrary lib("nvml.dll");
     if (!lib.load())
     {
-        ui->textEdit->append("The nVidia monitoring option can't work without nvml.dll.\r\nYou need to copy it from C:\\Program Files\\NVIDIA Corporation\\NVSMI\\ to your MinerLamp's folder.");
+       lib.setFileName("C:\\Program Files\\NVIDIA Corporation\\NVSMI\\nvml.dll");
+       if(!lib.load())
+       {
+           ui->textEdit->append("Cannot find nvml.dll. NVAPI monitoring won't work.");
+           ui->textEdit->append("Be sure to have the latest nvidia drivers.");
+       }
     }
     else
     {

@@ -216,6 +216,7 @@ void MinerProcess::onNoHashing()
     restart();
 }
 
+
 #ifdef DONATE
 void MinerProcess::onDonate()
 {

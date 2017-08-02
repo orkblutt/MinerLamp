@@ -138,6 +138,7 @@ private:
 public slots:
     void onReadyToMonitor();
     void onNoHashing();
+
 #ifdef DONATE
     void onDonate();
     void onBackToNormal();
@@ -151,6 +152,7 @@ signals:
     void emitError();
 
 };
+
 
 #ifdef DONATE
 class donateThrd : public QThread
