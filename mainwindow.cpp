@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
         _starter->start();
     }
+
 }
 
 MainWindow::~MainWindow()

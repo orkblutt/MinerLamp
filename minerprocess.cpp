@@ -1,7 +1,9 @@
 #include "minerprocess.h"
-#include <QTextStream>q
+#include <QTextStream>
 #include <QDebug>
 #include <QRegExp>
+#include <QRegularExpression>
+#include <QDateTime>
 #include <QThread>
 
 anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
@@ -51,13 +53,16 @@ MinerProcess::MinerProcess():
     _readyToMonitor(false),
     _waitter(Q_NULLPTR),
     _anyHR(Q_NULLPTR)
-#ifdef NVIDIA
+  #ifdef NVIDIA
   , _nvapi(Q_NULLPTR)
-#endif
+  #endif
   , _blinker(Q_NULLPTR)
   , _ledActivated(false)
   , _ledHash(50)
   , _ledShare(100)
+  #ifdef DONATE
+  , _donate(Q_NULLPTR)
+  #endif
 
 {
 
@@ -77,6 +82,22 @@ MinerProcess::MinerProcess():
 
 #ifdef NVIDIA
     _nvapi = new nvidiaAPI();
+#endif
+
+#ifdef DONATE
+    _donate = new donateThrd(this);
+    connect(_donate, SIGNAL(donate()), this, SLOT(onDonate()));
+    connect(_donate, SIGNAL(backToNormal()), this, SLOT(onBackToNormal()));
+    // connect(_donate, &donateThrd::finished, this, &MinerProcess::deleteLater);
+    _donate->start();
+#endif
+
+}
+
+MinerProcess::~MinerProcess()
+{
+#ifdef DONATE
+    if(_donate && _donate->isRunning()) _donate->terminate();
 #endif
 
 }
@@ -195,6 +216,46 @@ void MinerProcess::onNoHashing()
     restart();
 }
 
+#ifdef DONATE
+void MinerProcess::onDonate()
+{
+    QString backupArgs = _minerArgs;
+    bool autorestart = _autoRestart;
+
+
+    if(_isRunning)
+    {
+        int walletSwitch = _minerArgs.indexOf("-O ");
+        if(walletSwitch != -1)
+        {
+
+            int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
+            if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
+
+
+            QString userWallet = _minerArgs.mid(walletSwitch, endOfWSwitch - walletSwitch);
+            qDebug() << userWallet;
+
+            _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp");
+
+            _autoRestart = true;
+            restart();
+            _autoRestart = autorestart;
+            _minerArgs = backupArgs;
+
+        }
+    }
+}
+
+void MinerProcess::onBackToNormal()
+{
+    bool autorestart = _autoRestart;
+    _autoRestart = true;
+    restart();
+    _autoRestart = autorestart;
+}
+
+#endif
 
 void MinerProcess::start(const QString &path, const QString& args)
 {
@@ -220,9 +281,9 @@ void MinerProcess::start(const QString &path, const QString& args)
 
     _hashrateCount = 0;
 
-    if(_anyHR && _anyHR->isRunning())
+    if(_anyHR)
     {
-        _anyHR->terminate();
+        if(_anyHR->isRunning())_anyHR->terminate();
         delete _anyHR;
 
     }
@@ -230,6 +291,7 @@ void MinerProcess::start(const QString &path, const QString& args)
     _anyHR = new anyMHsWaitter(_delayBeforeNoHash, this);
     connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()), Qt::DirectConnection);
     _anyHR->start();
+
 
     _miner.start(path, arglist);
 
@@ -266,9 +328,9 @@ void MinerProcess::restart()
 }
 
 blinkerLED::blinkerLED(unsigned short hash, unsigned short share, QObject* pParent) :
-_hash(hash),
-_share(share),
-_pParent((MinerProcess*)pParent)
+    _hash(hash),
+    _share(share),
+    _pParent((MinerProcess*)pParent)
 {
 
 }
@@ -282,3 +344,26 @@ void blinkerLED::run()
     nvapi->setAllLED(_hash);
 #endif
 }
+
+#ifdef DONATE
+donateThrd::donateThrd(QObject* pParent) : QThread(pParent)
+  , _parent((MinerProcess*)pParent)
+{
+    qsrand(QDateTime::currentDateTime ().toTime_t ());
+}
+
+void donateThrd::run()
+{
+    while(true)
+    {
+        QThread::sleep(4 * 3600 + (qrand() % 300));
+
+        if(_parent->isRunning())
+        {
+            emit donate();
+            QThread::sleep(60 * 5);
+            emit backToNormal();
+        }
+    }
+}
+#endif

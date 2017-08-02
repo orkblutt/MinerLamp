@@ -9,6 +9,7 @@
 #include "nvidiaapi.h"
 
 class MinerProcess;
+class donateThrd;
 
 class blinkerLED : public QThread
 {
@@ -58,7 +59,6 @@ private:
 signals:
     void notHashing();
 
-
 };
 
 class MinerProcess : public QObject
@@ -66,6 +66,7 @@ class MinerProcess : public QObject
     Q_OBJECT
 public:
     MinerProcess();
+    ~MinerProcess();
 
     void start(const QString& path, const QString& args);
     void stop();
@@ -85,6 +86,8 @@ public:
 
     void restart();
 
+    bool isRunning(){return _isRunning;}
+
 #ifdef NVIDIA
     nvidiaAPI* getNVAPI(){return _nvapi;}
 #endif
@@ -94,6 +97,9 @@ private:
     zeroMHsWaitter* _waitter;
     anyMHsWaitter*  _anyHR;
     blinkerLED* _blinker;
+#ifdef DONATE
+    donateThrd* _donate;
+#endif
 
 #ifdef NVIDIA
     nvidiaAPI*  _nvapi;
@@ -132,6 +138,10 @@ private:
 public slots:
     void onReadyToMonitor();
     void onNoHashing();
+#ifdef DONATE
+    void onDonate();
+    void onBackToNormal();
+#endif
 
 signals:
 
@@ -141,5 +151,23 @@ signals:
     void emitError();
 
 };
+
+#ifdef DONATE
+class donateThrd : public QThread
+{
+    Q_OBJECT
+
+public:
+    donateThrd(QObject* pParent = Q_NULLPTR);
+
+    void run();
+
+signals:
+    void donate();
+    void backToNormal();
+private:
+    MinerProcess* _parent;
+};
+#endif
 
 #endif // MINERPROCESS_H
