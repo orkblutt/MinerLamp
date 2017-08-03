@@ -8,6 +8,7 @@
 
 #include "minerprocess.h"
 #include "highlighter.h"
+#include "nanopoolapi.h"
 
 
 namespace Ui {
@@ -22,10 +23,15 @@ public:
 
     void run();
 
+
+
+
 signals:
 
     void readyToStartMiner();
 };
+
+
 
 class maxGPUThread : public QThread
 {
@@ -110,6 +116,12 @@ private slots:
 
     void on_spinBoxDelayNoHash_valueChanged(int arg1);
 
+    void on_pushButtonPool_clicked(bool checked);
+
+    void on_pushButtonShowHideLog_clicked(bool checked);
+
+    void on_pushButtonDisplayPoolStats_clicked();
+
 private:
 
     void onMinerStarted();
@@ -146,6 +158,7 @@ private:
 #ifdef NVIDIA
     maxGPUThread* _maxGPUTemp;
 #endif
+
 };
 
 #endif // MAINWINDOW_H

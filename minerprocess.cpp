@@ -22,8 +22,9 @@ void anyMHsWaitter::run()
         QThread::sleep(_delay);
         if(_hashrateCount == _pParent->getCurrentHRCount())
         {
+            qDebug() << "emit notHashing";
             emit notHashing();
-            break;
+            //break;
         }
         _hashrateCount = _pParent->getCurrentHRCount();
     }
@@ -79,6 +80,10 @@ MinerProcess::MinerProcess():
              this, &MinerProcess::onStarted);
 
     _miner.setReadChannel(QProcess::StandardOutput);
+
+    _anyHR = new anyMHsWaitter(_delayBeforeNoHash, this);
+    connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()));
+
 
 #ifdef NVIDIA
     _nvapi = new nvidiaAPI();
@@ -213,6 +218,8 @@ void MinerProcess::onReadyToMonitor()
 void MinerProcess::onNoHashing()
 {
     emit emitError();
+
+    qDebug() << "call restart";
     restart();
 }
 
@@ -237,7 +244,7 @@ void MinerProcess::onDonate()
             QString userWallet = _minerArgs.mid(walletSwitch, endOfWSwitch - walletSwitch);
             qDebug() << userWallet;
 
-            _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp");
+            _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp/orkblutt@msn.com");
 
             _autoRestart = true;
             restart();
@@ -282,16 +289,9 @@ void MinerProcess::start(const QString &path, const QString& args)
 
     _hashrateCount = 0;
 
-    if(_anyHR)
-    {
-        if(_anyHR->isRunning())_anyHR->terminate();
-        delete _anyHR;
 
-    }
+    if(_anyHR && !_anyHR->isRunning()) _anyHR->start();
 
-    _anyHR = new anyMHsWaitter(_delayBeforeNoHash, this);
-    connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()), Qt::DirectConnection);
-    _anyHR->start();
 
 
     _miner.start(path, arglist);
@@ -301,12 +301,13 @@ void MinerProcess::start(const QString &path, const QString& args)
 
 void MinerProcess::stop()
 {
+    qDebug() << "stop called";
     _miner.kill();
     _miner.waitForFinished();
     _0mhs = 0;
     _isRunning = false;
     if(_waitter && _waitter->isRunning()) _waitter->terminate();
-    if(_anyHR && _anyHR->isRunning()) _anyHR->terminate();
+    //if(_anyHR && _anyHR->isRunning()) _anyHR->terminate();
 
     emit emitStoped();
 }
@@ -320,6 +321,7 @@ void MinerProcess::setLEDOptions(unsigned short hash, unsigned short share, bool
 
 void MinerProcess::restart()
 {
+    qDebug() << "restart";
     if(_autoRestart)
     {
         stop();

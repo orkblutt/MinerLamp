@@ -56,12 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QLibrary lib("nvml.dll");
     if (!lib.load())
     {
-       lib.setFileName("C:\\Program Files\\NVIDIA Corporation\\NVSMI\\nvml.dll");
-       if(!lib.load())
-       {
-           ui->textEdit->append("Cannot find nvml.dll. NVAPI monitoring won't work.");
-           ui->textEdit->append("Be sure to have the latest nvidia drivers.");
-       }
+        lib.setFileName("C:\\Program Files\\NVIDIA Corporation\\NVSMI\\nvml.dll");
+        if(!lib.load())
+        {
+            ui->textEdit->append("Cannot find nvml.dll. NVAPI monitoring won't work.");
+            ui->textEdit->append("Be sure to have the latest nvidia drivers.");
+        }
     }
     else
     {
@@ -101,6 +101,10 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(_starter, SIGNAL(readyToStartMiner()), this, SLOT(onReadyToStartMiner()));
         _starter->start();
     }
+
+    ui->pushButtonShowHideLog->setChecked(true);
+    ui->pushButtonPool->setChecked(false);
+    ui->groupBoxPools->hide();
 
 }
 
@@ -548,3 +552,28 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 
 #endif
 
+void MainWindow::on_pushButtonPool_clicked(bool checked)
+{
+    if(checked)
+        ui->groupBoxPools->show();
+    else
+        ui->groupBoxPools->hide();
+}
+
+void MainWindow::on_pushButtonShowHideLog_clicked(bool checked)
+{
+    if(checked)
+        ui->textEdit->show();
+    else
+    {
+        QRect rect = ui->textEdit->geometry();
+        ui->textEdit->hide();
+        QRect winRect = geometry();
+        resize(winRect.width(), winRect.height() - rect.height());
+    }
+}
+
+void MainWindow::on_pushButtonDisplayPoolStats_clicked()
+{
+
+}
