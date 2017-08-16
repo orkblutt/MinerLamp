@@ -37,7 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     _isMinerRunning(false),
     _isStartStoping(false),
-    _errorCount(0)
+    _errorCount(0),
+    _nano(Q_NULLPTR)
 {
 
     _process = new MinerProcess();
@@ -106,6 +107,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButtonPool->setChecked(false);
     ui->groupBoxPools->hide();
 
+
+    int pos = ui->lineEditArgs->text().indexOf("-O ");
+    if(pos > 0)
+        ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
+                                                                  , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 43 : 41));
 }
 
 MainWindow::~MainWindow()
@@ -282,6 +288,8 @@ void MainWindow::setupToolTips()
 void MainWindow::on_pushButton_clicked()
 {
     saveParameters();
+    if(ui->lineEditMinerPath->text().isEmpty() || ui->lineEditArgs->text().isEmpty()) return;
+
     if(!_isStartStoping) // avoid to start/stop more than once on dbl clic
     {
         _isStartStoping = true;
@@ -576,4 +584,32 @@ void MainWindow::on_pushButtonShowHideLog_clicked(bool checked)
 void MainWindow::on_pushButtonDisplayPoolStats_clicked()
 {
 
+    if(!_nano)
+    {
+        _nano = new nanopoolAPI(ui->lineEditAccount->text(), this);
+        connect(_nano, &nanopoolAPI::emitBalance, this, &MainWindow::onBalance);
+        connect(_nano, &nanopoolAPI::emitUSerInfo, this, &MainWindow::onPoolUserInfo);
+
+    }
+
+    _nano->getUserInfo();
+}
+
+void MainWindow::onBalance(double balance)
+{
+    qDebug() << balance;
+    ui->lcdNumberBalance->display(balance);
+}
+
+void MainWindow::onPoolUserInfo(double userBalance
+                                , double currentCalcultatedHashRate
+                                , double averageHashRate1H
+                                , double averageHashRate3H
+                                , double averageHashRate6H
+                                , double averageHashRate12H
+                                , double averageHashRate24H)
+{
+    ui->lcdNumberBalance->display(userBalance);
+    ui->lcdNumberCalculatedHR->display(currentCalcultatedHashRate);
+    ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }

@@ -41,6 +41,8 @@ protected:
     QString _accountAddress;
     double _currentCalcultatedHashRate;
     double _reportedHashRate;
+    double _averageHashRate1H;
+    double _averageHashRate3H;
     double _averageHashRate6H;
     double _averageHashRate12H;
     double _averageHashRate24H;
@@ -77,6 +79,14 @@ public slots:
 signals:
 
     void emitBalance(double balance);
+    void emitUSerInfo(double balance
+                      , double currentCalculatedHR
+                      , double avrgHrH1
+                      , double avrgHrH3
+                      , double avrgHrH6
+                      , double avrgHrH12
+                      , double avrgHrH24
+                      );
 
 };
 

@@ -122,6 +122,16 @@ private slots:
 
     void on_pushButtonDisplayPoolStats_clicked();
 
+    void onBalance(double balance);
+    void onPoolUserInfo(double userBalance
+                                     , double currentCalcultatedHashRate
+                                     , double averageHashRate1H
+                                     , double averageHashRate3H
+                                     , double averageHashRate6H
+                                     , double averageHashRate12H
+                                     , double averageHashRate24H
+                                     );
+
 private:
 
     void onMinerStarted();
@@ -159,6 +169,7 @@ private:
     maxGPUThread* _maxGPUTemp;
 #endif
 
+    nanopoolAPI* _nano;
 };
 
 #endif // MAINWINDOW_H

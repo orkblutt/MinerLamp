@@ -286,7 +286,7 @@ QPushButton:disabled
     <item row="11" column="0">
      <widget class="QPushButton" name="pushButtonPool">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="text">
        <string>Pool</string>
@@ -565,13 +565,6 @@ QPushButton:disabled
        <string>Pools</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_20">
-         <property name="text">
-          <string>Current Calculated Hashrate:</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="2">
         <widget class="QLabel" name="label_21">
          <property name="text">
@@ -580,8 +573,22 @@ for last 6 hour:</string>
          </property>
         </widget>
        </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Current Calculated Hashrate:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QPushButton" name="pushButtonDisplayPoolStats">
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
-        <widget class="QLCDNumber" name="lcdNumber_2">
+        <widget class="QLCDNumber" name="lcdNumberCalculatedHR">
          <property name="digitCount">
           <number>6</number>
          </property>
@@ -594,46 +601,45 @@ for last 6 hour:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="6">
-        <widget class="QPushButton" name="pushButtonDisplayPoolStats">
-         <property name="text">
-          <string>Go</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QRadioButton" name="radioButtonNaopool">
          <property name="text">
           <string>Nanopool</string>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QRadioButton" name="radioButtonEthermine">
-         <property name="text">
-          <string>Ethermine</string>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="5">
-        <widget class="QLineEdit" name="lineEditAccount"/>
-       </item>
        <item row="0" column="4">
         <widget class="QRadioButton" name="radioButtonDwarfPool">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Dwarfpool</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_19">
+       <item row="2" column="0" colspan="5">
+        <widget class="QLineEdit" name="lineEditAccount">
          <property name="text">
-          <string>Balance:</string>
+          <string>0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="radioButtonEthermine">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Ethermine</string>
          </property>
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QLCDNumber" name="lcdNumber">
+        <widget class="QLCDNumber" name="lcdNumberBalance">
          <property name="smallDecimalPoint">
           <bool>false</bool>
          </property>
@@ -649,15 +655,19 @@ for last 6 hour:</string>
          </property>
         </widget>
        </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Balance:</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="3">
-        <widget class="QLCDNumber" name="lcdNumber_3">
+        <widget class="QLCDNumber" name="lcdNumberAvrgHr6H">
          <property name="digitCount">
           <number>6</number>
          </property>
         </widget>
-       </item>
-       <item row="5" column="1" colspan="2">
-        <widget class="QTableView" name="tableViewWorker"/>
        </item>
       </layout>
      </widget>

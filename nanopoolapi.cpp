@@ -10,7 +10,7 @@ nanopoolAPI::nanopoolAPI(QString account, QObject *parent) : userAccount(account
 {
     _networkManager = new QNetworkAccessManager(this);
     connect(_networkManager, &QNetworkAccessManager::finished,
-           this, &nanopoolAPI::replyFinished, Qt::DirectConnection);
+            this, &nanopoolAPI::replyFinished, Qt::DirectConnection);
 
     qDebug() << account;
 }
@@ -54,6 +54,7 @@ void nanopoolAPI::replyFinished(QNetworkReply *reply)
     if(!data.isEmpty())
     {
         QJsonObject json = QJsonDocument::fromJson(data).object();
+
         if(reply == _balanceReply)
         {
             _userBalance = json.value("data").toDouble();
@@ -65,11 +66,32 @@ void nanopoolAPI::replyFinished(QNetworkReply *reply)
         {
             qDebug() << "hashrate";
         }
+
         else if(reply == _userinfoReply)
         {
 
-        }
+            QJsonObject jsonData = json.value("data").toObject();
 
+            _userBalance = jsonData.value("balance").toString().toDouble();
+            _currentCalcultatedHashRate = jsonData.value("hashrate").toString().toDouble();
+
+            QJsonObject jsonHR = jsonData.value("avgHashrate").toObject();
+
+            _averageHashRate1H = jsonHR["h1"].toString().toDouble();
+            _averageHashRate3H = jsonHR["h3"].toString().toDouble();
+            _averageHashRate6H = jsonHR["h6"].toString().toDouble();
+            _averageHashRate12H = jsonHR["h12"].toString().toDouble();
+            _averageHashRate24H = jsonHR["h24"].toString().toDouble();
+
+            emit emitUSerInfo(_userBalance
+                              , _currentCalcultatedHashRate
+                              , _averageHashRate1H
+                              , _averageHashRate3H
+                              , _averageHashRate6H
+                              , _averageHashRate12H
+                              , _averageHashRate24H
+                              );
+        }
 
         qDebug() << data;
     }
