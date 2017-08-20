@@ -28,7 +28,8 @@ MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under cont
 
 ## Download
 You can find the ready to use package in [[!Releases]][Releases].
-IMPORTAT: the ready to use version is built with the DONATE flag on.
+
+IMPORTANT: the ready to use version is built with the DONATE flag on.
 
 ## Install
 
