@@ -15,7 +15,7 @@ MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under cont
 - display useful information for nVidia cards - core temperatures, fan speed, memory and gpu clock, power drawing - a minimum and a maximum from all cards - easy for spotting OC issues.
 - funny option like blinking cards LEDs on share accepted.
 - integrated overclocking of nVidia cards - available soon!
-- integrated pools monitoring - available soon!
+- integrated pools monitoring - in progress ...
 
 ## Table of Contents
 - [Download]("#download")
@@ -23,10 +23,12 @@ MinerLamp, written in Qt (C++), is a GUI with options to run ethminer under cont
 - [Usage](#usage)
 - [Build](#build)
 - [Contribute](#contribute)
+- [Donation](#donation)
 - [TODO](#todo)
 
 ## Download
-You can find the ready to use package in [[!Releases]][Releases]
+You can find the ready to use package in [[!Releases]][Releases].
+IMPORTAT: the ready to use version is built with the DONATE flag on.
 
 ## Install
 
@@ -62,9 +64,16 @@ If you don't want to build for nVIDIA GPU, delete the NVIDIA flag in the DEFINE 
 
 Feel free to make pull request.
 
+## Donation
+
+By default, the binaries built using the code include an automatic donation system:
+Every 4 hours, ethminer will be restarted using the 0xa07a8c9975145bb5371e8b3c31acb62ad9d0698e ethereum address in the parameters during 5 minutes. When this 5 minutes delay is gone, ethminer is restarted using the user credentials.
+If you prefer to not use this system, you have to comment the DONATE flag in the .pro file and recompil the code.
+
+You can also donate directly on 0xa07a8c9975145bb5371e8b3c31acb62ad9d0698e
+
 ## TODO
 
-- correct versioning
 - CMake
 - Support for AMD
 - build Linux and Mac releases
