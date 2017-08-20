@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int pos = ui->lineEditArgs->text().indexOf("-O ");
     if(pos > 0)
         ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
-                                                                  , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 43 : 41));
+                                                                  , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 42 : 40));
 }
 
 MainWindow::~MainWindow()

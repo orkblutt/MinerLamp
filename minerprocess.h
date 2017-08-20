@@ -123,6 +123,11 @@ private:
 
     unsigned int _hashrateCount;
 
+    unsigned int _acceptedShare;
+    unsigned int _staleShare;
+
+    QString _shareNumber;
+
     unsigned short _ledHash;
     unsigned short _ledShare;
 

@@ -61,6 +61,9 @@ MinerProcess::MinerProcess():
   , _ledActivated(false)
   , _ledHash(50)
   , _ledShare(100)
+  , _acceptedShare(0)
+  , _staleShare(0)
+  , _shareNumber("")
   #ifdef DONATE
   , _donate(Q_NULLPTR)
   #endif
@@ -121,9 +124,47 @@ void MinerProcess::onReadyToReadStdout()
 void MinerProcess::onReadyToReadStderr()
 {
     QString line(_miner.readAllStandardError());
-
     if(line.length() > 1)
     {
+        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2}MH/s"));
+        if(mhsPos != -1)
+        {
+            int endPos = line.indexOf(" (", mhsPos);
+            QString hashRate = line.mid(mhsPos, endPos - mhsPos);
+
+            qDebug() << hashRate;
+
+
+            if(_readyToMonitor)
+            {
+                if(hashRate == "0.00MH/s")
+                    _0mhs++;
+                else
+                    _0mhs = 0;
+
+                if(_0mhs > _max0mhs)
+                {
+                    restart();
+                }
+            }
+
+            hashRate += " ";
+            hashRate += _shareNumber;
+
+            emit emitHashRate(hashRate);
+
+            _hashrateCount++;
+        }
+
+        int miningOnPos = line.indexOf("Mining on #");
+        if(miningOnPos != -1)
+        {
+            miningOnPos = line.indexOf("[", miningOnPos);
+            int endPos = line.indexOf("]", miningOnPos) + 1;
+            _shareNumber = line.mid(miningOnPos, endPos - miningOnPos);
+        }
+
+
         QStringList list = line.split(QRegExp("\r\n"), QString::SkipEmptyParts);
         qDebug() << list;
         for(int i = 0; i < list.size(); i++)
@@ -135,7 +176,6 @@ void MinerProcess::onReadyToReadStderr()
                         || list.at(i).indexOf("Submitted") != -1)
                 {
                     _log->append(list.at(i).simplified());
-
                 }
             }
             else
@@ -149,29 +189,6 @@ void MinerProcess::onReadyToReadStderr()
             emit emitError();
             restart();
             return;
-        }
-
-        if(line.indexOf("MH/s") != -1)
-        {
-            QRegExp regex("[, ]");
-            QStringList list = line.split(regex, QString::SkipEmptyParts);
-            QString hasrate(list.at(6) + " " + list.at(7));
-
-            emit emitHashRate(hasrate);
-
-            if(_readyToMonitor)
-            {
-                if(list.at(7) == "0.00MH/s")
-                    _0mhs++;
-                else
-                    _0mhs = 0;
-
-                if(_0mhs > _max0mhs)
-                {
-                    restart();
-                }
-            }
-            _hashrateCount++;
         }
 
         if(_ledActivated)
@@ -207,6 +224,7 @@ void MinerProcess::onStarted()
     _log->append("ethminer start");
     _isRunning = true;
     _0mhs = 0;
+    _shareNumber = "";
     emit emitStarted();
 }
 
