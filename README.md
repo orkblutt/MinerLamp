@@ -2,6 +2,7 @@
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 [![Releases](https://img.shields.io/github/downloads/atom/atom/total.svg)][Releases]
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)][Gitter]
 
 > MinerLamp is a graphical interface to use with ethminer with advanced watchdog options and monitoring.
 
@@ -63,7 +64,7 @@ If you don't want to build for nVIDIA GPU, delete the NVIDIA flag in the DEFINE 
 
 ## Contribute
 
-Feel free to make pull request.
+Feel free to make pull request. You can also chat with other users and me [on Gitter][Gitter].
 
 ## Donation
 
@@ -82,4 +83,6 @@ You can also donate directly on 0xa07a8c9975145bb5371e8b3c31acb62ad9d0698e
 
 
 [Releases]: https://github.com/orkblutt/MinerLamp/releases
+[Gitter]: https://gitter.im/MinerLamp/Lobby
+
 
