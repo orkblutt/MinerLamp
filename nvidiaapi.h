@@ -281,6 +281,7 @@ public:
     void setLED(unsigned int gpu, int color);
 
     int getGPUOffset(unsigned int gpu);
+    int getMemOffset(unsigned int gpu);
 
     unsigned int getGpuClock(unsigned int gpu);
     unsigned int getPowerLimit(unsigned int gpu);

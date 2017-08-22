@@ -8,10 +8,7 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     _nvapi = new nvidiaAPI();
-
-
 
     unsigned int deviceNumber = _nvapi->getGPUCount();
     if(deviceNumber)
@@ -20,11 +17,10 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
         {
             ui->comboBoxDevice->addItem(QString("device " + QString::number(i)));
         }
-int value = _nvapi->getPowerLimit(0);
-qDebug() << value;
-        ui->horizontalSliderPowerPercent->setValue(value);
-    }
 
+        updateSliders(0);
+
+    }
 
 }
 
@@ -48,4 +44,21 @@ void nvOCDialog::on_horizontalSliderGpuOffset_valueChanged(int value)
 void nvOCDialog::on_horizontalSliderMemOffset_valueChanged(int value)
 {
     ui->lcdNumberMemClock->display(value);
+}
+
+
+void nvOCDialog::on_comboBoxDevice_activated(int index)
+{
+   updateSliders(index);
+}
+
+void nvOCDialog::updateSliders(unsigned int gpu)
+{
+    int plimit = _nvapi->getPowerLimit(gpu);
+    int gpuoffset = _nvapi->getGPUOffset(gpu);
+    int memoffset = _nvapi->getMemOffset(gpu);
+
+    ui->horizontalSliderPowerPercent->setValue(plimit);
+    ui->horizontalSliderGpuOffset->setValue(gpuoffset);
+    ui->horizontalSliderMemOffset->setValue(memoffset);
 }

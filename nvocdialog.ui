@@ -71,6 +71,12 @@
    </item>
    <item row="4" column="1" colspan="3">
     <widget class="QSlider" name="horizontalSliderGpuOffset">
+     <property name="minimum">
+      <number>-200</number>
+     </property>
+     <property name="maximum">
+      <number>200</number>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -78,8 +84,11 @@
    </item>
    <item row="7" column="1" colspan="3">
     <widget class="QSlider" name="horizontalSliderMemOffset">
+     <property name="minimum">
+      <number>-1500</number>
+     </property>
      <property name="maximum">
-      <number>1000</number>
+      <number>1500</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

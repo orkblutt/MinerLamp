@@ -25,7 +25,14 @@ private slots:
 
     void on_horizontalSliderMemOffset_valueChanged(int value);
 
+    void on_comboBoxDevice_activated(int index);
+
+
+
 private:
+
+    void updateSliders(unsigned int gpu);
+
     Ui::nvOCDialog *ui;
 
     nvidiaNVML* _nvml;

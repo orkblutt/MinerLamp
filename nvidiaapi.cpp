@@ -113,20 +113,43 @@ int nvidiaAPI::getGPUOffset(unsigned int gpu)
 {
     NvAPI_Status ret;
 
+    NV_GPU_PERF_PSTATES20_INFO pset1 = { 0 };
+    pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
+    pset1.numPstates = 1;
+    pset1.numClocks = 1;
+    // Ok on both 1080 and 970
+    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS;
+
+
+
+    ret = NvGetPstates(_gpuHandles[gpu], &pset1);
+    if (ret == NVAPI_OK) {
+        return pset1.pstates[0].clocks[0].freqDelta_kHz.value / 1000;
+    }
+
+    return 0;
+}
+
+int nvidiaAPI::getMemOffset(unsigned int gpu)
+{
+    NvAPI_Status ret;
 
     NV_GPU_PERF_PSTATES20_INFO pset1 = { 0 };
     pset1.version = NV_GPU_PERF_PSTATES20_INFO_VER1;
     pset1.numPstates = 1;
     pset1.numClocks = 1;
     // Ok on both 1080 and 970
-    //pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS;
+    pset1.pstates[0].clocks[0].domainId = NVAPI_GPU_PUBLIC_CLOCK_MEMORY;
+
+
 
     ret = NvGetPstates(_gpuHandles[gpu], &pset1);
     if (ret == NVAPI_OK) {
-        qDebug() << pset1.pstates[0].clocks[0].freqDelta_kHz.value;
+        return pset1.pstates[0].clocks[1].freqDelta_kHz.value / 1000;
     }
 
-    return ret;
+    return 0;
+
 }
 
 
