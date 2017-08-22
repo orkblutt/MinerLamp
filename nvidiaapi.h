@@ -276,8 +276,6 @@ public:
 
     unsigned int getGPUCount();
 
-    void overClock(unsigned int gpu, unsigned int mem);
-
     void setLED(unsigned int gpu, int color);
 
     int getGPUOffset(unsigned int gpu);
@@ -286,8 +284,8 @@ public:
     unsigned int getGpuClock(unsigned int gpu);
     unsigned int getPowerLimit(unsigned int gpu);
 
-    int setMemClockOffset(unsigned int gpu, unsigned int clock);
-    int setGPUOffset(unsigned int gpu, unsigned int offset);
+    int setMemClockOffset(unsigned int gpu,  int clock);
+    int setGPUOffset(unsigned int gpu, int offset);
     int setPowerLimitPercent(unsigned int gpu, unsigned int percent);
     int setTempLimitOffset(unsigned int gpu, unsigned int offset);
 

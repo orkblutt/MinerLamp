@@ -30,6 +30,9 @@
 #define NVLEDHASHINTENSITY  "nv_led_hash_intensity"
 #define NVLEDSHAREINTENSITY "nv_led_share_intensity"
 #define NVLEDBLINKON        "nv_led_blink_on"
+
+#define NVOCOPTION          "nvidia_oc_options"
+
 #endif
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -516,7 +519,7 @@ void maxGPUThread::run()
 
 void MainWindow::on_pushButtonOC_clicked()
 {
-    nvOCDialog* dlg = new nvOCDialog(this);
+    nvOCDialog* dlg = new nvOCDialog(*_settings, this);
     dlg->exec();
     delete dlg;
 

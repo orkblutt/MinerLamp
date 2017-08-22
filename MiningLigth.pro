@@ -16,7 +16,7 @@ VERSION = 0.1.0.647
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS NVIDIA #DONATE
+DEFINES += QT_DEPRECATED_WARNINGS NVIDIA DONATE
 
 
 # You can also make your code fail to compile if you use deprecated APIs.

@@ -2,7 +2,7 @@
 #include "ui_nvocdialog.h"
 #include <QDebug>
 
-nvOCDialog::nvOCDialog(QWidget *parent) :
+nvOCDialog::nvOCDialog(QSettings &settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::nvOCDialog)
 {
@@ -17,11 +17,8 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
         {
             ui->comboBoxDevice->addItem(QString("device " + QString::number(i)));
         }
-
         updateSliders(0);
-
     }
-
 }
 
 nvOCDialog::~nvOCDialog()
@@ -61,4 +58,31 @@ void nvOCDialog::updateSliders(unsigned int gpu)
     ui->horizontalSliderPowerPercent->setValue(plimit);
     ui->horizontalSliderGpuOffset->setValue(gpuoffset);
     ui->horizontalSliderMemOffset->setValue(memoffset);
+}
+
+
+
+void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if(button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Apply))
+    {
+        int gpu = ui->comboBoxDevice->currentIndex();
+        if(ui->checkBoxAllDevices->isChecked())
+        {
+            for(int i = 0; i < _nvapi->getGPUCount(); i++)
+            {
+                _nvapi->setPowerLimitPercent(i, ui->horizontalSliderPowerPercent->value());
+                _nvapi->setGPUOffset(i, ui->horizontalSliderGpuOffset->value());
+                _nvapi->setMemClockOffset(i, ui->horizontalSliderMemOffset->value());
+            }
+        }
+        else
+        {
+            _nvapi->setPowerLimitPercent(gpu, ui->horizontalSliderPowerPercent->value());
+            _nvapi->setGPUOffset(gpu, ui->horizontalSliderGpuOffset->value());
+            _nvapi->setMemClockOffset(gpu, ui->horizontalSliderMemOffset->value());
+        }
+
+
+    }
 }
