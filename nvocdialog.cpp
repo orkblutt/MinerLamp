@@ -11,12 +11,20 @@ nvOCDialog::nvOCDialog(QWidget *parent) :
 
     _nvapi = new nvidiaAPI();
 
-    ui->horizontalSliderPowerPercent->setValue(_nvapi->getPowerLimit(0));
 
-    unsigned int gpuclock = _nvapi->getGpuClock(0);
-    qDebug() << gpuclock;
 
-_nvapi->getGPUOffset(0);
+    unsigned int deviceNumber = _nvapi->getGPUCount();
+    if(deviceNumber)
+    {
+        for(unsigned int i = 0; i < deviceNumber; i++)
+        {
+            ui->comboBoxDevice->addItem(QString("device " + QString::number(i)));
+        }
+int value = _nvapi->getPowerLimit(0);
+qDebug() << value;
+        ui->horizontalSliderPowerPercent->setValue(value);
+    }
+
 
 }
 

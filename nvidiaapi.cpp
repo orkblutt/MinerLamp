@@ -54,8 +54,7 @@ nvidiaAPI::nvidiaAPI():
 
         qDebug() << "NVAPI success " << ret;
 
-        NvEnumGPUs(_gpuHandles, &_gpuCount);
-        qDebug() << _gpuCount;
+
 
     }
 }
@@ -64,6 +63,13 @@ nvidiaAPI::~nvidiaAPI()
 {
 
 
+}
+
+unsigned int nvidiaAPI::getGPUCount()
+{
+    NvEnumGPUs(_gpuHandles, &_gpuCount);
+    qDebug() << _gpuCount;
+    return _gpuCount;
 }
 
 
@@ -146,7 +152,10 @@ unsigned int nvidiaAPI::getPowerLimit(unsigned int gpu)
     NVAPI_GPU_POWER_STATUS pol = { 0 };
     pol.version = NVAPI_GPU_POWER_STATUS_VER;
     if ((ret = NvClientPowerPoliciesGetStatus(_gpuHandles[gpu], &pol)) != NVAPI_OK)
+    {
+        qDebug() << "error";
        return 0;
+    }
 
     return (uint8_t) (pol.entries[0].power / 1000); // in percent
 
