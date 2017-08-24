@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
 
 #ifdef NVIDIA
+
+    _nvapi = new nvidiaAPI();
+
     QLibrary lib("nvml.dll");
     if (!lib.load())
     {
@@ -157,6 +160,13 @@ void MainWindow::saveParameters()
     _settings->setValue(DISPLAYSHAREONLY, ui->checkBoxOnlyShare->isChecked());
     _settings->setValue(DELAYNOHASH, ui->spinBoxDelayNoHash->value());
 }
+
+#ifdef NVIDIA
+void MainWindow::applyOC()
+{
+
+}
+#endif
 
 void MainWindow::setVisible(bool visible)
 {
@@ -276,14 +286,14 @@ void MainWindow::setupToolTips()
 
     ui->lcdNumberTotalPowerDraw->setToolTip("The total power used by the GPUs");
 
+    ui->pushButtonOC->setToolTip("Manage NVIDIA overclocking");
+    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
+
 #endif
     if(!ui->groupBoxWatchdog->isChecked())
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
     else
         ui->groupBoxWatchdog->setToolTip("");
-
-    ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
-    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
 
 }
 
@@ -519,7 +529,7 @@ void maxGPUThread::run()
 
 void MainWindow::on_pushButtonOC_clicked()
 {
-    nvOCDialog* dlg = new nvOCDialog(*_settings, this);
+    nvOCDialog* dlg = new nvOCDialog(_nvapi, _settings, this);
     dlg->exec();
     delete dlg;
 
@@ -528,8 +538,6 @@ void MainWindow::on_pushButtonOC_clicked()
 void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 {
     unsigned short hash = 0 , share = 0;
-
-    _settings->beginGroup(NVIDIAOPTION);
 
     if(checked)
     {
@@ -558,7 +566,6 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
         _settings->setValue(NVLEDHASHINTENSITY, hash);
         _settings->setValue(NVLEDSHAREINTENSITY, share);
     }
-    _settings->endGroup();
 }
 
 #endif
@@ -592,7 +599,6 @@ void MainWindow::on_pushButtonDisplayPoolStats_clicked()
         _nano = new nanopoolAPI(ui->lineEditAccount->text(), this);
         connect(_nano, &nanopoolAPI::emitBalance, this, &MainWindow::onBalance);
         connect(_nano, &nanopoolAPI::emitUSerInfo, this, &MainWindow::onPoolUserInfo);
-
     }
 
     _nano->getUserInfo();

@@ -6,150 +6,288 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
-    <height>395</height>
+    <width>666</width>
+    <height>383</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>nVidia OC options</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Devices:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="comboBoxDevice"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Power Limit (%)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QSlider" name="horizontalSliderPowerPercent">
-     <property name="minimum">
-      <number>50</number>
-     </property>
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QLCDNumber" name="lcdNumberPowerPercent">
-     <property name="digitCount">
-      <number>5</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Core Clock (MHz)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QSlider" name="horizontalSliderGpuOffset">
-     <property name="minimum">
-      <number>-200</number>
-     </property>
-     <property name="maximum">
-      <number>200</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QLCDNumber" name="lcdNumberGpuOffset"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Mem Clock (MHz)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" colspan="2">
-    <widget class="QSlider" name="horizontalSliderMemOffset">
-     <property name="minimum">
-      <number>-1500</number>
-     </property>
-     <property name="maximum">
-      <number>1500</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="3">
-    <widget class="QLCDNumber" name="lcdNumberMemClock"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="checkBoxAutoSpeedFan">
-     <property name="text">
-      <string>Auto</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Fan Speed (%)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QSlider" name="horizontalSlider_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QCheckBox" name="checkBoxAllDevices">
-     <property name="text">
-      <string>Apply to all devices</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QCheckBox" name="checkBoxOCMLStartup">
-     <property name="text">
-      <string>Apply on MinerLamp startup</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QCheckBox" name="checkBoxOCMinerStart">
-     <property name="text">
-      <string>Apply on each ethminer (re)start</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
-     </property>
-    </widget>
-   </item>
-  </layout>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>103</y>
+     <width>108</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Core Clock (MHz) :</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSlider_4">
+   <property name="geometry">
+    <rect>
+     <x>136</x>
+     <y>223</y>
+     <width>431</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBoxDevice">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>20</y>
+     <width>161</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>62</y>
+     <width>102</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Power Limit (%) :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>22</y>
+     <width>52</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Devices :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>144</y>
+     <width>109</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Mem Clock (MHz) :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>223</y>
+     <width>87</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Fan Speed (%)</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSliderGpuOffset">
+   <property name="geometry">
+    <rect>
+     <x>136</x>
+     <y>103</y>
+     <width>431</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>-200</number>
+   </property>
+   <property name="maximum">
+    <number>200</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSliderMemOffset">
+   <property name="geometry">
+    <rect>
+     <x>136</x>
+     <y>144</y>
+     <width>431</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>-1500</number>
+   </property>
+   <property name="maximum">
+    <number>1500</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumberMemClock">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>144</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumberGpuOffset">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>103</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumberPowerPercent">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>62</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>5</number>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSliderPowerPercent">
+   <property name="geometry">
+    <rect>
+     <x>136</x>
+     <y>62</y>
+     <width>431</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimum">
+    <number>50</number>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxAutoSpeedFan">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>220</y>
+     <width>53</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxAllDevices">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>263</y>
+     <width>385</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Apply to all devices (current settings are applied to all devices)</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxOCMinerStart">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>310</y>
+     <width>214</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Apply on each ethminer (re)start</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>463</x>
+     <y>339</y>
+     <width>193</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

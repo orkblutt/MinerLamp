@@ -9,6 +9,7 @@
 #include "minerprocess.h"
 #include "highlighter.h"
 #include "nanopoolapi.h"
+#include "nvapi.h"
 
 
 namespace Ui {
@@ -83,6 +84,12 @@ private:
      void setupToolTips();
      void loadParameters();
      void saveParameters();
+
+#ifdef NVIDIA
+     nvidiaAPI* _nvapi;
+     void applyOC();
+#endif
+
 
 private slots:
 

@@ -9,9 +9,8 @@
 #include <QSettings>
 
 
-class nvCard
+struct nvCard
 {
-public:
     int powerOffset;
     int memOffset;
     int gpuOffset;
@@ -26,7 +25,7 @@ class nvOCDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit nvOCDialog(QSettings& settings, QWidget *parent = 0);
+    explicit nvOCDialog(nvidiaAPI* nvapi, QSettings* settings, QWidget *parent = 0);
     ~nvOCDialog();
 
 private slots:
@@ -44,14 +43,19 @@ private:
 
     void updateSliders(unsigned int gpu);
 
+    bool loadConfig();
+    void saveConfig();
+
     Ui::nvOCDialog *ui;
 
-    QSettings _settings;
+    QSettings* _settings;
     nvidiaNVML* _nvml;
 
     nvidiaAPI* _nvapi;
 
     QList<nvCard> _cardList;
+
+    unsigned int _gpuIndex;
 };
 
 #endif // NVOCDIALOG_H

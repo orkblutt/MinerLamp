@@ -68,7 +68,6 @@ nvidiaAPI::~nvidiaAPI()
 unsigned int nvidiaAPI::getGPUCount()
 {
     NvEnumGPUs(_gpuHandles, &_gpuCount);
-    qDebug() << _gpuCount;
     return _gpuCount;
 }
 
@@ -76,8 +75,6 @@ unsigned int nvidiaAPI::getGPUCount()
 void nvidiaAPI::setLED(unsigned int gpu, int color)
 {
     NvAPI_Status ret = NVAPI_OK;
-
-
     NV_GPU_QUERY_ILLUMINATION_SUPPORT_PARM illu;
     illu.bSupported = false;
     illu.version = NV_GPU_QUERY_ILLUMINATION_SUPPORT_PARM_VER;
@@ -139,9 +136,7 @@ int nvidiaAPI::getMemOffset(unsigned int gpu)
     }
 
     return 0;
-
 }
-
 
 
 unsigned int nvidiaAPI::getGpuClock(unsigned int gpu)
@@ -241,8 +236,6 @@ int nvidiaAPI::setGPUOffset(unsigned int gpu, int offset)
     return ret;
 
 }
-
-
 
 int nvidiaAPI::setTempLimitOffset(unsigned int gpu, unsigned int offset)
 {
