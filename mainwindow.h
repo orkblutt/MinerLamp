@@ -24,15 +24,21 @@ public:
 
     void run();
 
-
-
-
 signals:
 
     void readyToStartMiner();
 };
 
 
+class fanSpeedThread: public QThread
+{
+    Q_OBJECT
+public:
+    fanSpeedThread(QObject* pParent = Q_NULLPTR);
+
+    void run();
+
+};
 
 class maxGPUThread : public QThread
 {

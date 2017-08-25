@@ -622,3 +622,13 @@ void MainWindow::onPoolUserInfo(double userBalance
     ui->lcdNumberCalculatedHR->display(currentCalcultatedHashRate);
     ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }
+
+fanSpeedThread::fanSpeedThread(QObject *pParent)
+{
+
+}
+
+void fanSpeedThread::run()
+{
+
+}

@@ -42,6 +42,8 @@ private slots:
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_checkBoxAutoSpeedFan_clicked(bool checked);
+
 private:
 
     void updateSliders(unsigned int gpu);

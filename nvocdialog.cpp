@@ -25,7 +25,6 @@ nvOCDialog::nvOCDialog(nvidiaAPI *nvapi, QSettings *settings, QWidget *parent) :
             _cardList << card;
             ui->comboBoxDevice->addItem(QString("device " + QString::number(i)));
         }
-
         updateSliders(0);
     }
 
@@ -130,3 +129,20 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
 }
 
 
+
+void nvOCDialog::on_checkBoxAutoSpeedFan_clicked(bool checked)
+{
+    if(checked)
+    {
+        ui->horizontalSliderFanSpeed->hide();
+        ui->spinBoxMinTemp->setReadOnly(false);
+        ui->spinBoxMaxTemp->setReadOnly(false);
+    }
+    else
+    {
+        ui->horizontalSliderFanSpeed->show();
+        ui->spinBoxMinTemp->setReadOnly(true);
+        ui->spinBoxMaxTemp->setReadOnly(true);
+
+    }
+}
