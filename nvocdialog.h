@@ -14,6 +14,7 @@ struct nvCard
     int powerOffset;
     int memOffset;
     int gpuOffset;
+    int fanSpeed;
 };
 
 namespace Ui {
@@ -34,6 +35,8 @@ private slots:
     void on_horizontalSliderGpuOffset_valueChanged(int value);
 
     void on_horizontalSliderMemOffset_valueChanged(int value);
+
+    void on_horizontalSliderFanSpeed_valueChanged(int value);
 
     void on_comboBoxDevice_activated(int index);
 

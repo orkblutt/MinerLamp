@@ -19,7 +19,8 @@ nvOCDialog::nvOCDialog(nvidiaAPI *nvapi, QSettings *settings, QWidget *parent) :
             nvCard card;
             card.gpuOffset = 0;
             card.memOffset = 0;
-            card.powerOffset = 0;
+            card.powerOffset = 100;
+            card.fanSpeed = 50;
 
             _cardList << card;
             ui->comboBoxDevice->addItem(QString("device " + QString::number(i)));
@@ -57,6 +58,11 @@ void nvOCDialog::on_horizontalSliderMemOffset_valueChanged(int value)
     _cardList[_gpuIndex].memOffset = value;
 }
 
+void nvOCDialog::on_horizontalSliderFanSpeed_valueChanged(int value)
+{
+    ui->lcdNumberFanSpeed->display(value);
+    _cardList[_gpuIndex].fanSpeed = value;
+}
 
 void nvOCDialog::on_comboBoxDevice_activated(int index)
 {
@@ -69,15 +75,18 @@ void nvOCDialog::updateSliders(unsigned int gpu)
     int plimit = _nvapi->getPowerLimit(gpu);
     int gpuoffset = _nvapi->getGPUOffset(gpu);
     int memoffset = _nvapi->getMemOffset(gpu);
+    int fanspeed = _nvapi->getFanSpeed(gpu);
 
     ui->horizontalSliderPowerPercent->setValue(plimit);
     ui->horizontalSliderGpuOffset->setValue(gpuoffset);
     ui->horizontalSliderMemOffset->setValue(memoffset);
+    ui->horizontalSliderFanSpeed->setValue(fanspeed);
 }
 
 void nvOCDialog::saveConfig()
 {
     _settings->beginGroup("nvoc");
+
     _settings->setValue("nvoc_applyall", ui->checkBoxAllDevices->isChecked());
     _settings->setValue("nvoc_applyonstart", ui->checkBoxOCMinerStart->isChecked());
 
@@ -86,6 +95,7 @@ void nvOCDialog::saveConfig()
         _settings->setValue(QString("powerlimitoffset" + QString::number(i)), _cardList.at(i).powerOffset);
         _settings->setValue(QString("gpuoffset" + QString::number(i)), _cardList.at(i).gpuOffset);
         _settings->setValue(QString("memoffset" + QString::number(i)), _cardList.at(i).memOffset);
+        _settings->setValue(QString("fanspeed" + QString::number(i)), _cardList.at(i).fanSpeed);
     }
 
     _settings->endGroup();
@@ -104,6 +114,7 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
                 _nvapi->setPowerLimitPercent(i, ui->horizontalSliderPowerPercent->value());
                 _nvapi->setGPUOffset(i, ui->horizontalSliderGpuOffset->value());
                 _nvapi->setMemClockOffset(i, ui->horizontalSliderMemOffset->value());
+                _nvapi->setFanSpeed(i, ui->horizontalSliderFanSpeed->value());
             }
         }
         else
@@ -111,8 +122,11 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
             _nvapi->setPowerLimitPercent(gpu, ui->horizontalSliderPowerPercent->value());
             _nvapi->setGPUOffset(gpu, ui->horizontalSliderGpuOffset->value());
             _nvapi->setMemClockOffset(gpu, ui->horizontalSliderMemOffset->value());
+            _nvapi->setFanSpeed(gpu, ui->horizontalSliderFanSpeed->value());
         }
 
         saveConfig();
     }
 }
+
+

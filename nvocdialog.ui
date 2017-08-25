@@ -38,7 +38,7 @@
     <string>Core Clock (MHz) :</string>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider_4">
+  <widget class="QSlider" name="horizontalSliderFanSpeed">
    <property name="geometry">
     <rect>
      <x>136</x>
@@ -46,6 +46,9 @@
      <width>431</width>
      <height>22</height>
     </rect>
+   </property>
+   <property name="maximum">
+    <number>100</number>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -236,8 +239,8 @@
   <widget class="QCheckBox" name="checkBoxAutoSpeedFan">
    <property name="geometry">
     <rect>
-     <x>610</x>
-     <y>220</y>
+     <x>590</x>
+     <y>190</y>
      <width>53</width>
      <height>20</height>
     </rect>
@@ -286,6 +289,16 @@
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdNumberFanSpeed">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>220</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
    </property>
   </widget>
  </widget>

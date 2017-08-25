@@ -266,9 +266,49 @@ typedef struct {
 } NVAPI_COOLER_LEVEL;
 #define NVAPI_COOLER_LEVEL_VER MAKE_NVAPI_VERSION(NVAPI_COOLER_LEVEL, 1)
 
+#define NVAPI_MAX_COOLERS_PER_GPU   20
 
 
-class nvidiaAPI : QLibrary
+typedef struct {
+    NvU32 version;
+    NvU32 count;
+    struct {
+        NvS32 type;
+        NvS32 controller;
+        NvS32 defaultMin;
+        NvS32 defaultMax;
+        NvS32 currentMin;
+        NvS32 currentMax;
+        NvS32 currentLevel;
+        NvS32 defaultPolicy;
+        NvS32 currentPolicy;
+        NvS32 target;
+        NvS32 controlType;
+        NvS32 active;
+    } cooler[NVAPI_MAX_COOLERS_PER_GPU];
+} NV_GPU_COOLER_SETTINGS_V2;
+typedef NV_GPU_COOLER_SETTINGS_V2   NV_GPU_COOLER_SETTINGS;
+
+#define NV_GPU_COOLER_SETTINGS_VER_2    MAKE_NVAPI_VERSION(NV_GPU_COOLER_SETTINGS_V2,2)
+#define NV_GPU_COOLER_SETTINGS_VER      NV_GPU_COOLER_SETTINGS_VER_2
+
+
+typedef struct {
+    NvU32 version;
+    struct {
+        NvS32 level;
+        NvS32 policy;
+    } cooler[NVAPI_MAX_COOLERS_PER_GPU];
+} NV_GPU_COOLER_LEVELS_V1;
+typedef NV_GPU_COOLER_LEVELS_V1 NV_GPU_COOLER_LEVELS;
+
+
+#define NV_GPU_COOLER_LEVELS_VER_1  MAKE_NVAPI_VERSION(NV_GPU_COOLER_LEVELS_V1,1)
+#define NV_GPU_COOLER_LEVELS_VER    NV_GPU_COOLER_LEVELS_VER_1
+
+
+
+class nvidiaAPI : public QLibrary
 {
 public:
     nvidiaAPI();
@@ -283,11 +323,14 @@ public:
 
     unsigned int getGpuClock(unsigned int gpu);
     unsigned int getPowerLimit(unsigned int gpu);
+    unsigned int getFanSpeed(unsigned int gpu);
+
 
     int setMemClockOffset(unsigned int gpu,  int clock);
     int setGPUOffset(unsigned int gpu, int offset);
     int setPowerLimitPercent(unsigned int gpu, unsigned int percent);
     int setTempLimitOffset(unsigned int gpu, unsigned int offset);
+    int setFanSpeed(unsigned int gpu, unsigned int percent);
 
     void setAllLED(int color);
 
@@ -313,6 +356,8 @@ private:
     typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesGetStatus_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_STATUS* pPolicies);
     typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesGetInfo_t)(NvPhysicalGpuHandle hPhysicalGpu, NVAPI_GPU_POWER_INFO* pInfo);
     typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesSetStatus_t)(NvPhysicalGpuHandle handle, NVAPI_GPU_POWER_STATUS* pPolicies);
+    typedef NvAPI_Status (*NvAPI_GPU_GetCoolersSettings_t)(NvPhysicalGpuHandle hPhysicalGpu, NvU32 coolerIndex, NV_GPU_COOLER_SETTINGS* coolerSettings);
+    typedef NvAPI_Status (*NvAPI_GPU_SetCoolerLevel_t)(NvPhysicalGpuHandle hPhysicalGpu, NvU32 coolerIndex, NV_GPU_COOLER_LEVELS* coolerLevel);
 
     NvAPI_QueryInterface_t NvQueryInterface;
     NvAPI_Initialize_t NvInit;
@@ -333,6 +378,8 @@ private:
     NvAPI_DLL_ClientPowerPoliciesGetStatus_t NvClientPowerPoliciesGetStatus;
     NvAPI_DLL_ClientPowerPoliciesGetInfo_t NvClientPowerPoliciesGetInfo;
     NvAPI_DLL_ClientPowerPoliciesSetStatus_t NvClientPowerPoliciesSetStatus;
+    NvAPI_GPU_GetCoolersSettings_t NvGetCoolersSettings;
+    NvAPI_GPU_SetCoolerLevel_t NvSetCoolerLevel;
 
 private:
 
@@ -341,7 +388,6 @@ private:
     NvPhysicalGpuHandle _gpuHandles[NVAPI_MAX_PHYSICAL_GPUS];
 
     bool _libLoaded;
-
 
 };
 

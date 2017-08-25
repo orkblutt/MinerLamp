@@ -22,9 +22,10 @@ nvidiaAPI::nvidiaAPI():
     NvGetPStatesInfoEx(NULL),
     NvQueryIlluminationSupport(NULL),
     NvGetIllumination(NULL),
-    NvSetIllumination(NULL)
+    NvSetIllumination(NULL),
+    NvGetCoolersSettings(NULL),
+    NvSetCoolerLevel(NULL)
 {
-
     NvQueryInterface = (NvAPI_QueryInterface_t)resolve("nvapi_QueryInterface");
     if(NvQueryInterface)
     {
@@ -50,12 +51,12 @@ nvidiaAPI::nvidiaAPI():
         NvGetIllumination = (NvAPI_GPU_GetIllumination_t)NvQueryInterface(0x9A1B9365);
         NvSetIllumination = (NvAPI_GPU_SetIllumination_t)NvQueryInterface(0x254A187);
 
+        NvGetCoolersSettings = (NvAPI_GPU_GetCoolersSettings_t)NvQueryInterface(0xDA141340);
+        NvSetCoolerLevel =  (NvAPI_GPU_SetCoolerLevel_t)NvQueryInterface(0x891FA0AE);
+
         NvAPI_Status ret = NvInit();
 
         qDebug() << "NVAPI success " << ret;
-
-
-
     }
 }
 
@@ -162,12 +163,27 @@ unsigned int nvidiaAPI::getPowerLimit(unsigned int gpu)
     if ((ret = NvClientPowerPoliciesGetStatus(_gpuHandles[gpu], &pol)) != NVAPI_OK)
     {
         qDebug() << "error";
-       return 0;
+        return 0;
     }
 
     return (uint8_t) (pol.entries[0].power / 1000); // in percent
 
 }
+
+unsigned int nvidiaAPI::getFanSpeed(unsigned int gpu)
+{
+    NV_GPU_COOLER_SETTINGS coolerSettings;
+    coolerSettings.version = NV_GPU_COOLER_SETTINGS_VER;
+
+    NvAPI_Status ret = NvGetCoolersSettings(_gpuHandles[gpu], 0, &coolerSettings);
+    if(ret == NVAPI_OK)
+    {
+        return coolerSettings.cooler[0].currentLevel;
+    }
+    return 0;
+}
+
+
 
 int nvidiaAPI::setPowerLimitPercent(unsigned int gpu, unsigned int percent)
 {
@@ -240,6 +256,18 @@ int nvidiaAPI::setGPUOffset(unsigned int gpu, int offset)
 int nvidiaAPI::setTempLimitOffset(unsigned int gpu, unsigned int offset)
 {
     return 0;
+}
+
+int nvidiaAPI::setFanSpeed(unsigned int gpu, unsigned int percent)
+{
+    NV_GPU_COOLER_LEVELS coolerLvl;
+    coolerLvl.cooler[0].policy = 1;
+    coolerLvl.version = NV_GPU_COOLER_LEVELS_VER;
+    coolerLvl.cooler[0].level = percent;
+
+    NvAPI_Status ret = NvSetCoolerLevel(_gpuHandles[gpu], 0, &coolerLvl);
+
+    return ret;
 }
 
 void nvidiaAPI::setAllLED(int color)
