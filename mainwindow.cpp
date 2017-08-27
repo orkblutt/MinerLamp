@@ -164,7 +164,15 @@ void MainWindow::saveParameters()
 #ifdef NVIDIA
 void MainWindow::applyOC()
 {
-
+    _settings->beginGroup("nvoc");
+    for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+    {
+        _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
+        _nvapi->setPowerLimitPercent(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
+        _nvapi->setPowerLimitPercent(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
+        _nvapi->setPowerLimitPercent(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+    }
+    _settings->endGroup();
 }
 #endif
 
@@ -342,7 +350,12 @@ void MainWindow::onMinerStoped()
 
 void MainWindow::onHashrate(QString &hashrate)
 {
-    QString hrValue = hashrate.mid(0, hashrate.indexOf("MH/s"));
+
+    qDebug() << "hashrate:" << hashrate;
+
+
+    QString hrValue = hashrate.mid(0, hashrate.indexOf("Mh/s"));
+
 
     this->setWindowTitle(QString("Miner's Lamp - " + hashrate + " - Restart count: " + QString::number(_errorCount)));
     if(hrValue.toDouble() == 0)
@@ -623,8 +636,10 @@ void MainWindow::onPoolUserInfo(double userBalance
     ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }
 
+#ifdef NVIDIA
 fanSpeedThread::fanSpeedThread(QObject *pParent)
 {
+
 
 }
 
@@ -632,3 +647,4 @@ void fanSpeedThread::run()
 {
 
 }
+#endif

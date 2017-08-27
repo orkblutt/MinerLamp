@@ -143,6 +143,5 @@ void nvOCDialog::on_checkBoxAutoSpeedFan_clicked(bool checked)
         ui->horizontalSliderFanSpeed->show();
         ui->spinBoxMinTemp->setReadOnly(true);
         ui->spinBoxMaxTemp->setReadOnly(true);
-
     }
 }

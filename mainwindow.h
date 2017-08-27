@@ -29,7 +29,7 @@ signals:
     void readyToStartMiner();
 };
 
-
+#ifdef NVIDIA
 class fanSpeedThread: public QThread
 {
     Q_OBJECT
@@ -39,6 +39,7 @@ public:
     void run();
 
 };
+#endif
 
 class maxGPUThread : public QThread
 {

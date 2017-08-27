@@ -126,10 +126,10 @@ void MinerProcess::onReadyToReadStderr()
     QString line(_miner.readAllStandardError());
     if(line.length() > 1)
     {
-        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2}MH/s"));
+        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh/s"));
         if(mhsPos != -1)
         {
-            int endPos = line.indexOf(" (", mhsPos);
+            int endPos = line.indexOf("  ", mhsPos);
             QString hashRate = line.mid(mhsPos, endPos - mhsPos);
 
             qDebug() << hashRate;
@@ -137,7 +137,7 @@ void MinerProcess::onReadyToReadStderr()
 
             if(_readyToMonitor)
             {
-                if(hashRate == "0.00MH/s")
+                if(hashRate == "0.00 Mh/s")
                     _0mhs++;
                 else
                     _0mhs = 0;
@@ -156,12 +156,16 @@ void MinerProcess::onReadyToReadStderr()
             _hashrateCount++;
         }
 
-        int miningOnPos = line.indexOf("Mining on #");
+        int miningOnPos = line.indexOf(" [A");
         if(miningOnPos != -1)
         {
+
             miningOnPos = line.indexOf("[", miningOnPos);
             int endPos = line.indexOf("]", miningOnPos) + 1;
             _shareNumber = line.mid(miningOnPos, endPos - miningOnPos);
+
+            qDebug() << _shareNumber;
+
         }
 
 

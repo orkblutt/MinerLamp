@@ -525,6 +525,9 @@ QPushButton:disabled
          <property name="minimum">
           <number>1</number>
          </property>
+         <property name="maximum">
+          <number>600</number>
+         </property>
          <property name="value">
           <number>20</number>
          </property>
@@ -543,7 +546,7 @@ QPushButton:disabled
           <number>30</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>600</number>
          </property>
          <property name="value">
           <number>60</number>

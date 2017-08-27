@@ -87,7 +87,6 @@ signals:
                       , double avrgHrH12
                       , double avrgHrH24
                       );
-
 };
 
 #endif // NANOPOOLAPI_H
