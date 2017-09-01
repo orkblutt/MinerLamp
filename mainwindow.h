@@ -45,7 +45,7 @@ class maxGPUThread : public QThread
 {
     Q_OBJECT
 public:
-    maxGPUThread(QObject* pParent = Q_NULLPTR);
+    maxGPUThread(QObject* = Q_NULLPTR);
 
     void run();
 
