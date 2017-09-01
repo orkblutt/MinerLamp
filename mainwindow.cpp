@@ -402,7 +402,6 @@ void MainWindow::on_groupBoxWatchdog_clicked(bool checked)
         ui->groupBoxWatchdog->setToolTip("");
     else
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
-
 }
 
 void MainWindow::on_spinBoxMax0MHs_valueChanged(int arg1)
@@ -425,7 +424,6 @@ void MainWindow::onReadyToStartMiner()
     on_pushButton_clicked();
 }
 
-
 void MainWindow::onHelp()
 {
     on_pushButtonHelp_clicked();
@@ -435,7 +433,6 @@ void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 {
     _process->setShareOnly(checked);
 }
-
 
 void MainWindow::on_pushButtonHelp_clicked()
 {
@@ -448,9 +445,6 @@ void MainWindow::on_spinBoxDelayNoHash_valueChanged(int arg1)
 {
     _process->setDelayBeforeNoHash(arg1);
 }
-
-
-
 
 autoStart::autoStart(QObject *pParent)
 {
@@ -502,9 +496,9 @@ void MainWindow::onGPUInfo(unsigned int gpucount
 
 }
 
-
-maxGPUThread::maxGPUThread(QObject *pParent)
+maxGPUThread::maxGPUThread(QObject * /*pParent*/)
 {
+
 
 }
 
@@ -553,7 +547,6 @@ void MainWindow::on_pushButtonOC_clicked()
     nvOCDialog* dlg = new nvOCDialog(_nvapi, _settings, this);
     dlg->exec();
     delete dlg;
-
 }
 
 void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
@@ -614,7 +607,6 @@ void MainWindow::on_pushButtonShowHideLog_clicked(bool checked)
 
 void MainWindow::on_pushButtonDisplayPoolStats_clicked()
 {
-
     if(!_nano)
     {
         _nano = new nanopoolAPI(ui->lineEditAccount->text(), this);
