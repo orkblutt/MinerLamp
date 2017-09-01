@@ -1,8 +1,9 @@
 #include "helpdialog.h"
 #include "ui_helpdialog.h"
 
-helpDialog::helpDialog(QWidget *parent) :
+helpDialog::helpDialog(QSettings* settings, QWidget *parent) :
     QDialog(parent),
+    _settings(settings),
     ui(new Ui::helpDialog)
 {
     ui->setupUi(this);
@@ -16,6 +17,8 @@ helpDialog::helpDialog(QWidget *parent) :
     ui->plainTextEdit->appendHtml("<b>0xa07a8c9975145bb5371e8b3c31acb62ad9d0698e</b><br><br>");
     ui->plainTextEdit->appendHtml("<br>Feel free to send me comment at <b>orkblutt@msn.com</b>");
     ui->plainTextEdit->appendHtml("</html>");
+
+    ui->checkBox->setChecked(_settings->value("donate", true).toBool());
 }
 
 helpDialog::~helpDialog()
@@ -26,4 +29,9 @@ helpDialog::~helpDialog()
 void helpDialog::on_pushButtonFinish_clicked()
 {
     close();
+}
+
+void helpDialog::on_checkBox_clicked(bool checked)
+{
+    _settings->setValue("donate", checked);
 }

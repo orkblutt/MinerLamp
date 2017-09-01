@@ -237,6 +237,9 @@
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBoxAutoSpeedFan">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>140</x>
@@ -302,6 +305,9 @@
    </property>
   </widget>
   <widget class="QLabel" name="label1Percent">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -315,6 +321,9 @@
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>400</x>
@@ -328,6 +337,9 @@
    </property>
   </widget>
   <widget class="QLabel" name="label100Percent">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>440</x>
@@ -341,6 +353,9 @@
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -354,6 +369,9 @@
    </property>
   </widget>
   <widget class="QSpinBox" name="spinBoxMinTemp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>340</x>
@@ -367,6 +385,9 @@
    </property>
   </widget>
   <widget class="QSpinBox" name="spinBoxMaxTemp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>500</x>

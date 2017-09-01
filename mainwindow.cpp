@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _nano(Q_NULLPTR)
 {
 
-    _process = new MinerProcess();
+    _process = new MinerProcess(_settings);
     _settings = new QSettings(QString(QDir::currentPath() + QDir::separator() + "minerlamp.ini"), QSettings::IniFormat);
 
     ui->setupUi(this);
@@ -165,12 +165,15 @@ void MainWindow::saveParameters()
 void MainWindow::applyOC()
 {
     _settings->beginGroup("nvoc");
-    for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+    if(_settings->value("nvoc_applyonstart").toBool())
     {
-        _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
-        _nvapi->setPowerLimitPercent(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
-        _nvapi->setPowerLimitPercent(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
-        _nvapi->setPowerLimitPercent(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+        for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+        {
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+        }
     }
     _settings->endGroup();
 }
@@ -330,9 +333,14 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::onMinerStarted()
 {
+
     ui->pushButton->setText("Stop mining");
     _isMinerRunning = true;
     _isStartStoping = false;
+
+#ifdef NVIDIA
+    applyOC();
+#endif
 }
 
 void MainWindow::onMinerStoped()
@@ -431,7 +439,7 @@ void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 
 void MainWindow::on_pushButtonHelp_clicked()
 {
-    helpDialog* helpdial = new helpDialog(this);
+    helpDialog* helpdial = new helpDialog(_settings, this);
     helpdial->exec();
     delete helpdial;
 }
