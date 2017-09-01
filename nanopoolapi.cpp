@@ -75,8 +75,6 @@ void nanopoolAPI::replyFinished(QNetworkReply *reply)
             _userBalance = jsonData.value("balance").toString().toDouble();
             _currentCalcultatedHashRate = jsonData.value("hashrate").toString().toDouble();
 
-
-
             QJsonObject jsonHR = jsonData.value("avgHashrate").toObject();
 
             _averageHashRate1H = jsonHR["h1"].toString().toDouble();
@@ -94,8 +92,6 @@ void nanopoolAPI::replyFinished(QNetworkReply *reply)
                               , _averageHashRate24H
                               );
         }
-
-        qDebug() << data;
     }
     reply->deleteLater();
 }

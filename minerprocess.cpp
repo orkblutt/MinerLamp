@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QThread>
 
+
 anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
   , _pParent((MinerProcess*)pParent)
   , _delay(delay)
@@ -44,7 +45,7 @@ void zeroMHsWaitter::run()
     QThread::sleep(_delay);
 }
 
-MinerProcess::MinerProcess():
+MinerProcess::MinerProcess(QSettings* settings):
     _isRunning(false),
     _0mhs(5),
     _restartDelay(2),
@@ -64,6 +65,7 @@ MinerProcess::MinerProcess():
   , _acceptedShare(0)
   , _staleShare(0)
   , _shareNumber("")
+  , _settings(settings)
   #ifdef DONATE
   , _donate(Q_NULLPTR)
   #endif
@@ -92,21 +94,17 @@ MinerProcess::MinerProcess():
     _nvapi = new nvidiaAPI();
 #endif
 
-#ifdef DONATE
     _donate = new donateThrd(this);
     connect(_donate, SIGNAL(donate()), this, SLOT(onDonate()));
     connect(_donate, SIGNAL(backToNormal()), this, SLOT(onBackToNormal()));
     // connect(_donate, &donateThrd::finished, this, &MinerProcess::deleteLater);
     _donate->start();
-#endif
 
 }
 
 MinerProcess::~MinerProcess()
 {
-#ifdef DONATE
     if(_donate && _donate->isRunning()) _donate->terminate();
-#endif
 
 }
 
@@ -126,10 +124,10 @@ void MinerProcess::onReadyToReadStderr()
     QString line(_miner.readAllStandardError());
     if(line.length() > 1)
     {
-        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2}MH/s"));
+        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh/s"));
         if(mhsPos != -1)
         {
-            int endPos = line.indexOf(" (", mhsPos);
+            int endPos = line.indexOf("  ", mhsPos);
             QString hashRate = line.mid(mhsPos, endPos - mhsPos);
 
             qDebug() << hashRate;
@@ -137,7 +135,7 @@ void MinerProcess::onReadyToReadStderr()
 
             if(_readyToMonitor)
             {
-                if(hashRate == "0.00MH/s")
+                if(hashRate == "0.00 Mh/s")
                     _0mhs++;
                 else
                     _0mhs = 0;
@@ -156,12 +154,16 @@ void MinerProcess::onReadyToReadStderr()
             _hashrateCount++;
         }
 
-        int miningOnPos = line.indexOf("Mining on #");
+        int miningOnPos = line.indexOf(" [A");
         if(miningOnPos != -1)
         {
+
             miningOnPos = line.indexOf("[", miningOnPos);
             int endPos = line.indexOf("]", miningOnPos) + 1;
             _shareNumber = line.mid(miningOnPos, endPos - miningOnPos);
+
+            qDebug() << _shareNumber;
+
         }
 
 
@@ -242,46 +244,50 @@ void MinerProcess::onNoHashing()
 }
 
 
-#ifdef DONATE
 void MinerProcess::onDonate()
 {
     QString backupArgs = _minerArgs;
     bool autorestart = _autoRestart;
 
 
-    if(_isRunning)
+    if(_settings->value("donate", true).toBool())
     {
-        int walletSwitch = _minerArgs.indexOf("-O ");
-        if(walletSwitch != -1)
+        if(_isRunning)
         {
+            int walletSwitch = _minerArgs.indexOf("-O ");
+            if(walletSwitch != -1)
+            {
 
-            int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
-            if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
+                int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
+                if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
 
 
-            QString userWallet = _minerArgs.mid(walletSwitch, endOfWSwitch - walletSwitch);
-            qDebug() << userWallet;
+                QString userWallet = _minerArgs.mid(walletSwitch, endOfWSwitch - walletSwitch);
+                qDebug() << userWallet;
 
-            _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp/orkblutt@msn.com");
+                _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp/orkblutt@msn.com");
 
-            _autoRestart = true;
-            restart();
-            _autoRestart = autorestart;
-            _minerArgs = backupArgs;
+                _autoRestart = true;
+                restart();
+                _autoRestart = autorestart;
+                _minerArgs = backupArgs;
 
+            }
         }
     }
 }
 
 void MinerProcess::onBackToNormal()
 {
-    bool autorestart = _autoRestart;
-    _autoRestart = true;
-    restart();
-    _autoRestart = autorestart;
+    if(_settings->value("donate", true).toBool())
+    {
+        bool autorestart = _autoRestart;
+        _autoRestart = true;
+        restart();
+        _autoRestart = autorestart;
+    }
 }
 
-#endif
 
 void MinerProcess::start(const QString &path, const QString& args)
 {
@@ -366,7 +372,6 @@ void blinkerLED::run()
 #endif
 }
 
-#ifdef DONATE
 donateThrd::donateThrd(QObject* pParent) : QThread(pParent)
   , _parent((MinerProcess*)pParent)
 {
@@ -387,4 +392,3 @@ void donateThrd::run()
         }
     }
 }
-#endif

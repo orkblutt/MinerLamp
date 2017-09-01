@@ -30,6 +30,9 @@
 #define NVLEDHASHINTENSITY  "nv_led_hash_intensity"
 #define NVLEDSHAREINTENSITY "nv_led_share_intensity"
 #define NVLEDBLINKON        "nv_led_blink_on"
+
+#define NVOCOPTION          "nvidia_oc_options"
+
 #endif
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -41,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _nano(Q_NULLPTR)
 {
 
-    _process = new MinerProcess();
+    _process = new MinerProcess(_settings);
     _settings = new QSettings(QString(QDir::currentPath() + QDir::separator() + "minerlamp.ini"), QSettings::IniFormat);
 
     ui->setupUi(this);
@@ -54,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
 
 #ifdef NVIDIA
+
+    _nvapi = new nvidiaAPI();
+
     QLibrary lib("nvml.dll");
     if (!lib.load())
     {
@@ -154,6 +160,24 @@ void MainWindow::saveParameters()
     _settings->setValue(DISPLAYSHAREONLY, ui->checkBoxOnlyShare->isChecked());
     _settings->setValue(DELAYNOHASH, ui->spinBoxDelayNoHash->value());
 }
+
+#ifdef NVIDIA
+void MainWindow::applyOC()
+{
+    _settings->beginGroup("nvoc");
+    if(_settings->value("nvoc_applyonstart").toBool())
+    {
+        for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+        {
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
+            _nvapi->setPowerLimitPercent(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+        }
+    }
+    _settings->endGroup();
+}
+#endif
 
 void MainWindow::setVisible(bool visible)
 {
@@ -273,14 +297,14 @@ void MainWindow::setupToolTips()
 
     ui->lcdNumberTotalPowerDraw->setToolTip("The total power used by the GPUs");
 
+    ui->pushButtonOC->setToolTip("Manage NVIDIA overclocking");
+    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
+
 #endif
     if(!ui->groupBoxWatchdog->isChecked())
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
     else
         ui->groupBoxWatchdog->setToolTip("");
-
-    ui->pushButtonOC->setToolTip("Not yet implemented... soon ;-)");
-    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
 
 }
 
@@ -309,9 +333,14 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::onMinerStarted()
 {
+
     ui->pushButton->setText("Stop mining");
     _isMinerRunning = true;
     _isStartStoping = false;
+
+#ifdef NVIDIA
+    applyOC();
+#endif
 }
 
 void MainWindow::onMinerStoped()
@@ -329,7 +358,12 @@ void MainWindow::onMinerStoped()
 
 void MainWindow::onHashrate(QString &hashrate)
 {
-    QString hrValue = hashrate.mid(0, hashrate.indexOf("MH/s"));
+
+    qDebug() << "hashrate:" << hashrate;
+
+
+    QString hrValue = hashrate.mid(0, hashrate.indexOf("Mh/s"));
+
 
     this->setWindowTitle(QString("Miner's Lamp - " + hashrate + " - Restart count: " + QString::number(_errorCount)));
     if(hrValue.toDouble() == 0)
@@ -405,7 +439,7 @@ void MainWindow::on_checkBoxOnlyShare_clicked(bool checked)
 
 void MainWindow::on_pushButtonHelp_clicked()
 {
-    helpDialog* helpdial = new helpDialog(this);
+    helpDialog* helpdial = new helpDialog(_settings, this);
     helpdial->exec();
     delete helpdial;
 }
@@ -516,7 +550,7 @@ void maxGPUThread::run()
 
 void MainWindow::on_pushButtonOC_clicked()
 {
-    nvOCDialog* dlg = new nvOCDialog(this);
+    nvOCDialog* dlg = new nvOCDialog(_nvapi, _settings, this);
     dlg->exec();
     delete dlg;
 
@@ -525,8 +559,6 @@ void MainWindow::on_pushButtonOC_clicked()
 void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
 {
     unsigned short hash = 0 , share = 0;
-
-    _settings->beginGroup(NVIDIAOPTION);
 
     if(checked)
     {
@@ -555,7 +587,6 @@ void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
         _settings->setValue(NVLEDHASHINTENSITY, hash);
         _settings->setValue(NVLEDSHAREINTENSITY, share);
     }
-    _settings->endGroup();
 }
 
 #endif
@@ -589,7 +620,6 @@ void MainWindow::on_pushButtonDisplayPoolStats_clicked()
         _nano = new nanopoolAPI(ui->lineEditAccount->text(), this);
         connect(_nano, &nanopoolAPI::emitBalance, this, &MainWindow::onBalance);
         connect(_nano, &nanopoolAPI::emitUSerInfo, this, &MainWindow::onPoolUserInfo);
-
     }
 
     _nano->getUserInfo();
@@ -613,3 +643,16 @@ void MainWindow::onPoolUserInfo(double userBalance
     ui->lcdNumberCalculatedHR->display(currentCalcultatedHashRate);
     ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }
+
+#ifdef NVIDIA
+fanSpeedThread::fanSpeedThread(QObject *pParent)
+{
+
+
+}
+
+void fanSpeedThread::run()
+{
+
+}
+#endif

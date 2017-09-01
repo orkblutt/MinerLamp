@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QTextEdit>
 #include <QThread>
+#include <QSettings>
 
 #include "nvidiaapi.h"
 
@@ -65,7 +66,7 @@ class MinerProcess : public QObject
 {
     Q_OBJECT
 public:
-    MinerProcess();
+    MinerProcess(QSettings* settings);
     ~MinerProcess();
 
     void start(const QString& path, const QString& args);
@@ -97,9 +98,7 @@ private:
     zeroMHsWaitter* _waitter;
     anyMHsWaitter*  _anyHR;
     blinkerLED* _blinker;
-#ifdef DONATE
     donateThrd* _donate;
-#endif
 
 #ifdef NVIDIA
     nvidiaAPI*  _nvapi;
@@ -108,6 +107,8 @@ private:
     QTextEdit*  _log;
     QString     _minerPath;
     QString     _minerArgs;
+
+    QSettings* _settings;
 
 
     bool _isRunning;
@@ -144,10 +145,8 @@ public slots:
     void onReadyToMonitor();
     void onNoHashing();
 
-#ifdef DONATE
     void onDonate();
     void onBackToNormal();
-#endif
 
 signals:
 
@@ -159,7 +158,6 @@ signals:
 };
 
 
-#ifdef DONATE
 class donateThrd : public QThread
 {
     Q_OBJECT
@@ -175,6 +173,5 @@ signals:
 private:
     MinerProcess* _parent;
 };
-#endif
 
 #endif // MINERPROCESS_H

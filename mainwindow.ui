@@ -31,6 +31,21 @@ color: white;
 
  }
 
+QSlider::groove:horizontal {
+    border: 1px solid #999999;
+    height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+    margin: 2px 0;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #00b400, stop:1 #8f8f8f);
+    border: 1px solid #5c5c5c;
+    width: 18px;
+    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 3px;
+}
+
 QLabel
 {
   background-color: black;
@@ -283,19 +298,6 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="11" column="0">
-     <widget class="QPushButton" name="pushButtonPool">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>Pool</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="8" column="0" colspan="6">
      <widget class="QGroupBox" name="groupBoxNvidia">
       <property name="sizePolicy">
@@ -413,7 +415,7 @@ QPushButton:disabled
        <item row="1" column="0" rowspan="3">
         <widget class="QPushButton" name="pushButtonOC">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string>OverClocking</string>
@@ -525,6 +527,9 @@ QPushButton:disabled
          <property name="minimum">
           <number>1</number>
          </property>
+         <property name="maximum">
+          <number>600</number>
+         </property>
          <property name="value">
           <number>20</number>
          </property>
@@ -543,7 +548,7 @@ QPushButton:disabled
           <number>30</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>600</number>
          </property>
          <property name="value">
           <number>60</number>
@@ -675,6 +680,19 @@ for last 6 hour:</string>
     <item row="10" column="0" colspan="6">
      <widget class="QTextEdit" name="textEdit">
       <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QPushButton" name="pushButtonPool">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Pool</string>
+      </property>
+      <property name="checkable">
        <bool>true</bool>
       </property>
      </widget>
