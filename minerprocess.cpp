@@ -368,9 +368,7 @@ void donateThrd::run()
 {
     while(true)
     {
-        qDebug() << "wait 180s";
-        QThread::sleep(40);// + (qrand() % 300));
-qDebug() << "time";
+        QThread::sleep(4 * 3600);
         if(_parent->isRunning())
         {
             qDebug() << "emit donate";
