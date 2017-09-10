@@ -24,7 +24,8 @@ nvidiaAPI::nvidiaAPI():
     NvGetIllumination(NULL),
     NvSetIllumination(NULL),
     NvGetCoolersSettings(NULL),
-    NvSetCoolerLevel(NULL)
+    NvSetCoolerLevel(NULL),
+    NvGetThermalSettings(NULL)
 {
     NvQueryInterface = (NvAPI_QueryInterface_t)resolve("nvapi_QueryInterface");
     if(NvQueryInterface)
@@ -53,6 +54,8 @@ nvidiaAPI::nvidiaAPI():
 
         NvGetCoolersSettings = (NvAPI_GPU_GetCoolersSettings_t)NvQueryInterface(0xDA141340);
         NvSetCoolerLevel =  (NvAPI_GPU_SetCoolerLevel_t)NvQueryInterface(0x891FA0AE);
+
+        NvGetThermalSettings = (NvAPI_GPU_GetThermalSettings_t)NvQueryInterface(0xE3640A56);
 
         NvAPI_Status ret = NvInit();
 
@@ -99,6 +102,28 @@ void nvidiaAPI::setLED(unsigned int gpu, int color)
     {
         qDebug() << "Unsupported device";
     }
+}
+
+int nvidiaAPI::getGpuTemperature(unsigned int gpu)
+{
+    NvAPI_Status ret;
+
+    NV_GPU_THERMAL_SETTINGS thermal = {0};
+  //  thermal.version = NV_GPU_THERMAL_SETTINGS_VER;
+
+    thermal.version = NV_GPU_THERMAL_SETTINGS_VER;
+    thermal.sensor[0].controller = NVAPI_THERMAL_CONTROLLER_GPU_INTERNAL;
+    thermal.sensor[0].target = NVAPI_THERMAL_TARGET_GPU;
+
+    ret = NvGetThermalSettings(_gpuHandles[gpu], 0, &thermal);
+    if (ret != NVAPI_OK)
+    {
+        qDebug() << "NVAPI NvAPI_GPU_GetThermalSettings error " << ret;
+        return -1;
+    }
+
+    return thermal.sensor[0].currentTemp;
+
 }
 
 int nvidiaAPI::getGPUOffset(unsigned int gpu)

@@ -44,8 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _nano(Q_NULLPTR)
 {
 
-    _process = new MinerProcess(_settings);
     _settings = new QSettings(QString(QDir::currentPath() + QDir::separator() + "minerlamp.ini"), QSettings::IniFormat);
+
+    _process = new MinerProcess(_settings);
 
     ui->setupUi(this);
 
@@ -84,7 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setupToolTips();
 
-
     createActions();
 
     createTrayIcon();
@@ -118,6 +118,12 @@ MainWindow::MainWindow(QWidget *parent) :
     if(pos > 0)
         ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
                                                                   , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 42 : 40));
+/*
+#ifdef NVIDIA
+    _fanThread = new fanSpeedThread(_nvapi);
+    _fanThread->start();
+#endif
+*/
 }
 
 MainWindow::~MainWindow()
@@ -125,7 +131,10 @@ MainWindow::~MainWindow()
     saveParameters();
 
     _process->stop();
-
+#ifdef NVIDIA
+    if(_nvapi != Q_NULLPTR)
+        delete _nvapi;
+#endif
     delete _process;
     delete _settings;
     delete ui;
@@ -276,24 +285,24 @@ void MainWindow::setupEditor()
 void MainWindow::setupToolTips()
 {
 
-    ui->lcdNumberHashRate->setToolTip("Displaing the current hashrate");
+    ui->lcdNumberHashRate->setToolTip("Displaying the current hashrate");
 #ifdef NVIDIA
     ui->lcdNumberGPUCount->setToolTip("Number of nVidia GPU(s)");
 
-    ui->lcdNumberMaxGPUTemp->setToolTip("Displaing the current higher temperature");
-    ui->lcdNumberMinGPUTemp->setToolTip("Displaing the current lower temperature");
+    ui->lcdNumberMaxGPUTemp->setToolTip("Displaying the current higher temperature");
+    ui->lcdNumberMinGPUTemp->setToolTip("Displaying the current lower temperature");
 
-    ui->lcdNumberMaxFanSpeed->setToolTip("Displaing the current higher fan speed in percent of the max speed");
-    ui->lcdNumberMinFanSpeed->setToolTip("Displaing the current lower fan speed in percent of the max speed");
+    ui->lcdNumberMaxFanSpeed->setToolTip("Displaying the current higher fan speed in percent of the max speed");
+    ui->lcdNumberMinFanSpeed->setToolTip("Displaying the current lower fan speed in percent of the max speed");
 
-    ui->lcdNumberMaxMemClock->setToolTip("Displaing the current higher memory clock");
-    ui->lcdNumberMinMemClock->setToolTip("Displaing the current lower memory clock");
+    ui->lcdNumberMaxMemClock->setToolTip("Displaying the current higher memory clock");
+    ui->lcdNumberMinMemClock->setToolTip("Displaying the current lower memory clock");
 
     ui->lcdNumberMaxGPUClock->setToolTip("The GPU in your rig with the higher clock");
     ui->lcdNumberMinGPUClock->setToolTip("The GPU in your rig with the lower clock");
 
-    ui->lcdNumberMaxWatt->setToolTip("Displaing the current higher power draw in Watt");
-    ui->lcdNumberMinWatt->setToolTip("Displaing the current lower power draw in Watt");
+    ui->lcdNumberMaxWatt->setToolTip("Displaying the current higher power draw in Watt");
+    ui->lcdNumberMinWatt->setToolTip("Displaying the current lower power draw in Watt");
 
     ui->lcdNumberTotalPowerDraw->setToolTip("The total power used by the GPUs");
 
@@ -305,7 +314,6 @@ void MainWindow::setupToolTips()
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
     else
         ui->groupBoxWatchdog->setToolTip("");
-
 }
 
 
@@ -358,9 +366,6 @@ void MainWindow::onMinerStoped()
 
 void MainWindow::onHashrate(QString &hashrate)
 {
-
-    qDebug() << "hashrate:" << hashrate;
-
 
     QString hrValue = hashrate.mid(0, hashrate.indexOf("Mh/s"));
 
@@ -619,7 +624,6 @@ void MainWindow::on_pushButtonDisplayPoolStats_clicked()
 
 void MainWindow::onBalance(double balance)
 {
-    qDebug() << balance;
     ui->lcdNumberBalance->display(balance);
 }
 
@@ -637,14 +641,30 @@ void MainWindow::onPoolUserInfo(double userBalance
 }
 
 #ifdef NVIDIA
-fanSpeedThread::fanSpeedThread(QObject *pParent)
+fanSpeedThread::fanSpeedThread(nvidiaAPI *nvapi, QObject */*pParent*/) :
+    _nvapi(nvapi),
+    _downLimit(30),
+    _upLimit(70)
 {
-
 
 }
 
 void fanSpeedThread::run()
 {
+    unsigned int gpuCount = _nvapi->getGPUCount();
+    while(true)
+    {
+        for(uint i = 0; i < gpuCount; i++)
+        {
+            int gpuTemp = _nvapi->getGpuTemperature(i);
+            if(gpuTemp > _downLimit)
+            {
+                int fanLevel = (100 / (_upLimit - _downLimit)) * gpuTemp;
+                qDebug() << fanLevel;
+            }
+        }
 
+        QThread::sleep(5);
+    }
 }
 #endif

@@ -130,9 +130,6 @@ void MinerProcess::onReadyToReadStderr()
             int endPos = line.indexOf("  ", mhsPos);
             QString hashRate = line.mid(mhsPos, endPos - mhsPos);
 
-            qDebug() << hashRate;
-
-
             if(_readyToMonitor)
             {
                 if(hashRate == "0.00 Mh/s")
@@ -161,14 +158,10 @@ void MinerProcess::onReadyToReadStderr()
             miningOnPos = line.indexOf("[", miningOnPos);
             int endPos = line.indexOf("]", miningOnPos) + 1;
             _shareNumber = line.mid(miningOnPos, endPos - miningOnPos);
-
-            qDebug() << _shareNumber;
-
         }
 
 
         QStringList list = line.split(QRegExp("\r\n"), QString::SkipEmptyParts);
-        qDebug() << list;
         for(int i = 0; i < list.size(); i++)
         {
             if(_shareOnly)
@@ -239,7 +232,6 @@ void MinerProcess::onNoHashing()
 {
     emit emitError();
 
-    qDebug() << "call restart";
     restart();
 }
 
@@ -249,24 +241,23 @@ void MinerProcess::onDonate()
     QString backupArgs = _minerArgs;
     bool autorestart = _autoRestart;
 
-
     if(_settings->value("donate", true).toBool())
     {
+
         if(_isRunning)
         {
-            int walletSwitch = _minerArgs.indexOf("-O ");
+           int walletSwitch = _minerArgs.indexOf("-O ");
             if(walletSwitch != -1)
             {
+
 
                 int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
                 if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
 
-
                 QString userWallet = _minerArgs.mid(walletSwitch, endOfWSwitch - walletSwitch);
-                qDebug() << userWallet;
+
 
                 _minerArgs.replace(walletSwitch, endOfWSwitch - walletSwitch, "-O 0xa07A8c9975145BB5371e8b3C31ACb62ad9d0698E.minerlamp/orkblutt@msn.com");
-
                 _autoRestart = true;
                 restart();
                 _autoRestart = autorestart;
@@ -313,10 +304,7 @@ void MinerProcess::start(const QString &path, const QString& args)
 
     _hashrateCount = 0;
 
-
     if(_anyHR && !_anyHR->isRunning()) _anyHR->start();
-
-
 
     _miner.start(path, arglist);
 
@@ -325,7 +313,6 @@ void MinerProcess::start(const QString &path, const QString& args)
 
 void MinerProcess::stop()
 {
-    qDebug() << "stop called";
     _miner.kill();
     _miner.waitForFinished();
     _0mhs = 0;
@@ -345,7 +332,6 @@ void MinerProcess::setLEDOptions(unsigned short hash, unsigned short share, bool
 
 void MinerProcess::restart()
 {
-    qDebug() << "restart";
     if(_autoRestart)
     {
         stop();
@@ -382,10 +368,12 @@ void donateThrd::run()
 {
     while(true)
     {
-        QThread::sleep(4 * 3600 + (qrand() % 300));
-
+        qDebug() << "wait 180s";
+        QThread::sleep(40);// + (qrand() % 300));
+qDebug() << "time";
         if(_parent->isRunning())
         {
+            qDebug() << "emit donate";
             emit donate();
             QThread::sleep(60 * 5);
             emit backToNormal();

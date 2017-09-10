@@ -8,7 +8,7 @@ LEDDialog::LEDDialog(unsigned short hash, unsigned short share, QWidget *parent)
     _sharingLEDIntensity(share)
 {
     ui->setupUi(this);
-
+    setFixedSize(size());
     ui->spinBoxLEDHashIntensity->setValue(hash);
     ui->spinBoxLEDShareIntensity->setValue(share);
 }

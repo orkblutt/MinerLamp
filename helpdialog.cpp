@@ -6,7 +6,11 @@ helpDialog::helpDialog(QSettings* settings, QWidget *parent) :
     _settings(settings),
     ui(new Ui::helpDialog)
 {
+
     ui->setupUi(this);
+
+    setFixedSize(size());
+
     ui->plainTextEdit->appendHtml("<html>");
     ui->plainTextEdit->appendHtml("<h2>Simple Qt GUI for running ethminer safely.</h2><br>");
     ui->plainTextEdit->appendHtml("It will restart ethminer for you in case of error...");

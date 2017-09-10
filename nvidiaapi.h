@@ -318,6 +318,8 @@ public:
 
     void setLED(unsigned int gpu, int color);
 
+    int getGpuTemperature(unsigned int gpu);
+
     int getGPUOffset(unsigned int gpu);
     int getMemOffset(unsigned int gpu);
 
@@ -358,6 +360,7 @@ private:
     typedef NvAPI_Status (*NvAPI_DLL_ClientPowerPoliciesSetStatus_t)(NvPhysicalGpuHandle handle, NVAPI_GPU_POWER_STATUS* pPolicies);
     typedef NvAPI_Status (*NvAPI_GPU_GetCoolersSettings_t)(NvPhysicalGpuHandle hPhysicalGpu, NvU32 coolerIndex, NV_GPU_COOLER_SETTINGS* coolerSettings);
     typedef NvAPI_Status (*NvAPI_GPU_SetCoolerLevel_t)(NvPhysicalGpuHandle hPhysicalGpu, NvU32 coolerIndex, NV_GPU_COOLER_LEVELS* coolerLevel);
+    typedef NvAPI_Status (*NvAPI_GPU_GetThermalSettings_t)(NvPhysicalGpuHandle hPhysicalGpu, NvU32 gpuIndex, NV_GPU_THERMAL_SETTINGS* thermalSettings);
 
     NvAPI_QueryInterface_t NvQueryInterface;
     NvAPI_Initialize_t NvInit;
@@ -380,6 +383,7 @@ private:
     NvAPI_DLL_ClientPowerPoliciesSetStatus_t NvClientPowerPoliciesSetStatus;
     NvAPI_GPU_GetCoolersSettings_t NvGetCoolersSettings;
     NvAPI_GPU_SetCoolerLevel_t NvSetCoolerLevel;
+    NvAPI_GPU_GetThermalSettings_t NvGetThermalSettings;
 
 private:
 

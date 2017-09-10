@@ -11,6 +11,8 @@ nvOCDialog::nvOCDialog(nvidiaAPI *nvapi, QSettings *settings, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setFixedSize(size());
+
     unsigned int deviceNumber = _nvapi->getGPUCount();
     if(deviceNumber)
     {

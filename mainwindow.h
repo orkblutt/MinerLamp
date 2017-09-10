@@ -34,10 +34,15 @@ class fanSpeedThread: public QThread
 {
     Q_OBJECT
 public:
-    fanSpeedThread(QObject* pParent = Q_NULLPTR);
+    fanSpeedThread(nvidiaAPI* nvapi, QObject* = Q_NULLPTR);
 
     void run();
+private:
 
+    nvidiaAPI* _nvapi;
+
+    int _upLimit;
+    int _downLimit;
 };
 #endif
 
@@ -181,6 +186,7 @@ private:
     autoStart* _starter;
 #ifdef NVIDIA
     maxGPUThread* _maxGPUTemp;
+    fanSpeedThread* _fanThread;
 #endif
 
     nanopoolAPI* _nano;
