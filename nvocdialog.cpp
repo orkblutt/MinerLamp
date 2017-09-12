@@ -73,10 +73,10 @@ void nvOCDialog::on_comboBoxDevice_activated(int index)
 
 void nvOCDialog::updateSliders(unsigned int gpu)
 {
-    int plimit = _nvapi->getPowerLimit(gpu);
-    int gpuoffset = _nvapi->getGPUOffset(gpu);
-    int memoffset = _nvapi->getMemOffset(gpu);
-    int fanspeed = _nvapi->getFanSpeed(gpu);
+    int plimit      = _nvapi->getPowerLimit(gpu);
+    int gpuoffset   = _nvapi->getGPUOffset(gpu);
+    int memoffset   = _nvapi->getMemOffset(gpu);
+    int fanspeed    = _nvapi->getFanSpeed(gpu);
 
     ui->horizontalSliderPowerPercent->setValue(plimit);
     ui->horizontalSliderGpuOffset->setValue(gpuoffset);
@@ -86,19 +86,29 @@ void nvOCDialog::updateSliders(unsigned int gpu)
 
 void nvOCDialog::saveConfig()
 {
-    _settings->beginGroup("nvoc");
+    int deviceIndex = ui->comboBoxDevice->currentIndex();
 
+    _settings->beginGroup("nvoc");
     _settings->setValue("nvoc_applyall", ui->checkBoxAllDevices->isChecked());
     _settings->setValue("nvoc_applyonstart", ui->checkBoxOCMinerStart->isChecked());
 
-    for(int i = 0; i < _cardList.size(); i++)
+    if(ui->checkBoxAllDevices->isChecked())
     {
-        _settings->setValue(QString("powerlimitoffset" + QString::number(i)), _cardList.at(i).powerOffset);
-        _settings->setValue(QString("gpuoffset" + QString::number(i)), _cardList.at(i).gpuOffset);
-        _settings->setValue(QString("memoffset" + QString::number(i)), _cardList.at(i).memOffset);
-        _settings->setValue(QString("fanspeed" + QString::number(i)), _cardList.at(i).fanSpeed);
+        for(int i = 0; i < _cardList.size(); i++)
+        {
+            _settings->setValue(QString("powerlimitoffset" + QString::number(i)), _cardList.at(deviceIndex).powerOffset);
+            _settings->setValue(QString("gpuoffset" + QString::number(i)), _cardList.at(deviceIndex).gpuOffset);
+            _settings->setValue(QString("memoffset" + QString::number(i)), _cardList.at(deviceIndex).memOffset);
+            _settings->setValue(QString("fanspeed" + QString::number(i)), _cardList.at(deviceIndex).fanSpeed);
+        }
     }
-
+    else
+    {
+        _settings->setValue(QString("powerlimitoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).powerOffset);
+        _settings->setValue(QString("gpuoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).gpuOffset);
+        _settings->setValue(QString("memoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).memOffset);
+        _settings->setValue(QString("fanspeed" + QString::number(deviceIndex)), _cardList.at(deviceIndex).fanSpeed);
+    }
     _settings->endGroup();
 }
 
@@ -125,11 +135,9 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
             _nvapi->setMemClockOffset(gpu, ui->horizontalSliderMemOffset->value());
             _nvapi->setFanSpeed(gpu, ui->horizontalSliderFanSpeed->value());
         }
-
         saveConfig();
     }
 }
-
 
 
 void nvOCDialog::on_checkBoxAutoSpeedFan_clicked(bool checked)

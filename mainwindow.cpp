@@ -179,9 +179,9 @@ void MainWindow::applyOC()
         for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
         {
             _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
-            _nvapi->setPowerLimitPercent(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
-            _nvapi->setPowerLimitPercent(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
-            _nvapi->setPowerLimitPercent(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+            _nvapi->setGPUOffset(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
+            _nvapi->setMemClockOffset(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
+            _nvapi->setFanSpeed(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
         }
     }
     _settings->endGroup();
