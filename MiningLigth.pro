@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MinerLamp
 TEMPLATE = app
-VERSION = 0.1.2.26
+VERSION = 0.1.2.32
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
