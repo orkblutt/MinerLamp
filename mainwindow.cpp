@@ -118,12 +118,12 @@ MainWindow::MainWindow(QWidget *parent) :
     if(pos > 0)
         ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
                                                                   , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 42 : 40));
-/*
+
 #ifdef NVIDIA
     _fanThread = new fanSpeedThread(_nvapi);
     _fanThread->start();
 #endif
-*/
+
 }
 
 MainWindow::~MainWindow()
@@ -644,7 +644,7 @@ void MainWindow::onPoolUserInfo(double userBalance
 fanSpeedThread::fanSpeedThread(nvidiaAPI *nvapi, QObject */*pParent*/) :
     _nvapi(nvapi),
     _downLimit(30),
-    _upLimit(70)
+    _upLimit(65)
 {
 
 }
@@ -657,9 +657,15 @@ void fanSpeedThread::run()
         for(uint i = 0; i < gpuCount; i++)
         {
             int gpuTemp = _nvapi->getGpuTemperature(i);
+            qDebug() << "gpu temp" << gpuTemp;
             if(gpuTemp > _downLimit)
             {
-                int fanLevel = (100 / (_upLimit - _downLimit)) * gpuTemp;
+                float step = 100 / (float)(_upLimit - _downLimit);
+
+                float fanLevel = step * (gpuTemp - _downLimit);
+
+                _nvapi->setFanSpeed(i, (int)fanLevel);
+
                 qDebug() << fanLevel;
             }
         }
