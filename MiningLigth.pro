@@ -34,7 +34,8 @@ SOURCES += \
     nvocdialog.cpp \
     nvidiaapi.cpp \
     leddialog.cpp \
-    nanopoolapi.cpp
+    nanopoolapi.cpp \
+    amdapi_adl.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,7 +46,8 @@ HEADERS += \
     nvocdialog.h \
     nvidiaapi.h \
     leddialog.h \
-    nanopoolapi.h
+    nanopoolapi.h \
+    amdapi_adl.h
 
 FORMS += \
         mainwindow.ui \
@@ -66,5 +68,7 @@ INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 
 win32: INCLUDEPATH += $$PWD/nvapi
+
+INCLUDEPATH += $$PWD/adl/include
 
 CONFIG  += openssl-linked
