@@ -33,6 +33,8 @@ public:
     int setTempLimitOffset(int gpu, unsigned int offset);
     int setFanSpeed(int gpu, unsigned int percent);
 
+    bool isInitialized(){return _isInitialized;}
+
 
 private:
 

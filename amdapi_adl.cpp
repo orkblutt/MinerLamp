@@ -79,9 +79,8 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
 
         // Get the AdapterInfo structure for all adapters in the system
         ADL_Adapter_AdapterInfo_Get (_lpAdapterInfo, sizeof (AdapterInfo) * _gpuCount);
+        _isInitialized = true;
     }
-
-    _isInitialized = true;
 }
 
 
@@ -105,6 +104,14 @@ int amdapi_adl::getGPUCount()
 
 int amdapi_adl::getGpuTemperature(int gpu)
 {
+    int temp;
+    int iSupported,iEnabled,iVersion;
+    ADL2_Overdrive_Caps(_context, _lpAdapterInfo[gpu].iAdapterIndex, &iSupported, &iEnabled, &iVersion);
+    if (iVersion == 7)
+    {
+        ADL2_OverdriveN_Temperature_Get(_context,_lpAdapterInfo[gpu].iAdapterIndex,1, &temp);
+        return temp;
+    }
     return 0;
 }
 

@@ -7,6 +7,7 @@
 #include "leddialog.h"
 #include "nanopoolapi.h"
 
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QMenu>
@@ -59,8 +60,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #ifdef NVIDIA
 
+
     _nvapi = new nvidiaAPI();
 
+    bool nvDll = true;
     QLibrary lib("nvml.dll");
     if (!lib.load())
     {
@@ -69,18 +72,27 @@ MainWindow::MainWindow(QWidget *parent) :
         {
             ui->textEdit->append("Cannot find nvml.dll. NVAPI monitoring won't work.");
             ui->textEdit->append("Be sure to have the latest nvidia drivers.");
+            nvDll = false;
         }
+    }
+
+    if(nvDll)
+    {
+        _maxGPUTemp = new maxGPUThread(this);
+        connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
+        _maxGPUTemp->start();
     }
     else
     {
-
-        _maxGPUTemp = new maxGPUThread(this);
-        connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
-
-        _maxGPUTemp->start();
+        ui->groupBoxNvidia->hide();
     }
+
 #endif
 
+
+#ifdef AMD
+    _amd = new amdapi_adl();
+#endif
     loadParameters();
 
     setupToolTips();

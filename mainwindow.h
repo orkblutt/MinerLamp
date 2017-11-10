@@ -10,6 +10,7 @@
 #include "highlighter.h"
 #include "nanopoolapi.h"
 #include "nvapi.h"
+#include "amdapi_adl.h"
 
 
 namespace Ui {
@@ -102,6 +103,9 @@ private:
      void applyOC();
 #endif
 
+#ifdef AMD
+     amdapi_adl* _amd;
+#endif
 
 private slots:
 
