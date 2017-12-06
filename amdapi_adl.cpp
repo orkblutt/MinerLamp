@@ -25,6 +25,7 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
   , _context(nullptr)
 {
 
+    qDebug() << "Entering adl constructor";
     ADL_Main_Control_Create = (ADL_MAIN_CONTROL_CREATE) resolve("ADL_Main_Control_Create");
     ADL_Main_Control_Destroy = (ADL_MAIN_CONTROL_DESTROY) resolve("ADL_Main_Control_Destroy");
     ADL_Adapter_NumberOfAdapters_Get = (ADL_ADAPTER_NUMBEROFADAPTERS_GET) resolve("ADL_Adapter_NumberOfAdapters_Get");
@@ -86,9 +87,11 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
 
 amdapi_adl::~amdapi_adl()
 {
-
-    free(_lpAdapterInfo);
-    ADL_Main_Control_Destroy();
+    if(_isInitialized)
+    {
+        free(_lpAdapterInfo);
+        ADL_Main_Control_Destroy();
+    }
 }
 
 int amdapi_adl::getGPUCount()

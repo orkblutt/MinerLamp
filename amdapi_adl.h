@@ -82,11 +82,8 @@ private:
  private:
 
     bool _isInitialized;
-
     int _gpuCount;
-
     ADL_CONTEXT_HANDLE _context;
-
     LPAdapterInfo   _lpAdapterInfo;
 
 };

@@ -7,23 +7,9 @@
 #include <QThread>
 #include <QSettings>
 
-#include "nvidiaapi.h"
 
 class MinerProcess;
 class donateThrd;
-
-class blinkerLED : public QThread
-{
-    Q_OBJECT
-public:
-    blinkerLED(unsigned short hash, unsigned short share, QObject* pParent = Q_NULLPTR);
-
-    void run();
-private:
-    unsigned short _hash;
-    unsigned short _share;
-    MinerProcess* _pParent;
-};
 
 // waitter before to monitor for O.OOMH/s
 class zeroMHsWaitter : public QThread
@@ -89,20 +75,13 @@ public:
 
     bool isRunning(){return _isRunning;}
 
-#ifdef NVIDIA
-    nvidiaAPI* getNVAPI(){return _nvapi;}
-#endif
+
 
 private:
     QProcess    _miner;
     zeroMHsWaitter* _waitter;
     anyMHsWaitter*  _anyHR;
-    blinkerLED* _blinker;
     donateThrd* _donate;
-
-#ifdef NVIDIA
-    nvidiaAPI*  _nvapi;
-#endif
 
     QTextEdit*  _log;
     QString     _minerPath;

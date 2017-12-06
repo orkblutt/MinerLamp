@@ -55,10 +55,6 @@ MinerProcess::MinerProcess(QSettings* settings):
     _readyToMonitor(false),
     _waitter(Q_NULLPTR),
     _anyHR(Q_NULLPTR)
-  #ifdef NVIDIA
-  , _nvapi(Q_NULLPTR)
-  #endif
-  , _blinker(Q_NULLPTR)
   , _ledActivated(false)
   , _ledHash(50)
   , _ledShare(100)
@@ -89,10 +85,6 @@ MinerProcess::MinerProcess(QSettings* settings):
     _anyHR = new anyMHsWaitter(_delayBeforeNoHash, this);
     connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()));
 
-
-#ifdef NVIDIA
-    _nvapi = new nvidiaAPI();
-#endif
 
     _donate = new donateThrd(this);
     connect(_donate, SIGNAL(donate()), this, SLOT(onDonate()));
@@ -186,20 +178,7 @@ void MinerProcess::onReadyToReadStderr()
             return;
         }
 
-        if(_ledActivated)
-        {
-            if(line.indexOf("B-) Submitted and accepted.") != -1)
-            {
-                if(_blinker)
-                {
-                    if(_blinker->isRunning()) _blinker->terminate();
-                    delete _blinker;
-                }
 
-                _blinker = new blinkerLED(_ledHash, _ledShare, this);
-                _blinker->start();
-            }
-        }
     }
 }
 
@@ -249,8 +228,6 @@ void MinerProcess::onDonate()
            int walletSwitch = _minerArgs.indexOf("-O ");
             if(walletSwitch != -1)
             {
-
-
                 int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
                 if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
 
@@ -340,23 +317,8 @@ void MinerProcess::restart()
     }
 }
 
-blinkerLED::blinkerLED(unsigned short hash, unsigned short share, QObject* pParent) :
-    _hash(hash),
-    _share(share),
-    _pParent((MinerProcess*)pParent)
-{
 
-}
 
-void blinkerLED::run()
-{
-#ifdef NVIDIA
-    nvidiaAPI* nvapi = _pParent->getNVAPI();
-    nvapi->setAllLED(_share);
-    QThread::sleep(1);
-    nvapi->setAllLED(_hash);
-#endif
-}
 
 donateThrd::donateThrd(QObject* pParent) : QThread(pParent)
   , _parent((MinerProcess*)pParent)

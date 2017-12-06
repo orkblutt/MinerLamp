@@ -57,9 +57,12 @@ nvidiaAPI::nvidiaAPI():
 
         NvGetThermalSettings = (NvAPI_GPU_GetThermalSettings_t)NvQueryInterface(0xE3640A56);
 
+
         NvAPI_Status ret = NvInit();
 
         qDebug() << "NVAPI success " << ret;
+
+        _libLoaded = true;
     }
 }
 

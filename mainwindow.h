@@ -10,6 +10,7 @@
 #include "highlighter.h"
 #include "nanopoolapi.h"
 #include "nvapi.h"
+#include "nvidiaapi.h"
 #include "amdapi_adl.h"
 
 
@@ -116,7 +117,7 @@ private slots:
     void on_pushButtonHelp_clicked();
     void on_spinBoxDelay0MHs_valueChanged(int arg1);
     void onReadyToStartMiner();
- #ifdef NVIDIA
+
     void onGPUInfo(unsigned int gpucount
                    , unsigned int maxgputemp
                    , unsigned int mingputemp
@@ -131,8 +132,7 @@ private slots:
                    , unsigned int totalpowerdraw
                    );
      void on_pushButtonOC_clicked();
-     void on_checkBoxBlinkLED_clicked(bool checked);
-#endif
+
 
      void onHelp();
     void on_groupBoxWatchdog_clicked(bool checked);
@@ -188,10 +188,9 @@ private:
 
     //QThreads
     autoStart* _starter;
-#ifdef NVIDIA
+
     maxGPUThread* _maxGPUTemp;
     fanSpeedThread* _fanThread;
-#endif
 
     nanopoolAPI* _nano;
 };

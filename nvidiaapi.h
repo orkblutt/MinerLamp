@@ -336,6 +336,8 @@ public:
 
     void setAllLED(int color);
 
+    bool libLoaded(){return _libLoaded;}
+
 
 private:
 

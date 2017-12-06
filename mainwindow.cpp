@@ -58,7 +58,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_process, &MinerProcess::emitHashRate, this, &MainWindow::onHashrate);
     connect(_process, &MinerProcess::emitError, this, &MainWindow::onError);
 
-#ifdef NVIDIA
 
 
     _nvapi = new nvidiaAPI();
@@ -81,18 +80,31 @@ MainWindow::MainWindow(QWidget *parent) :
         _maxGPUTemp = new maxGPUThread(this);
         connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
         _maxGPUTemp->start();
+
+        if(_nvapi->libLoaded())
+        {
+            _fanThread = new fanSpeedThread(_nvapi);
+            _fanThread->start();
+        }
     }
     else
     {
         ui->groupBoxNvidia->hide();
     }
 
-#endif
 
-
-#ifdef AMD
     _amd = new amdapi_adl();
-#endif
+    if(!_amd->isInitialized())
+    {
+        ui->groupBoxAMD->hide();
+
+    }
+    else
+    {
+        ui->lcdNumber_AMD_GPUCount->display(_amd->getGPUCount());
+
+    }
+
     loadParameters();
 
     setupToolTips();
@@ -110,9 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupEditor();
 
     ui->lcdNumberHashRate->display("0.00");
-#ifndef NVIDIA
-    ui->groupBoxNvidia->hide();
-#endif
+
 
     if(ui->checkBoxAutoStart->isChecked())
     {
@@ -131,11 +141,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
                                                                   , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 42 : 40));
 
-#ifdef NVIDIA
-    _fanThread = new fanSpeedThread(_nvapi);
-    _fanThread->start();
-#endif
-
 }
 
 MainWindow::~MainWindow()
@@ -143,10 +148,14 @@ MainWindow::~MainWindow()
     saveParameters();
 
     _process->stop();
-#ifdef NVIDIA
+
     if(_nvapi != Q_NULLPTR)
         delete _nvapi;
-#endif
+
+    if(_amd != Q_NULLPTR)
+        delete _amd;
+
+
     delete _process;
     delete _settings;
     delete ui;
@@ -182,23 +191,26 @@ void MainWindow::saveParameters()
     _settings->setValue(DELAYNOHASH, ui->spinBoxDelayNoHash->value());
 }
 
-#ifdef NVIDIA
+
 void MainWindow::applyOC()
 {
     _settings->beginGroup("nvoc");
     if(_settings->value("nvoc_applyonstart").toBool())
     {
-        for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+        if(_nvapi->libLoaded())
         {
-            _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
-            _nvapi->setGPUOffset(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
-            _nvapi->setMemClockOffset(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
-            _nvapi->setFanSpeed(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+            for(unsigned int i = 0; i < _nvapi->getGPUCount(); i++)
+            {
+                _nvapi->setPowerLimitPercent(i, _settings->value(QString("powerlimitoffset" + QString::number(i))).toInt());
+                _nvapi->setGPUOffset(i, _settings->value(QString("gpuoffset" + QString::number(i))).toInt());
+                _nvapi->setMemClockOffset(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
+                _nvapi->setFanSpeed(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
+            }
         }
     }
     _settings->endGroup();
 }
-#endif
+
 
 void MainWindow::setVisible(bool visible)
 {
@@ -319,7 +331,6 @@ void MainWindow::setupToolTips()
     ui->lcdNumberTotalPowerDraw->setToolTip("The total power used by the GPUs");
 
     ui->pushButtonOC->setToolTip("Manage NVIDIA overclocking");
-    ui->checkBoxBlinkLED->setToolTip("Blink baby! Blink!");
 
 #endif
     if(!ui->groupBoxWatchdog->isChecked())
@@ -473,7 +484,6 @@ void autoStart::run()
     emit readyToStartMiner();
 }
 
-#ifdef NVIDIA
 
 void MainWindow::onGPUInfo(unsigned int gpucount
                            , unsigned int maxgputemp
@@ -561,45 +571,13 @@ void maxGPUThread::run()
 
 void MainWindow::on_pushButtonOC_clicked()
 {
-    nvOCDialog* dlg = new nvOCDialog(_nvapi, _settings, this);
-    dlg->exec();
-    delete dlg;
-}
-
-void MainWindow::on_checkBoxBlinkLED_clicked(bool checked)
-{
-    unsigned short hash = 0 , share = 0;
-
-    if(checked)
+    if(_nvapi->libLoaded())
     {
-        hash = _settings->value(NVLEDHASHINTENSITY, hash).toInt();
-        share = _settings->value(NVLEDSHAREINTENSITY, share).toInt();
-        LEDDialog* led = new LEDDialog(hash, share, this);
-        if(led)
-        {
-            if(led->exec())
-            {
-                led->getValues(hash, share);
-                _process->setLEDOptions(hash, share, true);
-            }
-            else
-                ui->checkBoxBlinkLED->setChecked(false);
-            delete led;
-        }
-    }
-    else
-        _process->setLEDOptions(hash, share, true);
-
-    _settings->setValue(NVLEDBLINKON, checked);
-
-    if(checked)
-    {
-        _settings->setValue(NVLEDHASHINTENSITY, hash);
-        _settings->setValue(NVLEDSHAREINTENSITY, share);
+        nvOCDialog* dlg = new nvOCDialog(_nvapi, _settings, this);
+        dlg->exec();
+        delete dlg;
     }
 }
-
-#endif
 
 void MainWindow::on_pushButtonPool_clicked(bool checked)
 {
@@ -652,7 +630,7 @@ void MainWindow::onPoolUserInfo(double userBalance
     ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }
 
-#ifdef NVIDIA
+
 fanSpeedThread::fanSpeedThread(nvidiaAPI *nvapi, QObject */*pParent*/) :
     _nvapi(nvapi),
     _downLimit(30),
@@ -685,4 +663,4 @@ void fanSpeedThread::run()
         QThread::sleep(5);
     }
 }
-#endif
+
