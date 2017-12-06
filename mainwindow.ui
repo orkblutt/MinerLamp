@@ -820,7 +820,7 @@ for last 6 hour:</string>
      <widget class="QLineEdit" name="lineEditArgs"/>
     </item>
     <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButtonEthminerBrowser">
       <property name="text">
        <string>...</string>
       </property>

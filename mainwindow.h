@@ -155,6 +155,8 @@ private slots:
                                      , double averageHashRate24H
                                      );
 
+    void on_pushButtonEthminerBrowser_clicked();
+
 private:
 
     void onMinerStarted();

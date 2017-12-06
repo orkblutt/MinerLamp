@@ -15,6 +15,7 @@
 #include <QCloseEvent>
 #include <QLibrary>
 #include <QDir>
+#include <QFileDialog>
 
 #define MINERPATH           "minerpath"
 #define MINERARGS           "minerargs"
@@ -664,3 +665,11 @@ void fanSpeedThread::run()
     }
 }
 
+
+void MainWindow::on_pushButtonEthminerBrowser_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Choose ethminer path"), "", tr("ethminer.exe (*.exe)"));
+    if(!fileName.isEmpty())
+        ui->lineEditMinerPath->setText(fileName);
+}
