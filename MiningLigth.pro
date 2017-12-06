@@ -33,7 +33,6 @@ SOURCES += \
     nvidianvml.cpp \
     nvocdialog.cpp \
     nvidiaapi.cpp \
-    leddialog.cpp \
     nanopoolapi.cpp \
     amdapi_adl.cpp
 
@@ -45,15 +44,13 @@ HEADERS += \
     nvidianvml.h \
     nvocdialog.h \
     nvidiaapi.h \
-    leddialog.h \
     nanopoolapi.h \
     amdapi_adl.h
 
 FORMS += \
         mainwindow.ui \
     helpdialog.ui \
-    nvocdialog.ui \
-    leddialog.ui
+    nvocdialog.ui
 
 RC_ICONS += \
         eth_miner_lamp.ico

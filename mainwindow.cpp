@@ -4,7 +4,6 @@
 #include "helpdialog.h"
 #include "nvidianvml.h"
 #include "nvocdialog.h"
-#include "leddialog.h"
 #include "nanopoolapi.h"
 
 
@@ -29,10 +28,6 @@
 
 #ifdef NVIDIA
 #define NVIDIAOPTION        "nvidia_options"
-#define NVLEDHASHINTENSITY  "nv_led_hash_intensity"
-#define NVLEDSHAREINTENSITY "nv_led_share_intensity"
-#define NVLEDBLINKON        "nv_led_blink_on"
-
 #define NVOCOPTION          "nvidia_oc_options"
 
 #endif
@@ -311,7 +306,7 @@ void MainWindow::setupToolTips()
 {
 
     ui->lcdNumberHashRate->setToolTip("Displaying the current hashrate");
-#ifdef NVIDIA
+
     ui->lcdNumberGPUCount->setToolTip("Number of nVidia GPU(s)");
 
     ui->lcdNumberMaxGPUTemp->setToolTip("Displaying the current higher temperature");
@@ -333,7 +328,6 @@ void MainWindow::setupToolTips()
 
     ui->pushButtonOC->setToolTip("Manage NVIDIA overclocking");
 
-#endif
     if(!ui->groupBoxWatchdog->isChecked())
         ui->groupBoxWatchdog->setToolTip("Check it to activate the following watchdog options");
     else
@@ -370,9 +364,8 @@ void MainWindow::onMinerStarted()
     _isMinerRunning = true;
     _isStartStoping = false;
 
-#ifdef NVIDIA
     applyOC();
-#endif
+
 }
 
 void MainWindow::onMinerStoped()
