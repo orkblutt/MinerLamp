@@ -73,31 +73,35 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(nvDll)
     {
-        _maxGPUTemp = new maxGPUThread(this);
-        connect(_maxGPUTemp, &maxGPUThread::gpuInfoSignal, this, &MainWindow::onGPUInfo);
-        _maxGPUTemp->start();
+        _nvMonitorThrd = new nvMonitorThrd(this);
+        connect(_nvMonitorThrd, &nvMonitorThrd::gpuInfoSignal, this, &MainWindow::onNvMonitorInfo);
+        _nvMonitorThrd->start();
 
         if(_nvapi->libLoaded())
         {
             _fanThread = new fanSpeedThread(_nvapi);
             _fanThread->start();
         }
+
     }
     else
     {
         ui->groupBoxNvidia->hide();
     }
 
-
-    _amd = new amdapi_adl();
-    if(!_amd->isInitialized())
+    QLibrary adl("atiadlxx");
+    if(!adl.load())
     {
         ui->groupBoxAMD->hide();
 
     }
     else
     {
-        ui->lcdNumber_AMD_GPUCount->display(_amd->getGPUCount());
+        adl.unload();
+
+        _amdMonitorThrd = new amdMonitorThrd(this);
+        connect(_amdMonitorThrd, &amdMonitorThrd::gpuInfoSignal, this, &MainWindow::onAMDMonitorInfo);
+        _amdMonitorThrd->start();
 
     }
 
@@ -147,9 +151,6 @@ MainWindow::~MainWindow()
 
     if(_nvapi != Q_NULLPTR)
         delete _nvapi;
-
-    if(_amd != Q_NULLPTR)
-        delete _amd;
 
 
     delete _process;
@@ -479,7 +480,7 @@ void autoStart::run()
 }
 
 
-void MainWindow::onGPUInfo(unsigned int gpucount
+void MainWindow::onNvMonitorInfo(unsigned int gpucount
                            , unsigned int maxgputemp
                            , unsigned int mingputemp
                            , unsigned int maxfanspeed
@@ -517,13 +518,41 @@ void MainWindow::onGPUInfo(unsigned int gpucount
 
 }
 
-maxGPUThread::maxGPUThread(QObject * /*pParent*/)
+void MainWindow::onAMDMonitorInfo(unsigned int gpucount, unsigned int maxgputemp, unsigned int mingputemp, unsigned int maxfanspeed, unsigned int minfanspeed, unsigned int maxmemclock, unsigned int minmemclock, unsigned int maxgpuclock, unsigned int mingpuclock, unsigned int maxpowerdraw, unsigned int minpowerdraw, unsigned int totalpowerdraw)
+{
+    ui->lcdNumber_AMD_MaxTemp->setPalette(getTempColor(maxgputemp));
+    ui->lcdNumber_AMD_MinTemp->setPalette(getTempColor(mingputemp));
+
+    ui->lcdNumber_AMD_GPUCount->display((int)gpucount);
+
+    ui->lcdNumber_AMD_MaxTemp->display((int)maxgputemp);
+    ui->lcdNumber_AMD_MinTemp->display((int)mingputemp);
+
+    ui->lcdNumber_AMD_MaxFan->display((int)maxfanspeed);
+    ui->lcdNumber_AMD_MinFan->display((int)minfanspeed);
+
+    ui->lcdNumberMaxMemClock->display((int)maxmemclock);
+    ui->lcdNumberMinMemClock->display((int)minmemclock);
+
+    ui->lcdNumberMaxGPUClock->display((int)maxgpuclock);
+    ui->lcdNumberMinGPUClock->display((int)mingpuclock);
+
+    ui->lcdNumberMaxWatt->display((double)maxpowerdraw / 1000);
+    ui->lcdNumberMinWatt->display((double)minpowerdraw / 1000);
+
+    ui->lcdNumberTotalPowerDraw->display((double)totalpowerdraw / 1000);
+
+}
+
+
+
+nvMonitorThrd::nvMonitorThrd(QObject * /*pParent*/)
 {
 
 
 }
 
-void maxGPUThread::run()
+void nvMonitorThrd::run()
 {
     nvidiaNVML nvml;
     if(!nvml.initNVML()) return;
@@ -561,6 +590,43 @@ void maxGPUThread::run()
     }
 
     nvml.shutDownNVML();
+}
+
+
+amdMonitorThrd::amdMonitorThrd(QObject *)
+{
+
+}
+
+void amdMonitorThrd::run()
+{
+    _amd = new amdapi_adl();
+
+    if(_amd && _amd->isInitialized())
+    {
+        while(1)
+        {
+            unsigned int gpucount = _amd->getGPUCount();
+
+            emit gpuInfoSignal(gpucount
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0
+                               , 0);
+
+            QThread::sleep(5);
+        }
+    }
+
+    if(_amd != Q_NULLPTR)
+        delete _amd;
 }
 
 void MainWindow::on_pushButtonOC_clicked()
@@ -666,3 +732,5 @@ void MainWindow::on_pushButtonEthminerBrowser_clicked()
     if(!fileName.isEmpty())
         ui->lineEditMinerPath->setText(fileName);
 }
+
+

@@ -246,10 +246,10 @@ QPushButton:disabled
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="2" column="11">
-        <widget class="QLCDNumber" name="lcdNumber_AMD_MaxPower_2"/>
+        <widget class="QLCDNumber" name="lcdNumber_AMD_MinPoxer"/>
        </item>
        <item row="2" column="5">
-        <widget class="QLCDNumber" name="lcdNumber_AMD_MinFan_2"/>
+        <widget class="QLCDNumber" name="lcdNumber_AMD_MinFan"/>
        </item>
        <item row="1" column="4">
         <widget class="QLabel" name="label_27">
@@ -262,7 +262,7 @@ QPushButton:disabled
         <widget class="QLCDNumber" name="lcdNumber_AMD_MaxTemp"/>
        </item>
        <item row="1" column="5">
-        <widget class="QLCDNumber" name="lcdNumber_AMD_MinFan"/>
+        <widget class="QLCDNumber" name="lcdNumber_AMD_MaxFan"/>
        </item>
        <item row="1" column="8">
         <widget class="QLabel" name="label_30">
