@@ -168,4 +168,30 @@ int amdapi_adl::setFanSpeed(int gpu, unsigned int percent)
     return 0;
 }
 
+int amdapi_adl::getHigherTemp()
+{
+    unsigned int maxTemp = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int temp = getGpuTemperature(i);
+        if(temp > maxTemp)
+            maxTemp = temp;
+    }
+    return maxTemp;
+}
+
+int amdapi_adl::getLowerTemp()
+{
+    unsigned int minTemp = 100000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int temp = getGpuTemperature(i);
+        if(temp < minTemp)
+            minTemp = temp;
+    }
+    return minTemp;
+}
+
 

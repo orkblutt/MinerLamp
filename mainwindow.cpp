@@ -607,10 +607,12 @@ void amdMonitorThrd::run()
         while(1)
         {
             unsigned int gpucount = _amd->getGPUCount();
+            unsigned int maxTemp =  _amd->getHigherTemp();
+            unsigned int minTemp =  _amd->getLowerTemp();
 
             emit gpuInfoSignal(gpucount
-                               , 0
-                               , 0
+                               , maxTemp
+                               , minTemp
                                , 0
                                , 0
                                , 0

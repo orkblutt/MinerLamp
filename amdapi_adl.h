@@ -35,6 +35,9 @@ public:
 
     bool isInitialized(){return _isInitialized;}
 
+    int getHigherTemp();
+    int getLowerTemp();
+
 
 private:
 
