@@ -26,8 +26,8 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
 {
 
     qDebug() << "Entering adl constructor";
-    ADL_Main_Control_Create = (ADL_MAIN_CONTROL_CREATE) resolve("ADL_Main_Control_Create");
-    ADL_Main_Control_Destroy = (ADL_MAIN_CONTROL_DESTROY) resolve("ADL_Main_Control_Destroy");
+    ADL2_Main_Control_Create = (ADL2_MAIN_CONTROL_CREATE) resolve("ADL2_Main_Control_Create");
+    ADL2_Main_Control_Destroy = (ADL2_MAIN_CONTROL_DESTROY) resolve("ADL_Main_Control_Destroy");
     ADL_Adapter_NumberOfAdapters_Get = (ADL_ADAPTER_NUMBEROFADAPTERS_GET) resolve("ADL_Adapter_NumberOfAdapters_Get");
     ADL_Adapter_AdapterInfo_Get = (ADL_ADAPTER_ADAPTERINFO_GET) resolve("ADL_Adapter_AdapterInfo_Get");
     ADL_AdapterX2_Caps = (ADL_ADAPTERX2_CAPS) resolve(  "ADL_AdapterX2_Caps");
@@ -44,8 +44,8 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
     ADL2_OverdriveN_PowerLimit_Set = (ADL2_OVERDRIVEN_POWERLIMIT_SET) resolve ( "ADL2_OverdriveN_PowerLimit_Set");
     ADL2_OverdriveN_Temperature_Get = (ADL2_OVERDRIVEN_TEMPERATURE_GET) resolve ( "ADL2_OverdriveN_Temperature_Get");
     ADL2_Overdrive_Caps = (ADL2_OVERDRIVE_CAPS) resolve ( "ADL2_Overdrive_Caps");
-    if ( NULL == ADL_Main_Control_Create ||
-         NULL == ADL_Main_Control_Destroy ||
+    if ( NULL == ADL2_Main_Control_Create ||
+         NULL == ADL2_Main_Control_Destroy ||
          NULL == ADL_Adapter_NumberOfAdapters_Get||
          NULL == ADL_Adapter_AdapterInfo_Get ||
          NULL == ADL_AdapterX2_Caps ||
@@ -65,7 +65,7 @@ amdapi_adl::amdapi_adl() : QLibrary("atiadlxx")
         return;
     }
 
-    if (ADL_OK != ADL_Main_Control_Create(ADL_Main_Memory_Alloc, 1))
+    if (ADL_OK != ADL2_Main_Control_Create(ADL_Main_Memory_Alloc, 1, &_context))
     {
         qDebug("Failed to initialize nested ADL2 context");
         return ;
@@ -90,7 +90,7 @@ amdapi_adl::~amdapi_adl()
     if(_isInitialized)
     {
         free(_lpAdapterInfo);
-        ADL_Main_Control_Destroy();
+        ADL2_Main_Control_Destroy(&_context);
     }
 }
 
@@ -110,11 +110,17 @@ int amdapi_adl::getGpuTemperature(int gpu)
     int temp;
     int iSupported,iEnabled,iVersion;
     ADL2_Overdrive_Caps(_context, _lpAdapterInfo[gpu].iAdapterIndex, &iSupported, &iEnabled, &iVersion);
-    if (iVersion == 7)
+    if (iSupported && iVersion == 7)
     {
-        ADL2_OverdriveN_Temperature_Get(_context,_lpAdapterInfo[gpu].iAdapterIndex,1, &temp);
+        if (ADL_OK != ADL2_OverdriveN_Temperature_Get(_context,_lpAdapterInfo[gpu].iAdapterIndex,1, &temp))
+        {
+            qDebug() << "ADL2_OverdriveN_Temperature_Get fails on gpu#" << gpu;
+            return 0;
+        }
         return temp;
     }
+    else
+        qDebug() << "Do not support N...";
     return 0;
 }
 
@@ -140,6 +146,20 @@ int amdapi_adl::getPowerLimit(int gpu)
 
 int amdapi_adl::getFanSpeed(int gpu)
 {
+    ADLODNFanControl fanCtrl;
+    int iSupported,iEnabled,iVersion;
+    ADL2_Overdrive_Caps(_context, _lpAdapterInfo[gpu].iAdapterIndex, &iSupported, &iEnabled, &iVersion);
+    if (iSupported && iVersion == 7)
+    {
+        if (ADL_OK != ADL2_OverdriveN_FanControl_Get(_context, _lpAdapterInfo[gpu].iAdapterIndex, &fanCtrl))
+        {
+            qDebug() << "ADL2_OverdriveN_FanControl_Get fails on gpu#" << gpu;
+            return 0;
+        }
+        else
+            return fanCtrl.iCurrentFanSpeed;
+    }
+
     return 0;
 }
 
@@ -195,3 +215,29 @@ int amdapi_adl::getLowerTemp()
 }
 
 
+int amdapi_adl::getHigherFanSpeed()
+{
+    unsigned int maxSpeed = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int speed = getFanSpeed(i);
+        if(speed > maxSpeed)
+            maxSpeed = speed;
+    }
+    return maxSpeed;
+}
+
+int amdapi_adl::getLowerFanSpeed()
+{
+    unsigned int minSpeed = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int speed = getFanSpeed(i);
+        if(speed < minSpeed)
+            minSpeed = speed;
+    }
+    return minSpeed;
+
+}

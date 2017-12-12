@@ -609,12 +609,14 @@ void amdMonitorThrd::run()
             unsigned int gpucount = _amd->getGPUCount();
             unsigned int maxTemp =  _amd->getHigherTemp();
             unsigned int minTemp =  _amd->getLowerTemp();
+            unsigned int maxfanspeed = _amd->getHigherFanSpeed();
+            unsigned int minfanspeed = _amd->getLowerFanSpeed();
 
             emit gpuInfoSignal(gpucount
                                , maxTemp
                                , minTemp
-                               , 0
-                               , 0
+                               , maxfanspeed
+                               , minfanspeed
                                , 0
                                , 0
                                , 0
@@ -713,7 +715,6 @@ void fanSpeedThread::run()
             if(gpuTemp > _downLimit)
             {
                 float step = 100 / (float)(_upLimit - _downLimit);
-
                 float fanLevel = step * (gpuTemp - _downLimit);
 
                 _nvapi->setFanSpeed(i, (int)fanLevel);
@@ -721,7 +722,6 @@ void fanSpeedThread::run()
                 qDebug() << fanLevel;
             }
         }
-
         QThread::sleep(5);
     }
 }

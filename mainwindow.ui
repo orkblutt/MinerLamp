@@ -241,6 +241,13 @@ QPushButton:disabled
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="title">
        <string>AMD</string>
       </property>
@@ -489,6 +496,13 @@ for last 6 hour:</string>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="title">
        <string>nVidia</string>
       </property>
@@ -690,19 +704,6 @@ for last 6 hour:</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="3">
-     <widget class="QPushButton" name="pushButtonPool">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>Pool</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1" colspan="3">
      <widget class="QLineEdit" name="lineEditMinerPath"/>
     </item>
@@ -715,16 +716,6 @@ for last 6 hour:</string>
     </item>
     <item row="1" column="1" colspan="4">
      <widget class="QLineEdit" name="lineEditArgs"/>
-    </item>
-    <item row="6" column="2">
-     <widget class="QPushButton" name="pushButtonShowHideLog">
-      <property name="text">
-       <string>Hide log</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-     </widget>
     </item>
     <item row="7" column="0" colspan="6">
      <widget class="QTextEdit" name="textEdit">
@@ -833,6 +824,29 @@ for last 6 hour:</string>
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item row="6" column="5">
+     <widget class="QPushButton" name="pushButtonPool">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Pool</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4">
+     <widget class="QPushButton" name="pushButtonShowHideLog">
+      <property name="text">
+       <string>Hide log</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

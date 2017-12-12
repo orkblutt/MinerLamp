@@ -38,14 +38,16 @@ public:
     int getHigherTemp();
     int getLowerTemp();
 
+    int getHigherFanSpeed();
+    int getLowerFanSpeed();
 
 private:
 
     // Definitions of the used function pointers. Add more if you use other ADL APIs
-    typedef int ( *ADL_MAIN_CONTROL_CREATE )(ADL_MAIN_MALLOC_CALLBACK, int );
-    typedef int ( *ADL_MAIN_CONTROL_DESTROY )();
+    typedef int ( *ADL2_MAIN_CONTROL_CREATE )(ADL_MAIN_MALLOC_CALLBACK, int, ADL_CONTEXT_HANDLE*);
+    typedef int ( *ADL2_MAIN_CONTROL_DESTROY )(ADL_CONTEXT_HANDLE*);
     typedef int ( *ADL_FLUSH_DRIVER_DATA)(int);
-    typedef int (*ADL2_ADAPTER_ACTIVE_GET ) (ADL_CONTEXT_HANDLE, int, int* );
+    typedef int ( *ADL2_ADAPTER_ACTIVE_GET ) (ADL_CONTEXT_HANDLE, int, int* );
 
     typedef int ( *ADL_ADAPTER_NUMBEROFADAPTERS_GET ) ( int* );
     typedef int ( *ADL_ADAPTER_ADAPTERINFO_GET ) ( LPAdapterInfo, int );
@@ -63,8 +65,8 @@ private:
     typedef int ( *ADL2_OVERDRIVEN_POWERLIMIT_SET) (ADL_CONTEXT_HANDLE, int, ADLODNPowerLimitSetting*);
     typedef int ( *ADL2_OVERDRIVEN_TEMPERATURE_GET) (ADL_CONTEXT_HANDLE, int, int, int*);
 
-    ADL_MAIN_CONTROL_CREATE          ADL_Main_Control_Create = NULL;
-    ADL_MAIN_CONTROL_DESTROY         ADL_Main_Control_Destroy = NULL;
+    ADL2_MAIN_CONTROL_CREATE          ADL2_Main_Control_Create = NULL;
+    ADL2_MAIN_CONTROL_DESTROY         ADL2_Main_Control_Destroy = NULL;
     ADL_ADAPTER_NUMBEROFADAPTERS_GET ADL_Adapter_NumberOfAdapters_Get = NULL;
     ADL_ADAPTER_ADAPTERINFO_GET      ADL_Adapter_AdapterInfo_Get = NULL;
     ADL_ADAPTERX2_CAPS ADL_AdapterX2_Caps = NULL;
