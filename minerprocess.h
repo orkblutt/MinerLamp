@@ -89,6 +89,7 @@ private:
 
     QSettings* _settings;
 
+    QString _outHelper = QString();
 
     bool _isRunning;
     bool _autoRestart;
@@ -119,6 +120,7 @@ private:
 
     void onExit();
     void onStarted();
+
 
 public slots:
     void onReadyToMonitor();

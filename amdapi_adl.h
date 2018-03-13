@@ -19,11 +19,11 @@ public:
 
     int getGpuTemperature(int gpu);
 
-    int getGPUOffset(int gpu);
-    int getMemOffset(int gpu);
+    int getGPUClock(int gpu);
+    int getMemClock(int gpu);
 
     int getGpuClock(int gpu);
-    int getPowerLimit(int gpu);
+    int getPowerDraw(int gpu);
     int getFanSpeed(int gpu);
 
 
@@ -40,6 +40,18 @@ public:
 
     int getHigherFanSpeed();
     int getLowerFanSpeed();
+
+    int getMemMaxClock();
+    int getMemLowerClock();
+
+    int getGPUMaxClock();
+    int getGPUMinClock();
+
+    int getMaxPowerDraw();
+    int getMinPowerDraw();
+
+    int getPowerDrawSum();
+
 
 private:
 

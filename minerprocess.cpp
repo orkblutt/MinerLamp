@@ -7,6 +7,8 @@
 #include <QThread>
 
 
+
+
 anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
   , _pParent((MinerProcess*)pParent)
   , _delay(delay)
@@ -111,11 +113,26 @@ void MinerProcess::onReadyToReadStdout()
     }
 }
 
+
 void MinerProcess::onReadyToReadStderr()
 {
-    QString line(_miner.readAllStandardError());
+    QByteArray array = _miner.readAllStandardError();
+
+    QString line(array);
+
+    _outHelper += line;
+
+    if(line.indexOf("\r\n") == -1)
+        return;
+
+
+    line = _outHelper;
+
+
     if(line.length() > 1)
     {
+        _outHelper.clear();
+
         int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh/s"));
         if(mhsPos != -1)
         {
@@ -158,18 +175,17 @@ void MinerProcess::onReadyToReadStderr()
         {
             if(_shareOnly)
             {
-                if(list.at(i).indexOf("Solution") != -1
-                        || list.at(i).indexOf("Nonce") != -1
-                        || list.at(i).indexOf("Submitted") != -1)
+                if(list.at(i).indexOf("**Accepted") != -1)
                 {
-                    _log->append(list.at(i).simplified());
+                    _log->append(list.at(i).trimmed());
                 }
             }
             else
             {
-                _log->append(list.at(i).simplified());
+                _log->append(list.at(i).trimmed());
             }
         }
+
 
         if(line.indexOf("error") != -1 || line.indexOf("Error") != -1)
         {
@@ -177,8 +193,6 @@ void MinerProcess::onReadyToReadStderr()
             restart();
             return;
         }
-
-
     }
 }
 
@@ -225,7 +239,7 @@ void MinerProcess::onDonate()
 
         if(_isRunning)
         {
-           int walletSwitch = _minerArgs.indexOf("-O ");
+            int walletSwitch = _minerArgs.indexOf("-O ");
             if(walletSwitch != -1)
             {
                 int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);

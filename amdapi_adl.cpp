@@ -124,22 +124,18 @@ int amdapi_adl::getGpuTemperature(int gpu)
     return 0;
 }
 
-int amdapi_adl::getGPUOffset(int gpu)
+int amdapi_adl::getGPUClock(int gpu)
 {
     return 0;
 }
 
-int amdapi_adl::getMemOffset(int gpu)
+int amdapi_adl::getMemClock(int gpu)
 {
     return 0;
 }
 
-int amdapi_adl::getGpuClock(int gpu)
-{
-    return 0;
-}
 
-int amdapi_adl::getPowerLimit(int gpu)
+int amdapi_adl::getPowerDraw(int gpu)
 {
     return 0;
 }
@@ -240,4 +236,94 @@ int amdapi_adl::getLowerFanSpeed()
     }
     return minSpeed;
 
+}
+
+int amdapi_adl::getMemMaxClock()
+{
+    unsigned int maxClock = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int clock = getMemClock(i);
+        if(clock > maxClock)
+            maxClock = clock;
+    }
+    return maxClock;
+
+}
+
+int amdapi_adl::getMemLowerClock()
+{
+    unsigned int minClock = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int speed = getMemClock(i);
+        if(speed < minClock)
+            minClock = speed;
+    }
+    return minClock;
+
+}
+
+int amdapi_adl::getGPUMaxClock()
+{
+    unsigned int maxClock = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int clock = getGPUClock(i);
+        if(clock > maxClock)
+            maxClock = clock;
+    }
+    return maxClock;
+}
+
+int amdapi_adl::getGPUMinClock()
+{
+    unsigned int minClock = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int speed = getGPUClock(i);
+        if(speed < minClock)
+            minClock = speed;
+    }
+    return minClock;
+}
+
+int amdapi_adl::getMaxPowerDraw()
+{
+    unsigned int maxWatt = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int watt = getPowerDraw(i);
+        if(watt > maxWatt)
+            maxWatt = watt;
+    }
+    return maxWatt;
+}
+
+int amdapi_adl::getMinPowerDraw()
+{
+    unsigned int minWatt = 1000000;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+    {
+        unsigned int watt = getPowerDraw(i);
+        if(watt < minWatt)
+            minWatt = watt;
+    }
+    return minWatt;
+
+}
+
+int amdapi_adl::getPowerDrawSum()
+{
+    unsigned int totalWatt = 0;
+    unsigned int gpuCount = getGPUCount();
+    for(unsigned int i = 0; i < gpuCount; i++)
+        totalWatt += getPowerDraw(i);
+    return totalWatt;
 }

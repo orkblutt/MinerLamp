@@ -1,4 +1,5 @@
 #include "highlighter.h"
+#include <QDebug>
 
 Highlighter::Highlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
@@ -6,32 +7,34 @@ Highlighter::Highlighter(QTextDocument *parent)
     HighlightingRule rule;
 
     QString escaped;
+    QTextCharFormat strFormat;
 
-    _0mhsFormat.setFontWeight(QFont::Bold);
-    _0mhsFormat.setForeground(Qt::red);
-    rule.pattern = QRegularExpression("\\b0.00MH/s\\b");
-    rule.format = _0mhsFormat;
+
+    strFormat.setFontWeight(QFont::Bold);
+    strFormat.setForeground(Qt::cyan);
+    rule.pattern = QRegularExpression("[0-9]{1,5}.[0-9]{1,2} Mh/s");
+    rule.format = strFormat;
     _highlightingRules.append(rule);
 
-    _shareFormat.setFontWeight(QFont::Bold);
-    _shareFormat.setForeground(Qt::blue);
-    rule.pattern = QRegularExpression("Solution[^\n]*");
-    rule.format = _shareFormat;
+    strFormat.setFontWeight(QFont::Bold);
+    strFormat.setForeground(Qt::red);
+    rule.pattern = QRegularExpression("0.00 Mh/s");
+    rule.format = strFormat;
     _highlightingRules.append(rule);
 
-    escaped = QRegularExpression::escape("B-) Submitted and accepted.");
-    _submitAdmitted.setFontWeight(QFont::Bold);
-    _submitAdmitted.setForeground(Qt::green);
+    escaped = QRegularExpression::escape("**Accepted");
+    strFormat.setForeground(Qt::green);
     rule.pattern = QRegularExpression(escaped);
-    rule.format = _submitAdmitted;
+    rule.format = strFormat;
     _highlightingRules.append(rule);
 
     escaped = QRegularExpression::escape(":-( Not accepted.");
-    _submitRefused.setFontWeight(QFont::Bold);
-    _submitRefused.setForeground(Qt::red);
+    strFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression(escaped);
-    rule.format = _submitRefused;
+    rule.format = strFormat;
     _highlightingRules.append(rule);
+
+
 }
 
 void Highlighter::highlightBlock(const QString &text)

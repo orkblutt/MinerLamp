@@ -81,12 +81,6 @@ QTextEdit {
 }
 
 
-
-QLineEdit
-{
-color: white;
-}
-
 QLineEdit#lineEditDonate
 {
 border-style: no-border;
