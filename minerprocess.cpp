@@ -175,7 +175,7 @@ void MinerProcess::onReadyToReadStderr()
         {
             if(_shareOnly)
             {
-                if(list.at(i).indexOf("**Accepted") != -1 || list.at(i).indexOf("**Rejected"))
+                if(list.at(i).indexOf("**Accepted") != -1 || list.at(i).indexOf("**Rejected") != -1)
                 {
                     _log->append(list.at(i).trimmed());
                 }
