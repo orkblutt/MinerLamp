@@ -26,6 +26,21 @@ private:
 
 };
 
+
+class restarter : public QThread
+{
+    Q_OBJECT
+public:
+    restarter(unsigned int delay);
+    void run();
+private:
+    unsigned int _delay;
+
+signals:
+    void restartsignal();
+
+};
+
 // Timer for any MH/s
 // If no hasrate reported after a given delay
 // this worker will signal for issue
@@ -128,6 +143,7 @@ public slots:
 
     void onDonate();
     void onBackToNormal();
+    void onReadyToRestart();
 
 signals:
 

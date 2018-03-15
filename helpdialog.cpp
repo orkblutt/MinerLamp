@@ -19,7 +19,8 @@ helpDialog::helpDialog(QSettings* settings, QWidget *parent) :
     ui->plainTextEdit->appendHtml("<u>https://github.com/ethereum-mining/ethminer</u><br>");
     ui->plainTextEdit->appendHtml("If you want to donate you can at this address:");
     ui->plainTextEdit->appendHtml("<b>0xa07a8c9975145bb5371e8b3c31acb62ad9d0698e</b><br><br>");
-    ui->plainTextEdit->appendHtml("<br>Feel free to send me comment at <b>orkblutt@msn.com</b>");
+    ui->plainTextEdit->appendHtml("<br>Feel free to send me comment at <b>orkblutt@msn.com</b><br>");
+    ui->plainTextEdit->appendHtml(QString("Version: <b>" + QApplication::applicationVersion() + "</b>"));
     ui->plainTextEdit->appendHtml("</html>");
 
     ui->checkBox->setChecked(_settings->value("donate", true).toBool());

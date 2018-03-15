@@ -175,7 +175,7 @@ void MinerProcess::onReadyToReadStderr()
         {
             if(_shareOnly)
             {
-                if(list.at(i).indexOf("**Accepted") != -1)
+                if(list.at(i).indexOf("**Accepted") != -1 || list.at(i).indexOf("**Rejected"))
                 {
                     _log->append(list.at(i).trimmed());
                 }
@@ -224,7 +224,6 @@ void MinerProcess::onReadyToMonitor()
 void MinerProcess::onNoHashing()
 {
     emit emitError();
-
     restart();
 }
 
@@ -268,6 +267,11 @@ void MinerProcess::onBackToNormal()
         restart();
         _autoRestart = autorestart;
     }
+}
+
+void MinerProcess::onReadyToRestart()
+{
+    start(_minerPath, _minerArgs);
 }
 
 
@@ -326,8 +330,9 @@ void MinerProcess::restart()
     if(_autoRestart)
     {
         stop();
-        QThread::sleep(_restartDelay);
-        start(_minerPath, _minerArgs);
+        static restarter rstart(_restartDelay);
+        connect(&rstart, SIGNAL(restartsignal()), this, SLOT(onReadyToRestart()));
+        rstart.start();
     }
 }
 
@@ -353,4 +358,16 @@ void donateThrd::run()
             emit backToNormal();
         }
     }
+}
+
+restarter::restarter(unsigned int delay) :
+    _delay(delay)
+{
+
+}
+
+void restarter::run()
+{
+    QThread::sleep(_delay);
+    emit restartsignal();
 }

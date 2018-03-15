@@ -28,7 +28,7 @@ Highlighter::Highlighter(QTextDocument *parent)
     rule.format = strFormat;
     _highlightingRules.append(rule);
 
-    escaped = QRegularExpression::escape(":-( Not accepted.");
+    escaped = QRegularExpression::escape("**Rejected");
     strFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression(escaped);
     rule.format = strFormat;
