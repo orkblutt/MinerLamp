@@ -79,8 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         if(_nvapi->libLoaded())
         {
-            _fanThread = new fanSpeedThread(_nvapi);
-            _fanThread->start();
+
         }
 
     }
@@ -203,6 +202,9 @@ void MainWindow::applyOC()
                 _nvapi->setMemClockOffset(i, _settings->value(QString("memoffset" + QString::number(i))).toInt());
                 _nvapi->setFanSpeed(i, _settings->value(QString("fanspeed" + QString::number(i))).toInt());
             }
+
+            if(_settings->value(QString("fanspeed" + QString::number(0))).toInt() == 101)
+                _nvapi->startFanThread();
         }
     }
     _settings->endGroup();
@@ -694,37 +696,6 @@ void MainWindow::onPoolUserInfo(double userBalance
     ui->lcdNumberAvrgHr6H->display(averageHashRate6H);
 }
 
-
-fanSpeedThread::fanSpeedThread(nvidiaAPI *nvapi, QObject */*pParent*/) :
-    _nvapi(nvapi),
-    _downLimit(30),
-    _upLimit(65)
-{
-
-}
-
-void fanSpeedThread::run()
-{
-    unsigned int gpuCount = _nvapi->getGPUCount();
-    while(true)
-    {
-        for(uint i = 0; i < gpuCount; i++)
-        {
-            int gpuTemp = _nvapi->getGpuTemperature(i);
-            qDebug() << "gpu temp" << gpuTemp;
-            if(gpuTemp > _downLimit)
-            {
-                float step = 100 / (float)(_upLimit - _downLimit);
-                float fanLevel = step * (gpuTemp - _downLimit);
-
-                _nvapi->setFanSpeed(i, (int)fanLevel);
-
-                qDebug() << fanLevel;
-            }
-        }
-        QThread::sleep(5);
-    }
-}
 
 
 void MainWindow::on_pushButtonEthminerBrowser_clicked()

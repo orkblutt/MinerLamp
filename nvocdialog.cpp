@@ -33,6 +33,7 @@ nvOCDialog::nvOCDialog(nvidiaAPI *nvapi, QSettings *settings, QWidget *parent) :
     _settings->beginGroup("nvoc");
     ui->checkBoxAllDevices->setChecked(_settings->value("nvoc_applyall").toBool());
     ui->checkBoxOCMinerStart->setChecked(_settings->value("nvoc_applyonstart").toBool());
+    ui->checkBoxAutoSpeedFan->setChecked(_settings->value("fanspeed0").toInt() == 101 ? true : false);
     _settings->endGroup();
 }
 
@@ -99,7 +100,7 @@ void nvOCDialog::saveConfig()
             _settings->setValue(QString("powerlimitoffset" + QString::number(i)), _cardList.at(deviceIndex).powerOffset);
             _settings->setValue(QString("gpuoffset" + QString::number(i)), _cardList.at(deviceIndex).gpuOffset);
             _settings->setValue(QString("memoffset" + QString::number(i)), _cardList.at(deviceIndex).memOffset);
-            _settings->setValue(QString("fanspeed" + QString::number(i)), _cardList.at(deviceIndex).fanSpeed);
+            _settings->setValue(QString("fanspeed" + QString::number(i)), ui->checkBoxAutoSpeedFan->isChecked() ? 101 : _cardList.at(deviceIndex).fanSpeed);
         }
     }
     else
@@ -107,12 +108,12 @@ void nvOCDialog::saveConfig()
         _settings->setValue(QString("powerlimitoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).powerOffset);
         _settings->setValue(QString("gpuoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).gpuOffset);
         _settings->setValue(QString("memoffset" + QString::number(deviceIndex)), _cardList.at(deviceIndex).memOffset);
-        _settings->setValue(QString("fanspeed" + QString::number(deviceIndex)), _cardList.at(deviceIndex).fanSpeed);
+        _settings->setValue(QString("fanspeed" + QString::number(deviceIndex)), ui->checkBoxAutoSpeedFan->isChecked() ? 101 : _cardList.at(deviceIndex).fanSpeed);
     }
     _settings->endGroup();
 }
 
-
+// Apply settings
 void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
     if(button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Apply))
@@ -125,7 +126,15 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
                 _nvapi->setPowerLimitPercent(i, ui->horizontalSliderPowerPercent->value());
                 _nvapi->setGPUOffset(i, ui->horizontalSliderGpuOffset->value());
                 _nvapi->setMemClockOffset(i, ui->horizontalSliderMemOffset->value());
-                _nvapi->setFanSpeed(i, ui->horizontalSliderFanSpeed->value());
+                if(ui->checkBoxAutoSpeedFan->isChecked())
+                {
+                    _nvapi->startFanThread();
+                }
+                else
+                {
+                    _nvapi->stopFanThread();
+                    _nvapi->setFanSpeed(i, ui->horizontalSliderFanSpeed->value());
+                }
             }
         }
         else
@@ -133,7 +142,15 @@ void nvOCDialog::on_buttonBox_clicked(QAbstractButton *button)
             _nvapi->setPowerLimitPercent(gpu, ui->horizontalSliderPowerPercent->value());
             _nvapi->setGPUOffset(gpu, ui->horizontalSliderGpuOffset->value());
             _nvapi->setMemClockOffset(gpu, ui->horizontalSliderMemOffset->value());
-            _nvapi->setFanSpeed(gpu, ui->horizontalSliderFanSpeed->value());
+            if(ui->checkBoxAutoSpeedFan->isChecked())
+            {
+                _nvapi->startFanThread();
+            }
+            else
+            {
+                _nvapi->stopFanThread();
+                _nvapi->setFanSpeed(gpu, ui->horizontalSliderFanSpeed->value());
+            }
         }
         saveConfig();
     }
@@ -145,13 +162,11 @@ void nvOCDialog::on_checkBoxAutoSpeedFan_clicked(bool checked)
     if(checked)
     {
         ui->horizontalSliderFanSpeed->hide();
-        ui->spinBoxMinTemp->setReadOnly(false);
-        ui->spinBoxMaxTemp->setReadOnly(false);
+
     }
     else
     {
         ui->horizontalSliderFanSpeed->show();
-        ui->spinBoxMinTemp->setReadOnly(true);
-        ui->spinBoxMaxTemp->setReadOnly(true);
+
     }
 }

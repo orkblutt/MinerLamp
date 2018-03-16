@@ -32,21 +32,6 @@ signals:
 };
 
 
-class fanSpeedThread: public QThread
-{
-    Q_OBJECT
-public:
-    fanSpeedThread(nvidiaAPI* nvapi, QObject* = Q_NULLPTR);
-
-    void run();
-private:
-
-    nvidiaAPI* _nvapi;
-
-    int _upLimit;
-    int _downLimit;
-};
-
 
 class nvMonitorThrd : public QThread
 {
@@ -232,7 +217,6 @@ private:
     autoStart* _starter;
 
     nvMonitorThrd* _nvMonitorThrd;
-    fanSpeedThread* _fanThread;
 
     amdMonitorThrd* _amdMonitorThrd;
 
