@@ -7,6 +7,8 @@
 #include <QThread>
 
 
+
+
 anyMHsWaitter::anyMHsWaitter(unsigned int delay, QObject *pParent) : QThread(pParent)
   , _pParent((MinerProcess*)pParent)
   , _delay(delay)
@@ -55,10 +57,6 @@ MinerProcess::MinerProcess(QSettings* settings):
     _readyToMonitor(false),
     _waitter(Q_NULLPTR),
     _anyHR(Q_NULLPTR)
-  #ifdef NVIDIA
-  , _nvapi(Q_NULLPTR)
-  #endif
-  , _blinker(Q_NULLPTR)
   , _ledActivated(false)
   , _ledHash(50)
   , _ledShare(100)
@@ -90,10 +88,6 @@ MinerProcess::MinerProcess(QSettings* settings):
     connect(_anyHR, SIGNAL(notHashing()), this, SLOT(onNoHashing()));
 
 
-#ifdef NVIDIA
-    _nvapi = new nvidiaAPI();
-#endif
-
     _donate = new donateThrd(this);
     connect(_donate, SIGNAL(donate()), this, SLOT(onDonate()));
     connect(_donate, SIGNAL(backToNormal()), this, SLOT(onBackToNormal()));
@@ -119,11 +113,26 @@ void MinerProcess::onReadyToReadStdout()
     }
 }
 
+
 void MinerProcess::onReadyToReadStderr()
 {
-    QString line(_miner.readAllStandardError());
+    QByteArray array = _miner.readAllStandardError();
+
+    QString line(array);
+
+    _outHelper += line;
+
+    if(line.indexOf("\r\n") == -1)
+        return;
+
+
+    line = _outHelper;
+
+
     if(line.length() > 1)
     {
+        _outHelper.clear();
+
         int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh/s"));
         if(mhsPos != -1)
         {
@@ -166,39 +175,23 @@ void MinerProcess::onReadyToReadStderr()
         {
             if(_shareOnly)
             {
-                if(list.at(i).indexOf("Solution") != -1
-                        || list.at(i).indexOf("Nonce") != -1
-                        || list.at(i).indexOf("Submitted") != -1)
+                if(list.at(i).indexOf("**Accepted") != -1 || list.at(i).indexOf("**Rejected") != -1)
                 {
-                    _log->append(list.at(i).simplified());
+                    _log->append(list.at(i).trimmed());
                 }
             }
             else
             {
-                _log->append(list.at(i).simplified());
+                _log->append(list.at(i).trimmed());
             }
         }
+
 
         if(line.indexOf("error") != -1 || line.indexOf("Error") != -1)
         {
             emit emitError();
             restart();
             return;
-        }
-
-        if(_ledActivated)
-        {
-            if(line.indexOf("B-) Submitted and accepted.") != -1)
-            {
-                if(_blinker)
-                {
-                    if(_blinker->isRunning()) _blinker->terminate();
-                    delete _blinker;
-                }
-
-                _blinker = new blinkerLED(_ledHash, _ledShare, this);
-                _blinker->start();
-            }
         }
     }
 }
@@ -231,7 +224,6 @@ void MinerProcess::onReadyToMonitor()
 void MinerProcess::onNoHashing()
 {
     emit emitError();
-
     restart();
 }
 
@@ -246,11 +238,9 @@ void MinerProcess::onDonate()
 
         if(_isRunning)
         {
-           int walletSwitch = _minerArgs.indexOf("-O ");
+            int walletSwitch = _minerArgs.indexOf("-O ");
             if(walletSwitch != -1)
             {
-
-
                 int endOfWSwitch = _minerArgs.indexOf(" ", walletSwitch + 3);
                 if(endOfWSwitch == -1) endOfWSwitch = _minerArgs.length();
 
@@ -277,6 +267,11 @@ void MinerProcess::onBackToNormal()
         restart();
         _autoRestart = autorestart;
     }
+}
+
+void MinerProcess::onReadyToRestart()
+{
+    start(_minerPath, _minerArgs);
 }
 
 
@@ -335,28 +330,14 @@ void MinerProcess::restart()
     if(_autoRestart)
     {
         stop();
-        QThread::sleep(_restartDelay);
-        start(_minerPath, _minerArgs);
+        static restarter rstart(_restartDelay);
+        connect(&rstart, SIGNAL(restartsignal()), this, SLOT(onReadyToRestart()));
+        rstart.start();
     }
 }
 
-blinkerLED::blinkerLED(unsigned short hash, unsigned short share, QObject* pParent) :
-    _hash(hash),
-    _share(share),
-    _pParent((MinerProcess*)pParent)
-{
 
-}
 
-void blinkerLED::run()
-{
-#ifdef NVIDIA
-    nvidiaAPI* nvapi = _pParent->getNVAPI();
-    nvapi->setAllLED(_share);
-    QThread::sleep(1);
-    nvapi->setAllLED(_hash);
-#endif
-}
 
 donateThrd::donateThrd(QObject* pParent) : QThread(pParent)
   , _parent((MinerProcess*)pParent)
@@ -377,4 +358,16 @@ void donateThrd::run()
             emit backToNormal();
         }
     }
+}
+
+restarter::restarter(unsigned int delay) :
+    _delay(delay)
+{
+
+}
+
+void restarter::run()
+{
+    QThread::sleep(_delay);
+    emit restartsignal();
 }

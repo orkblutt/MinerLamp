@@ -10,13 +10,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MinerLamp
 TEMPLATE = app
-VERSION = 0.1.2.32
+VERSION = 0.1.4.4
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS NVIDIA
+DEFINES += QT_DEPRECATED_WARNINGS NVIDIA AMD
 
 
 # You can also make your code fail to compile if you use deprecated APIs.
@@ -33,8 +33,8 @@ SOURCES += \
     nvidianvml.cpp \
     nvocdialog.cpp \
     nvidiaapi.cpp \
-    leddialog.cpp \
-    nanopoolapi.cpp
+    nanopoolapi.cpp \
+    amdapi_adl.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,14 +44,13 @@ HEADERS += \
     nvidianvml.h \
     nvocdialog.h \
     nvidiaapi.h \
-    leddialog.h \
-    nanopoolapi.h
+    nanopoolapi.h \
+    amdapi_adl.h
 
 FORMS += \
         mainwindow.ui \
     helpdialog.ui \
-    nvocdialog.ui \
-    leddialog.ui
+    nvocdialog.ui
 
 RC_ICONS += \
         eth_miner_lamp.ico
@@ -66,5 +65,7 @@ INCLUDEPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 DEPENDPATH += 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/include'
 
 win32: INCLUDEPATH += $$PWD/nvapi
+
+INCLUDEPATH += $$PWD/adl/include
 
 CONFIG  += openssl-linked

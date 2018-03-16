@@ -1,6 +1,37 @@
 #include "nvidiaapi.h"
 #include <QDebug>
 
+fanSpeedThread::fanSpeedThread(nvidiaAPI *nvapi, QObject */*pParent*/) :
+    _nvapi(nvapi),
+    _downLimit(30),
+    _upLimit(65)
+{
+
+}
+
+void fanSpeedThread::run()
+{
+    unsigned int gpuCount = _nvapi->getGPUCount();
+    while(!_needToStop)
+    {
+        int previous = 0;
+        for(uint i = 0; i < gpuCount; i++)
+        {
+            int gpuTemp = _nvapi->getGpuTemperature(i);
+            if(gpuTemp > _downLimit)
+            {
+                float step = 100 / (float)(_upLimit - _downLimit);
+                float fanLevel = step * (gpuTemp - _downLimit);
+                if(previous != (int)fanLevel)
+                {
+                    _nvapi->setFanSpeed(i, (int)fanLevel);
+                    previous = (int)fanLevel;
+                }
+            }
+        }
+        QThread::sleep(2);
+    }
+}
 
 nvidiaAPI::nvidiaAPI():
     QLibrary("nvapi64"),
@@ -57,9 +88,12 @@ nvidiaAPI::nvidiaAPI():
 
         NvGetThermalSettings = (NvAPI_GPU_GetThermalSettings_t)NvQueryInterface(0xE3640A56);
 
+
         NvAPI_Status ret = NvInit();
 
         qDebug() << "NVAPI success " << ret;
+
+        _libLoaded = true;
     }
 }
 
@@ -299,4 +333,21 @@ void nvidiaAPI::setAllLED(int color)
 {
     for(unsigned int i = 0; i < _gpuCount; i++)
         setLED(i, color);
+}
+
+void nvidiaAPI::startFanThread()
+{
+    //if(!_fanThread->isRunning())
+    _fanThread = new fanSpeedThread(this);
+    connect(_fanThread, SIGNAL(finished()), _fanThread, SLOT(deleteLater()));
+    connect(this, SIGNAL(stopFanThrdSignal()), _fanThread, SLOT(onStop()));
+    _fanThread->start();
+}
+
+void nvidiaAPI::stopFanThread()
+{
+    //if(_fanThread->isRunning())
+    emit stopFanThrdSignal();
+    while(_fanThread->isRunning()) QThread::msleep(10);
+    disconnect(this, SIGNAL(stopFanThrdSignal()), _fanThread, SLOT(onStop()));
 }

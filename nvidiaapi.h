@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QLibrary>
 #include <QByteArray>
+#include <QThread>
 
 #include "nvapi.h"
 
@@ -306,10 +307,33 @@ typedef NV_GPU_COOLER_LEVELS_V1 NV_GPU_COOLER_LEVELS;
 #define NV_GPU_COOLER_LEVELS_VER_1  MAKE_NVAPI_VERSION(NV_GPU_COOLER_LEVELS_V1,1)
 #define NV_GPU_COOLER_LEVELS_VER    NV_GPU_COOLER_LEVELS_VER_1
 
+class nvidiaAPI;
 
+class fanSpeedThread: public QThread
+{
+    Q_OBJECT
+public:
+    fanSpeedThread(nvidiaAPI* nvapi, QObject* = Q_NULLPTR);
+
+    void run();
+private:
+
+    nvidiaAPI* _nvapi;
+
+    int _upLimit;
+    int _downLimit;
+
+    bool _needToStop = false;
+
+public slots:
+
+    void onStop(){_needToStop = true;}
+
+};
 
 class nvidiaAPI : public QLibrary
 {
+    Q_OBJECT
 public:
     nvidiaAPI();
     ~nvidiaAPI();
@@ -335,6 +359,11 @@ public:
     int setFanSpeed(unsigned int gpu, unsigned int percent);
 
     void setAllLED(int color);
+
+    bool libLoaded(){return _libLoaded;}
+
+    void startFanThread();
+    void stopFanThread();
 
 
 private:
@@ -392,6 +421,13 @@ private:
     NvPhysicalGpuHandle _gpuHandles[NVAPI_MAX_PHYSICAL_GPUS];
 
     bool _libLoaded;
+
+    fanSpeedThread* _fanThread;
+
+signals:
+
+    void stopFanThrdSignal();
+
 
 };
 

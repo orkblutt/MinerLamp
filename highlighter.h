@@ -26,10 +26,7 @@ private:
 
     QVector<HighlightingRule> _highlightingRules;
 
-    QTextCharFormat _0mhsFormat;
-    QTextCharFormat _shareFormat;
-    QTextCharFormat _submitAdmitted;
-    QTextCharFormat _submitRefused;
+
 
 };
 
