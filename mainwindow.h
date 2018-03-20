@@ -5,6 +5,11 @@
 #include <QSettings>
 #include <QSystemTrayIcon>
 #include <QThread>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QCategoryAxis>
+#include <QDateTimeAxis>
+#include <QTimer>
 
 #include "minerprocess.h"
 #include "highlighter.h"
@@ -13,6 +18,7 @@
 #include "nvidiaapi.h"
 #include "amdapi_adl.h"
 
+QT_CHARTS_USE_NAMESPACE
 
 namespace Ui {
 class MainWindow;
@@ -182,6 +188,8 @@ private slots:
 
     void on_pushButtonEthminerBrowser_clicked();
 
+    void onHrChartTimer();
+
 private:
 
     void onMinerStarted();
@@ -212,6 +220,15 @@ private:
 
     Highlighter* _highlighter;
 
+    QChart* _chart;
+    QLineSeries* _series;
+    QDateTimeAxis *_axisX;
+
+    QTimer _hrChartTimer;
+
+    double _currentHashRate = 0.0;
+    double _maxChartHashRate = 0.0;
+    int _plotsCntr = 0;
 
     //QThreads
     autoStart* _starter;

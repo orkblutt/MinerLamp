@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>610</height>
+    <height>793</height>
    </rect>
   </property>
   <property name="font">
@@ -363,7 +363,7 @@ QPushButton:disabled
       </layout>
      </widget>
     </item>
-    <item row="8" column="0" colspan="6">
+    <item row="9" column="0" colspan="6">
      <widget class="QGroupBox" name="groupBoxPools">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -650,87 +650,6 @@ for last 6 hour:</string>
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Command line:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="checkBoxAutoStart">
-      <property name="text">
-       <string>Auto start miner</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="pushButtonEthminerBrowser">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>...</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="5">
-     <widget class="QPushButton" name="pushButtonHelp">
-      <property name="text">
-       <string>About</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Miner path:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Start mining</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" colspan="3">
-     <widget class="QLineEdit" name="lineEditMinerPath"/>
-    </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QCheckBox" name="checkBoxOnlyShare">
-      <property name="text">
-       <string>Only display share info</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditArgs"/>
-    </item>
-    <item row="7" column="0" colspan="6">
-     <widget class="QTextEdit" name="textEdit">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="5" rowspan="2">
-     <widget class="QLCDNumber" name="lcdNumberHashRate">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="digitCount">
-       <number>7</number>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0" colspan="5">
      <widget class="QGroupBox" name="groupBoxWatchdog">
       <property name="sizePolicy">
@@ -820,7 +739,40 @@ for last 6 hour:</string>
       </layout>
      </widget>
     </item>
-    <item row="6" column="5">
+    <item row="1" column="1" colspan="4">
+     <widget class="QLineEdit" name="lineEditArgs"/>
+    </item>
+    <item row="8" column="0" colspan="6">
+     <widget class="QTextEdit" name="textEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5" rowspan="2">
+     <widget class="QLCDNumber" name="lcdNumberHashRate">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="digitCount">
+       <number>7</number>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QPushButton" name="pushButtonShowHideLog">
+      <property name="text">
+       <string>Hide log</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="5">
      <widget class="QPushButton" name="pushButtonPool">
       <property name="enabled">
        <bool>true</bool>
@@ -833,20 +785,87 @@ for last 6 hour:</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="4">
-     <widget class="QPushButton" name="pushButtonShowHideLog">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>Hide log</string>
+       <string>Command line:</string>
       </property>
-      <property name="checkable">
-       <bool>true</bool>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QPushButton" name="pushButtonEthminerBrowser">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="checkBoxAutoStart">
+      <property name="text">
+       <string>Auto start miner</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QPushButton" name="pushButtonHelp">
+      <property name="text">
+       <string>About</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Miner path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QCheckBox" name="checkBoxOnlyShare">
+      <property name="text">
+       <string>Only display share info</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Start mining</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="3">
+     <widget class="QLineEdit" name="lineEditMinerPath"/>
+    </item>
+    <item row="6" column="0" colspan="6">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Hashrate chart</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <widget class="hashrateCharView" name="graphicsView"/>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>hashrateCharView</class>
+   <extends>QGraphicsView</extends>
+   <header>hashratecharview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

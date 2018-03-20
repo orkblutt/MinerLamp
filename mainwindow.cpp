@@ -5,6 +5,7 @@
 #include "nvidianvml.h"
 #include "nvocdialog.h"
 #include "nanopoolapi.h"
+#include "hashratecharview.h"
 
 
 #include <QDebug>
@@ -15,6 +16,8 @@
 #include <QLibrary>
 #include <QDir>
 #include <QFileDialog>
+#include <QDateTimeAxis>
+#include <QBarCategoryAxis>
 
 #define MINERPATH           "minerpath"
 #define MINERARGS           "minerargs"
@@ -119,6 +122,62 @@ MainWindow::MainWindow(QWidget *parent) :
     _trayIcon->show();
 
     setupEditor();
+
+
+    _chart = new QChart();
+
+    // Customize chart background
+    QLinearGradient backgroundGradient;
+    backgroundGradient.setStart(QPointF(0, 0));
+    backgroundGradient.setFinalStop(QPointF(0, 1));
+    backgroundGradient.setColorAt(0.0, QRgb(0x909090));
+    backgroundGradient.setColorAt(1.0, QRgb(0x101010));
+    backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    _chart->setBackgroundBrush(backgroundGradient);
+
+
+
+    _series = new QLineSeries();
+    QPen pen(QColor(255, 165, 0));
+    pen.setWidth(2);
+    _series->setPen(pen);
+
+    _chart->legend()->hide();
+
+    _series->append(QDateTime::currentDateTime().toMSecsSinceEpoch(),0);
+    _chart->addSeries(_series);
+    _chart->createDefaultAxes();
+
+    _axisX = new QDateTimeAxis;
+    _axisX->setTickCount(15);
+    _axisX->setFormat("hh:mm:ss");
+    _axisX->setTitleText("Time");
+    _chart->axisY()->setTitleText("HR in MH/s");
+
+    QFont labelsFont;
+    labelsFont.setPixelSize(14);
+    _axisX->setTitleFont(labelsFont);
+    _chart->axisY()->setTitleFont(labelsFont);
+
+    // Customize axis label colors
+    QBrush axisBrush(Qt::white);
+    _axisX->setLabelsBrush(axisBrush);
+    _chart->axisY()->setLabelsBrush(axisBrush);
+
+    _axisX->setTitleBrush(QBrush(Qt::blue));
+    _chart->axisY()->setTitleBrush(QBrush(Qt::blue));
+
+    _chart->setAxisX(_axisX);
+    _series->attachAxis(_axisX);
+    _axisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(120));
+
+    ui->graphicsView->setChart(_chart);
+
+
+    connect(&_hrChartTimer, &QTimer::timeout, this, &MainWindow::onHrChartTimer);
+    _hrChartTimer.setInterval(1000);
+    _hrChartTimer.start();
+
 
     ui->lcdNumberHashRate->display("0.00");
 
@@ -381,6 +440,8 @@ void MainWindow::onMinerStoped()
     ui->lcdNumberHashRate->setPalette(Qt::gray);
     ui->lcdNumberHashRate->display("0.00");
 
+    _currentHashRate = 0;
+
     _trayIcon->setToolTip(QString("Miner's lamp"));
 }
 
@@ -389,16 +450,19 @@ void MainWindow::onHashrate(QString &hashrate)
 
     QString hrValue = hashrate.mid(0, hashrate.indexOf("Mh/s"));
 
-
     this->setWindowTitle(QString("Miner's Lamp - " + hashrate + " - Restart count: " + QString::number(_errorCount)));
     if(hrValue.toDouble() == 0)
         ui->lcdNumberHashRate->setPalette(Qt::red);
     else
         ui->lcdNumberHashRate->setPalette(Qt::green);
 
+    _currentHashRate = hrValue.toDouble();
+
     ui->lcdNumberHashRate->display(hrValue);
 
     _trayIcon->setToolTip(QString("Miner's lamp - " + hashrate));
+
+
 }
 
 void MainWindow::onError()
@@ -482,22 +546,26 @@ void autoStart::run()
 }
 
 
+
+
 void MainWindow::onNvMonitorInfo(unsigned int gpucount
-                           , unsigned int maxgputemp
-                           , unsigned int mingputemp
-                           , unsigned int maxfanspeed
-                           , unsigned int minfanspeed
-                           , unsigned int maxmemclock
-                           , unsigned int minmemclock
-                           , unsigned int maxgpuclock
-                           , unsigned int mingpuclock
-                           , unsigned int maxpowerdraw
-                           , unsigned int minpowerdraw
-                           , unsigned int totalpowerdraw)
+                                 , unsigned int maxgputemp
+                                 , unsigned int mingputemp
+                                 , unsigned int maxfanspeed
+                                 , unsigned int minfanspeed
+                                 , unsigned int maxmemclock
+                                 , unsigned int minmemclock
+                                 , unsigned int maxgpuclock
+                                 , unsigned int mingpuclock
+                                 , unsigned int maxpowerdraw
+                                 , unsigned int minpowerdraw
+                                 , unsigned int totalpowerdraw)
 {
 
     ui->lcdNumberMaxGPUTemp->setPalette(getTempColor(maxgputemp));
     ui->lcdNumberMinGPUTemp->setPalette(getTempColor(mingputemp));
+
+
 
     ui->lcdNumberGPUCount->display((int)gpucount);
 
@@ -704,6 +772,26 @@ void MainWindow::on_pushButtonEthminerBrowser_clicked()
                                                     tr("Choose ethminer path"), "", tr("ethminer.exe (*.exe)"));
     if(!fileName.isEmpty())
         ui->lineEditMinerPath->setText(fileName);
+}
+
+void MainWindow::onHrChartTimer()
+{
+    if(_currentHashRate > _maxChartHashRate)
+        _maxChartHashRate = _currentHashRate;
+
+    _chart->removeSeries(_series);
+    _series->append(QDateTime::currentDateTime().toMSecsSinceEpoch(), _currentHashRate);
+    _chart->addSeries(_series);
+    _chart->axisY()->setRange(0, _maxChartHashRate + 1);
+
+    if(_plotsCntr >= 110)
+        _axisX->setRange(QDateTime::currentDateTime().addSecs(-110)
+                         , QDateTime::currentDateTime().addSecs(10));
+    else
+        _plotsCntr++;
+
+    _series->attachAxis(_axisX);
+    _series->attachAxis(_chart->axisY());
 }
 
 

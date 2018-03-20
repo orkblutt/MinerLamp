@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,7 +34,8 @@ SOURCES += \
     nvocdialog.cpp \
     nvidiaapi.cpp \
     nanopoolapi.cpp \
-    amdapi_adl.cpp
+    amdapi_adl.cpp \
+    hashratecharview.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,7 +46,8 @@ HEADERS += \
     nvocdialog.h \
     nvidiaapi.h \
     nanopoolapi.h \
-    amdapi_adl.h
+    amdapi_adl.h \
+    hashratecharview.h
 
 FORMS += \
         mainwindow.ui \
