@@ -850,7 +850,11 @@ for last 6 hour:</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="0" column="0">
-        <widget class="hashrateCharView" name="graphicsView"/>
+        <widget class="hashrateCharView" name="graphicsView">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

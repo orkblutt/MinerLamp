@@ -34,6 +34,7 @@ nvOCDialog::nvOCDialog(nvidiaAPI *nvapi, QSettings *settings, QWidget *parent) :
     ui->checkBoxAllDevices->setChecked(_settings->value("nvoc_applyall").toBool());
     ui->checkBoxOCMinerStart->setChecked(_settings->value("nvoc_applyonstart").toBool());
     ui->checkBoxAutoSpeedFan->setChecked(_settings->value("fanspeed0").toInt() == 101 ? true : false);
+    if(_settings->value("fanspeed0").toInt() == 101) ui->horizontalSliderFanSpeed->hide();
     _settings->endGroup();
 }
 

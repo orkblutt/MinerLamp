@@ -18,6 +18,7 @@
 #include <QFileDialog>
 #include <QDateTimeAxis>
 #include <QBarCategoryAxis>
+#include <QScrollBar>
 
 #define MINERPATH           "minerpath"
 #define MINERARGS           "minerargs"
@@ -133,16 +134,16 @@ MainWindow::MainWindow(QWidget *parent) :
     backgroundGradient.setColorAt(0.0, QRgb(0x909090));
     backgroundGradient.setColorAt(1.0, QRgb(0x101010));
     backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+
+    _chart->setAnimationOptions(QChart::SeriesAnimations);
     _chart->setBackgroundBrush(backgroundGradient);
+    _chart->legend()->hide();
 
-
-
-    _series = new QLineSeries();
     QPen pen(QColor(255, 165, 0));
     pen.setWidth(2);
-    _series->setPen(pen);
 
-    _chart->legend()->hide();
+    _series = new QLineSeries();
+    _series->setPen(pen);
 
     _series->append(QDateTime::currentDateTime().toMSecsSinceEpoch(),0);
     _chart->addSeries(_series);
@@ -153,6 +154,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _axisX->setFormat("hh:mm:ss");
     _axisX->setTitleText("Time");
     _chart->axisY()->setTitleText("HR in MH/s");
+    _chart->axisY()->setRange(0, 1);
 
     QFont labelsFont;
     labelsFont.setPixelSize(14);
@@ -165,11 +167,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _chart->axisY()->setLabelsBrush(axisBrush);
 
     _axisX->setTitleBrush(QBrush(Qt::blue));
-    _chart->axisY()->setTitleBrush(QBrush(Qt::blue));
+    _chart->axisY()->setTitleBrush(QBrush(Qt::yellow));
 
     _chart->setAxisX(_axisX);
     _series->attachAxis(_axisX);
-    _axisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(120));
+    _axisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(30));
+
 
     ui->graphicsView->setChart(_chart);
 
@@ -178,9 +181,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _hrChartTimer.setInterval(1000);
     _hrChartTimer.start();
 
-
     ui->lcdNumberHashRate->display("0.00");
-
 
     if(ui->checkBoxAutoStart->isChecked())
     {
@@ -198,7 +199,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if(pos > 0)
         ui->lineEditAccount->setText(ui->lineEditArgs->text().mid(pos + 3
                                                                   , ui->lineEditArgs->text().indexOf(" 0x") > 0 ? 42 : 40));
-
 }
 
 MainWindow::~MainWindow()
@@ -230,8 +230,8 @@ void MainWindow::loadParameters()
 
     _process->setShareOnly(_settings->value(DISPLAYSHAREONLY).toBool());
     _process->setRestartOption(_settings->value(AUTORESTART).toBool());
-
 }
+
 
 void MainWindow::saveParameters()
 {
@@ -776,22 +776,21 @@ void MainWindow::on_pushButtonEthminerBrowser_clicked()
 
 void MainWindow::onHrChartTimer()
 {
-    if(_currentHashRate > _maxChartHashRate)
-        _maxChartHashRate = _currentHashRate;
-
-    _chart->removeSeries(_series);
     _series->append(QDateTime::currentDateTime().toMSecsSinceEpoch(), _currentHashRate);
-    _chart->addSeries(_series);
-    _chart->axisY()->setRange(0, _maxChartHashRate + 1);
 
-    if(_plotsCntr >= 110)
-        _axisX->setRange(QDateTime::currentDateTime().addSecs(-110)
-                         , QDateTime::currentDateTime().addSecs(10));
+    if(_plotsCntr >= 25)
+    {
+        _axisX->setRange(QDateTime::currentDateTime().addSecs(-25)
+                         , QDateTime::currentDateTime().addSecs(5));
+    }
     else
         _plotsCntr++;
 
-    _series->attachAxis(_axisX);
-    _series->attachAxis(_chart->axisY());
+    if(_currentHashRate > _maxChartHashRate)
+    {
+        _maxChartHashRate = _currentHashRate;
+        _chart->axisY()->setRange(0, _maxChartHashRate + 1);
+    }
 }
 
 
