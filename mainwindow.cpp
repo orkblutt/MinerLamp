@@ -135,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
     backgroundGradient.setColorAt(1.0, QRgb(0x101010));
     backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
 
-    _chart->setAnimationOptions(QChart::SeriesAnimations);
+    _chart->setAnimationOptions(QChart::NoAnimation);
     _chart->setBackgroundBrush(backgroundGradient);
     _chart->legend()->hide();
 
