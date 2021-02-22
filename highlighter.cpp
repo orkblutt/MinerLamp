@@ -19,7 +19,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 
     strFormat.setFontWeight(QFont::Bold);
     strFormat.setForeground(Qt::red);
-    rule.pattern = QRegularExpression(" 0.00 Mh/s");
+    rule.pattern = QRegularExpression(" 0.00 Mh");
     rule.format = strFormat;
     _highlightingRules.append(rule);
 
