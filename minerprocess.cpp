@@ -133,7 +133,7 @@ void MinerProcess::onReadyToReadStderr()
     {
         _outHelper.clear();
 
-        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh/s"));
+        int mhsPos = line.indexOf(QRegExp("[0-9]{1,5}.[0-9]{1,2} Mh"));
         if(mhsPos != -1)
         {
             int endPos = line.indexOf("  ", mhsPos);
